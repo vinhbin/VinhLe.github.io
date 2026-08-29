@@ -245,6 +245,7 @@
       }
       .mock { height: min(58vh, 560px); }
       .gnav-links { gap: 1.1rem; }
+      .spec-row { grid-template-columns: 1fr; gap: 0.25rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -338,7 +339,18 @@
     </div>
   </section>
 
-  <!-- specs + closing inserted in Task 5 -->
+  <section class="specs" id="specs" aria-label="Tech specs">
+    <h2>Tech Specs.</h2>
+    <dl id="specList"></dl>
+  </section>
+
+  <section class="closing">
+    <h2>Pick it up.</h2>
+    <div class="hero-cta">
+      <a class="pill pill-blue" href="phone.html" data-tryit>Try it <span aria-hidden="true">&rarr;</span></a>
+      <a class="pill pill-ghost" href="mailto:vinhhle24@gmail.com?subject=Let%27s%20talk">Hire</a>
+    </div>
+  </section>
 
   <footer class="foot">
     <span>&copy; 2026 Vinh Le</span>
@@ -426,7 +438,28 @@
       } else {
         moments.forEach(function (m) { m.classList.add('in'); });
       }
-      /* Task 5 adds: tech specs rendering */
+      /* tech specs table, rendered from data.js */
+      var dl = document.getElementById('specList');
+      function specRow(k, v, gold) {
+        var div = document.createElement('div');
+        div.className = 'spec-row' + (gold ? ' spec-gold' : '');
+        var dt = document.createElement('dt');
+        dt.textContent = k;
+        var dd = document.createElement('dd');
+        dd.textContent = v;
+        div.appendChild(dt);
+        div.appendChild(dd);
+        dl.appendChild(div);
+      }
+      if (dl && V.skills) {
+        specRow('Chip', V.education[0].school + ' — ' + V.education[0].degree);
+        Object.keys(V.skills).forEach(function (k) {
+          specRow(k, V.skills[k].join(' · '));
+        });
+        specRow('In the box', V.experience.map(function (e) { return e.title + ' — ' + e.org; }).join('   ·   '));
+        specRow('Awards', 'Best Hack for Good — Hack RenderATL  ·  1st Place — Actian VectorAI Build Challenge', true);
+        specRow('Battery', 'Muay Thai, travel, videography, good food.');
+      }
       /* Task 6 adds: try-it takeoff handoff */
     })();
   </script>
