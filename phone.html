@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Vinh Le — The Phone</title>
+  <link rel="icon" href="images/linkedinpfp.jpg" type="image/jpeg" />
+  <meta name="description" content="Vinh Le's portfolio as a phone. Unlock it, read the messages, browse the project photos, and send a text that becomes a real email." />
+  <link rel="stylesheet" href="shared/void.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       THE PHONE — a flagship handset floating in the void.
+       Canvas: 390 x 844 design px, JS-scaled to fit the viewport.
+       On real mobile: full-bleed, the page IS the phone.
+       ============================================================ */
+    :root {
+      --accent: #9fc9ff;
+      --accent-deep: #5a8fe0;
+      --void: #050507;
+      --screen-bg: #0b0e15;
+      --panel: #131826;
+      --panel-2: #1a2133;
+      --hairline: rgba(159, 201, 255, 0.12);
+      --ink: #eef3fb;
+      --ink-dim: #93a0b8;
+      --bubble-in: #232b3d;
+      --bubble-out: linear-gradient(180deg, #4d94f7, #2f6fe0);
+      --safe-t: 54px;
+      --safe-b: 44px;
+      --r-screen: 44px;
+      --ui: 'Instrument Sans', -apple-system, sans-serif;
+      --clock: 'Outfit', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { height: 100%; }
+
+    body {
+      background: var(--void);
+      font-family: var(--ui);
+      color: var(--ink);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- The void ---------- */
+    .stage {
+      position: fixed; inset: 0;
+      display: grid; place-items: center;
+      background:
+        radial-gradient(ellipse 60% 45% at 50% 42%, rgba(159, 201, 255, 0.10), transparent 70%),
+        radial-gradient(ellipse 90% 70% at 50% 110%, rgba(90, 143, 224, 0.06), transparent 60%),
+        var(--void);
+    }
+    .stage::before { /* film grain */
+      content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .halo {
+      position: absolute; width: 640px; height: 640px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(159, 201, 255, 0.16), rgba(159, 201, 255, 0.05) 45%, transparent 68%);
+      filter: blur(10px);
+      animation: breathe 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    /* ---------- Phone hardware ---------- */
+    .ph-scale { will-change: transform; }
+    .ph-float { animation: levitate 7.5s ease-in-out infinite; }
+    @keyframes levitate {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .phone {
+      position: relative;
+      width: 390px; height: 844px;
+      border-radius: 58px;
+      background: linear-gradient(160deg, #14161c, #08090c 55%, #101319);
+      padding: 11px;
+      transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: transform 0.25s ease-out;
+      box-shadow:
+        0 0 0 1.5px #33383f,
+        0 0 0 3px #1b1e24,
+        0 0 0 3.75px rgba(190, 210, 240, 0.28),
+        0 42px 90px -18px rgba(0, 0, 0, 0.92),
+        0 0 130px rgba(159, 201, 255, 0.13);
+    }
+    .btn-hw { position: absolute; background: linear-gradient(90deg, #3a3f47, #1c1f25); border-radius: 2px; }
+    .btn-hw.power { right: -6px; top: 226px; width: 3.5px; height: 92px; }
+    .btn-hw.vol-up { left: -6px; top: 176px; width: 3.5px; height: 58px; }
+    .btn-hw.vol-dn { left: -6px; top: 244px; width: 3.5px; height: 58px; }
+    .btn-hw.action { left: -6px; top: 128px; width: 3.5px; height: 30px; }
+
+    .screen {
+      position: relative; width: 100%; height: 100%;
+      border-radius: var(--r-screen);
+      background: #000;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .screen::after { /* glass reflection */
+      content: ''; position: absolute; inset: 0; z-index: 60; pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(115deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 28%, transparent 42%);
+    }
+
+    .island {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 34px; border-radius: 20px;
+      background: #000; z-index: 50;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 11px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    }
+    .island .lens {
+      width: 11px; height: 11px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 32%, #2a3d55 12%, #0c111c 45%, #05070b 70%);
+      box-shadow: inset 0 0 2px rgba(120, 160, 220, 0.4);
+    }
+
+    /* ---------- Status bar ---------- */
+    .statusbar {
+      position: absolute; top: 0; left: 0; right: 0; height: var(--safe-t);
+      z-index: 40; pointer-events: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 30px 0;
+      font-size: 15px; font-weight: 600; letter-spacing: 0.01em;
+      color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+    }
+    .statusbar .cluster { display: flex; align-items: center; gap: 7px; }
+    .statusbar svg { display: block; }
+    .batt { position: relative; width: 26px; height: 13px; border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; }
+    .batt::after { content: ''; position: absolute; right: -3.5px; top: 3.5px; width: 2px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 0 2px 2px 0; }
+    .batt .fill { position: absolute; inset: 1.5px; width: 84%; background: #fff; border-radius: 2px; transition: width 0.6s ease; }
+    .batt.charging .fill { background: #7be08a; }
+
+    .home-indicator {
+      position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%);
+      width: 128px; height: 5px; border-radius: 3px;
+      background: rgba(255, 255, 255, 0.6); z-index: 41; pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* ---------- Wallpaper (shared by lock + home) ---------- */
+    .wallpaper { position: absolute; inset: -6%; z-index: 0; pointer-events: none; }
+    .wp-layer { position: absolute; inset: 0; transition: transform 0.4s ease-out; }
+    .wp-base {
+      background:
+        radial-gradient(ellipse 80% 55% at 78% 12%, rgba(159, 201, 255, 0.42), transparent 55%),
+        radial-gradient(ellipse 70% 60% at 12% 38%, rgba(90, 123, 216, 0.38), transparent 60%),
+        radial-gradient(ellipse 90% 55% at 60% 96%, rgba(35, 56, 110, 0.55), transparent 65%),
+        linear-gradient(196deg, #0d1526 0%, #070b16 48%, #04060d 100%);
+    }
+    .wp-aurora {
+      background:
+        radial-gradient(ellipse 34% 22% at 66% 26%, rgba(223, 233, 255, 0.30), transparent 70%),
+        radial-gradient(ellipse 45% 16% at 30% 60%, rgba(159, 201, 255, 0.16), transparent 70%),
+        conic-gradient(from 210deg at 70% 20%, transparent 70%, rgba(159, 201, 255, 0.10) 82%, transparent 94%);
+      filter: blur(6px);
+      animation: aurora 16s ease-in-out infinite alternate;
+    }
+    @keyframes aurora {
+      from { transform: translate3d(-1.5%, 0, 0) scale(1); opacity: 0.9; }
+      to { transform: translate3d(1.5%, -2%, 0) scale(1.06); opacity: 1; }
+    }
+    .wp-stars {
+      background-image:
+        radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,0.8), transparent 100%),
+        radial-gradient(1px 1px at 32% 8%, rgba(255,255,255,0.5), transparent 100%),
+        radial-gradient(1.4px 1.4px at 56% 32%, rgba(255,255,255,0.65), transparent 100%),
+        radial-gradient(1px 1px at 78% 48%, rgba(255,255,255,0.4), transparent 100%),
+        radial-gradient(1.2px 1.2px at 88% 14%, rgba(255,255,255,0.7), transparent 100%),
+        radial-gradient(1px 1px at 22% 52%, rgba(255,255,255,0.45), transparent 100%),
+        radial-gradient(1.3px 1.3px at 44% 70%, rgba(255,255,255,0.5), transparent 100%),
+        radial-gradient(1px 1px at 68% 82%, rgba(255,255,255,0.35), transparent 100%),
+        radial-gradient(1.1px 1.1px at 8% 78%, rgba(255,255,255,0.5), transparent 100%),
+        radial-gradient(1px 1px at 92% 66%, rgba(255,255,255,0.4), transparent 100%);
+    }
+
+    /* ---------- Lock screen ---------- */
+    .lock {
+      position: absolute; inset: 0; z-index: 20;
+      display: flex; flex-direction: column; align-items: center;
+      overflow: hidden; cursor: pointer;
+      border: 0; background: transparent; font-family: inherit; color: inherit;
+      text-align: center; width: 100%;
+      transition: transform 0.55s cubic-bezier(0.5, 0, 0.2, 1), opacity 0.5s ease;
+    }
+    .lock.away { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    .lock .lock-glyph { margin-top: 74px; opacity: 0.85; }
+    .lock-date { margin-top: 14px; font-size: 17px; font-weight: 500; color: rgba(238, 243, 251, 0.9); letter-spacing: 0.01em; }
+    .lock-clock {
+      font-family: var(--clock); font-weight: 200; font-size: 92px;
+      line-height: 1; letter-spacing: -0.015em; margin-top: 2px;
+      color: #f4f8ff; text-shadow: 0 2px 24px rgba(159, 201, 255, 0.35);
+      font-variant-numeric: tabular-nums;
+    }
+    .lock-owner { margin-top: auto; margin-bottom: 26px; }
+    .lock-owner .who { font-size: 21px; font-weight: 600; letter-spacing: 0.01em; }
+    .lock-owner .what { margin-top: 5px; font-size: 13.5px; font-weight: 500; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; }
+    .lock-hint {
+      margin-bottom: calc(var(--safe-b) + 12px);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(238, 243, 251, 0.55);
+    }
+    .lock-hint svg { animation: nudge 2.2s ease-in-out infinite; }
+    @keyframes nudge {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-7px); opacity: 1; }
+    }
+    .lock-notif {
+      margin-top: 26px; width: 330px; max-width: calc(100% - 40px);
+      display: flex; align-items: center; gap: 12px; text-align: left;
+      padding: 12px 14px; border-radius: 22px;
+      background: rgba(20, 26, 40, 0.55);
+      border: 1px solid rgba(159, 201, 255, 0.14);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    .lock-notif img { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; }
+    .lock-notif .nt { flex: 1; min-width: 0; }
+    .lock-notif .nt b { display: block; font-size: 14px; font-weight: 600; }
+    .lock-notif .nt span { display: block; font-size: 13px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lock-notif time { font-size: 11.5px; color: var(--ink-dim); align-self: flex-start; }
+
+    /* ---------- Home screen ---------- */
+    .home {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; flex-direction: column;
+      padding: calc(var(--safe-t) + 8px) 22px var(--safe-b);
+      opacity: 0; transform: scale(1.12);
+      transition: opacity 0.45s ease 0.1s, transform 0.55s cubic-bezier(0.3, 0.9, 0.3, 1) 0.1s;
+      pointer-events: none;
+    }
+    .home.on { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+    .widget {
+      border-radius: 24px; padding: 16px 18px;
+      background: rgba(16, 21, 34, 0.62);
+      border: 1px solid rgba(159, 201, 255, 0.13);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 26px;
+    }
+    .widget img { width: 52px; height: 52px; border-radius: 15px; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.25); }
+    .widget .w-txt { flex: 1; min-width: 0; }
+    .widget .w-name { font-size: 16.5px; font-weight: 700; letter-spacing: 0.01em; }
+    .widget .w-role { font-size: 12.5px; font-weight: 500; color: var(--accent); margin-top: 2px; }
+    .widget .w-loc { font-size: 11.5px; color: var(--ink-dim); margin-top: 3px; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 22px 8px; align-content: start;
+    }
+    .app-ic {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      background: none; border: 0; cursor: pointer; text-decoration: none;
+      font-family: inherit; -webkit-tap-highlight-color: transparent;
+    }
+    .app-ic .tile {
+      width: 62px; height: 62px; border-radius: 15.5px;
+      display: grid; place-items: center; overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .app-ic:active .tile { transform: scale(0.88); filter: brightness(0.82); }
+    .app-ic .lbl {
+      font-size: 11.5px; font-weight: 500; color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); letter-spacing: 0.01em;
+    }
+    .app-ic svg { display: block; }
+
+    .widget-photo {
+      margin-top: 26px; position: relative; overflow: hidden;
+      height: 172px; border-radius: 24px; padding: 0;
+      border: 1px solid rgba(159, 201, 255, 0.13); cursor: pointer;
+      background: var(--panel);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), inset 0 0.5px 0 rgba(255, 255, 255, 0.14);
+      transition: transform 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .widget-photo:active { transform: scale(0.97); }
+    .widget-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: opacity 0.45s ease; }
+    .widget-photo::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(4, 6, 12, 0.42), transparent 38%, transparent 55%, rgba(4, 6, 12, 0.68));
+    }
+    .widget-photo .wpw-tag {
+      position: absolute; top: 12px; left: 15px; z-index: 2;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    }
+    .widget-photo .wpw-name {
+      position: absolute; bottom: 11px; left: 15px; z-index: 2;
+      font-size: 15.5px; font-weight: 600; color: #fff; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+    }
+    @media (max-height: 760px) { .widget-photo { height: 120px; } }
+    @media (max-height: 640px) { .widget-photo { display: none; } }
+
+    .page-dot { margin: auto auto 12px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.85); }
+
+    .dock {
+      margin: 0 auto; width: 100%; max-width: 330px;
+      display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center;
+      padding: 14px 10px; border-radius: 30px;
+      background: rgba(22, 28, 44, 0.5);
+      border: 1px solid rgba(159, 201, 255, 0.1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    .dock .app-ic { gap: 0; }
+    .dock .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+    /* icon tile skins */
+    .t-msg { background: linear-gradient(180deg, #6ce07a, #2db84e); }
+    .t-photos { background: linear-gradient(180deg, #ffffff, #e9edf4); }
+    .t-notes { background: linear-gradient(180deg, #fdfdfb, #f2f0e6); position: relative; }
+    .t-notes::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 15px; background: linear-gradient(180deg, #f8d878, #f2c14e); }
+    .t-store { background: linear-gradient(180deg, #38b6ff, #1d6ff2); }
+    .t-li { background: #0a66c2; }
+    .t-gh { background: linear-gradient(180deg, #2b3137, #14171b); }
+    .t-dp { background: linear-gradient(180deg, #1e3358, #0d1730); }
+    .t-cv { background: linear-gradient(180deg, #fbfcff, #e8ecf3); }
+    .t-li .in-word { color: #fff; font-weight: 700; font-size: 27px; letter-spacing: -0.03em; font-family: var(--ui); transform: translateY(-1px); }
+
+    /* ---------- App views ---------- */
+    .app-view {
+      position: absolute; inset: 0; z-index: 15;
+      display: flex; flex-direction: column;
+      background: var(--screen-bg);
+      visibility: hidden; opacity: 0; transform: scale(0.16);
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0.25, 1), opacity 0.3s ease, visibility 0s linear 0.42s;
+    }
+    .app-view.open {
+      visibility: visible; opacity: 1; transform: scale(1);
+      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0.25, 1), opacity 0.22s ease, visibility 0s;
+    }
+    .app-head {
+      flex: none; display: flex; align-items: center; gap: 6px;
+      padding: calc(var(--safe-t) + 4px) 16px 10px;
+      border-bottom: 0.5px solid var(--hairline);
+      background: rgba(11, 14, 21, 0.82);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      position: relative; z-index: 3;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: none; border: 0; cursor: pointer; font-family: inherit;
+      color: var(--accent); font-size: 16px; font-weight: 500;
+      padding: 6px 8px 6px 2px; margin-left: -4px; border-radius: 10px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn:active { opacity: 0.55; }
+    .app-title { flex: 1; text-align: center; font-size: 16.5px; font-weight: 700; letter-spacing: 0.01em; margin-right: 58px; }
+    .app-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(var(--safe-b) + 8px); scrollbar-width: thin; scrollbar-color: rgba(159,201,255,0.25) transparent; }
+
+    /* ---------- Messages ---------- */
+    #app-messages .app-head { flex-direction: row; }
+    .msg-contact { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; margin-right: 46px; }
+    .msg-contact img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.3); }
+    .msg-contact span { font-size: 12px; font-weight: 500; color: var(--ink-dim); }
+    .thread { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 8px; }
+    .stamp { text-align: center; font-size: 11px; font-weight: 500; color: var(--ink-dim); margin: 4px 0 8px; }
+    .bubble {
+      max-width: 76%; padding: 9px 13px; border-radius: 19px;
+      font-size: 14.5px; line-height: 1.42; letter-spacing: 0.005em;
+      animation: pop-in 0.3s cubic-bezier(0.3, 1.2, 0.4, 1);
+      transform-origin: bottom left; word-wrap: break-word;
+    }
+    @keyframes pop-in { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .bubble.in { align-self: flex-start; background: var(--bubble-in); color: var(--ink); border-bottom-left-radius: 6px; }
+    .bubble.out { align-self: flex-end; background: var(--bubble-out); color: #fff; border-bottom-right-radius: 6px; transform-origin: bottom right; }
+    .bubble.typing { display: inline-flex; gap: 4px; padding: 13px 15px; }
+    .bubble.typing i { width: 7px; height: 7px; border-radius: 50%; background: #8b98b0; animation: blink 1.2s ease-in-out infinite; }
+    .bubble.typing i:nth-child(2) { animation-delay: 0.18s; }
+    .bubble.typing i:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes blink { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+    .composer {
+      flex: none; display: flex; align-items: center; gap: 9px;
+      padding: 10px 14px calc(var(--safe-b) + 6px);
+      border-top: 0.5px solid var(--hairline);
+      background: rgba(11, 14, 21, 0.85);
+    }
+    .composer input {
+      flex: 1; min-width: 0; height: 38px; padding: 0 16px;
+      border-radius: 19px; border: 1px solid rgba(159, 201, 255, 0.2);
+      background: rgba(30, 38, 58, 0.55); color: var(--ink);
+      font: 400 16px/1 var(--ui); outline-offset: 2px;
+    }
+    .composer input::placeholder { color: var(--ink-dim); }
+    .composer button {
+      flex: none; width: 36px; height: 36px; border-radius: 50%;
+      border: 0; cursor: pointer; display: grid; place-items: center;
+      background: linear-gradient(180deg, #4d94f7, #2f6fe0); color: #fff;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+    .composer button:active { transform: scale(0.88); }
+    .composer button:disabled { opacity: 0.35; cursor: default; }
+
+    /* ---------- Photos ---------- */
+    .ph-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
+    .ph-grid button {
+      border: 0; padding: 0; cursor: pointer; background: var(--panel);
+      aspect-ratio: 1; overflow: hidden; -webkit-tap-highlight-color: transparent;
+    }
+    .ph-grid img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .ph-grid button:hover img, .ph-grid button:focus-visible img { transform: scale(1.06); }
+    .ph-count { padding: 14px 16px 6px; font-size: 13px; color: var(--ink-dim); font-weight: 500; }
+
+    .ph-viewer {
+      position: absolute; inset: 0; z-index: 30; background: #000;
+      display: flex; flex-direction: column;
+      visibility: hidden; opacity: 0; transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+    }
+    .ph-viewer.open { visibility: visible; opacity: 1; transition: opacity 0.25s ease, visibility 0s; }
+    .ph-viewer .v-top {
+      flex: none; display: flex; justify-content: space-between; align-items: center;
+      padding: calc(var(--safe-t) + 2px) 16px 8px; z-index: 2;
+    }
+    .v-btn {
+      border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(35, 43, 61, 0.8); color: var(--ink);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .v-btn:active { transform: scale(0.9); }
+    .ph-viewer .v-img { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 10px; }
+    .ph-viewer .v-img img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+    .ph-viewer .v-cap { flex: none; padding: 14px 20px calc(var(--safe-b) + 10px); text-align: center; }
+    .v-cap .v-name { font-size: 16px; font-weight: 700; }
+    .v-cap .v-meta { font-size: 12px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 3px; }
+    .v-cap .v-desc { font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-top: 7px; }
+    .v-cap .v-link {
+      display: inline-block; margin-top: 11px; padding: 8px 20px; border-radius: 999px;
+      background: rgba(159, 201, 255, 0.14); border: 1px solid rgba(159, 201, 255, 0.35);
+      color: var(--accent); font-size: 13px; font-weight: 600; text-decoration: none;
+    }
+    .v-nav { display: flex; gap: 8px; }
+
+    /* ---------- Notes ---------- */
+    .notes-list { padding: 8px 16px; }
+    .notes-hd { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; padding: 10px 2px 14px; }
+    .note-row {
+      width: 100%; text-align: left; border: 0; cursor: pointer; font-family: inherit;
+      display: block; padding: 13px 15px; border-radius: 14px; margin-bottom: 8px;
+      background: var(--panel); color: var(--ink);
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s ease;
+    }
+    .note-row:hover, .note-row:focus-visible { background: var(--panel-2); }
+    .note-row b { display: block; font-size: 15.5px; font-weight: 600; }
+    .note-row span { display: block; font-size: 13px; color: var(--ink-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .note-detail { display: none; padding: 6px 22px 30px; }
+    .note-detail.on { display: block; }
+    .note-detail h2 { font-size: 24px; font-weight: 700; margin: 10px 0 4px; }
+    .note-detail .n-date { font-size: 12px; color: var(--ink-dim); margin-bottom: 16px; }
+    .note-detail p { font-size: 15px; line-height: 1.65; color: #cbd5e6; margin-bottom: 13px; }
+    .note-detail h3 { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.07em; text-transform: uppercase; margin: 18px 0 6px; }
+    .note-detail ul { list-style: none; }
+    .note-detail li { font-size: 14.5px; line-height: 1.6; color: #cbd5e6; padding-left: 16px; position: relative; margin-bottom: 5px; }
+    .note-detail li::before { content: ''; position: absolute; left: 2px; top: 0.62em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-deep); }
+    .note-detail .edu-block { margin-bottom: 16px; }
+    .note-detail .edu-block b { font-size: 15.5px; }
+    .note-detail .edu-block em { display: block; font-style: normal; font-size: 13.5px; color: var(--ink-dim); margin-top: 2px; }
+
+    /* ---------- Projects ("store") ---------- */
+    .store-hd { padding: 12px 18px 4px; }
+    .store-hd .today { font-size: 12px; font-weight: 700; color: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+    .store-hd h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-top: 2px; }
+    .store-list { padding: 8px 16px; }
+    .store-row { border-bottom: 0.5px solid var(--hairline); padding: 13px 2px; }
+    .store-main { display: flex; align-items: center; gap: 13px; width: 100%; background: none; border: 0; cursor: pointer; font-family: inherit; color: var(--ink); text-align: left; -webkit-tap-highlight-color: transparent; }
+    .store-app-ic {
+      flex: none; width: 56px; height: 56px; border-radius: 13px;
+      display: grid; place-items: center;
+      font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em;
+      box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+    }
+    .store-txt { flex: 1; min-width: 0; }
+    .store-txt b { display: block; font-size: 15.5px; font-weight: 600; }
+    .store-txt span { display: block; font-size: 12.5px; color: var(--ink-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .store-txt .award { color: #f5cd6b; font-weight: 600; }
+    .get-btn {
+      flex: none; padding: 7px 20px; border-radius: 999px; border: 0; cursor: pointer;
+      background: rgba(159, 201, 255, 0.16); color: var(--accent);
+      font: 700 13px/1 var(--ui); letter-spacing: 0.06em;
+      text-decoration: none; transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .get-btn:hover, .get-btn:focus-visible { background: rgba(159, 201, 255, 0.28); }
+    .get-btn:active { transform: scale(0.92); }
+    .store-more { display: none; padding: 11px 4px 2px 69px; }
+    .store-row.expanded .store-more { display: block; }
+    .store-more p { font-size: 13.5px; line-height: 1.55; color: #b9c4d8; margin-bottom: 8px; }
+    .store-more ul { list-style: none; margin-bottom: 8px; }
+    .store-more li { font-size: 12.5px; line-height: 1.5; color: var(--ink-dim); padding-left: 13px; position: relative; margin-bottom: 4px; }
+    .store-more li::before { content: '–'; position: absolute; left: 0; color: var(--accent-deep); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { font-size: 11px; font-weight: 600; color: var(--accent); padding: 4px 10px; border-radius: 999px; background: rgba(159, 201, 255, 0.1); border: 1px solid rgba(159, 201, 255, 0.18); }
+    .store-links { display: flex; gap: 12px; margin-top: 9px; }
+    .store-links a { font-size: 12.5px; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .store-links a:hover { text-decoration: underline; }
+
+    /* ---------- Focus / a11y ---------- */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+    /* ---------- Full-bleed on real mobile ---------- */
+    @media (max-width: 540px), (max-height: 620px) {
+      .ph-float { animation: none; }
+      .halo { display: none; }
+      .phone {
+        width: 100vw; height: 100dvh; border-radius: 0; padding: 0;
+        transform: none !important; transition: none; box-shadow: none;
+      }
+      .btn-hw, .island { display: none; }
+      .screen { border-radius: 0; }
+      .screen::after { display: none; }
+      :root { --safe-t: calc(env(safe-area-inset-top, 0px) + 44px); --safe-b: calc(env(safe-area-inset-bottom, 0px) + 54px); --r-screen: 0px; }
+      .statusbar { padding: calc(env(safe-area-inset-top, 0px) + 10px) 24px 0; }
+      .lock .lock-glyph { margin-top: calc(env(safe-area-inset-top, 0px) + 48px); }
+      .dock { max-width: 300px; }
+    }
+
+    /* ---------- Reduced motion ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      .ph-float, .halo, .wp-aurora, .lock-hint svg { animation: none; }
+      .phone { transform: none !important; transition: none; }
+      .wp-layer { transition: none; }
+      .lock, .home, .app-view, .ph-viewer, .bubble { transition-duration: 0.01s; animation: none; }
+      .bubble.typing i { animation: none; opacity: 0.6; }
+      .ph-grid img { transition: none; }
+    }
+  </style>
+</head>
+<body data-accent="#9fc9ff" data-room="phone">
+
+  <div class="stage" id="stage">
+    <div class="halo" aria-hidden="true"></div>
+    <div class="ph-scale" id="phScale">
+      <div class="ph-float">
+        <div class="phone" id="phone">
+          <div class="btn-hw action" aria-hidden="true"></div>
+          <div class="btn-hw vol-up" aria-hidden="true"></div>
+          <div class="btn-hw vol-dn" aria-hidden="true"></div>
+          <div class="btn-hw power" aria-hidden="true"></div>
+
+          <div class="screen" id="screen">
+
+            <!-- shared wallpaper -->
+            <div class="wallpaper" aria-hidden="true">
+              <div class="wp-layer wp-base" data-depth="6"></div>
+              <div class="wp-layer wp-stars" data-depth="14"></div>
+              <div class="wp-layer wp-aurora" data-depth="10"></div>
+            </div>
+
+            <!-- status bar -->
+            <div class="statusbar" aria-hidden="true">
+              <div class="cluster"><span id="sbClock">9:41</span></div>
+              <div class="cluster">
+                <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0.5" width="3" height="11.5" rx="1"/></svg>
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 12 5.6 8.9a4.1 4.1 0 0 1 5.8 0Zm5-5.3a7.6 7.6 0 0 0-10 0L1.4 4.5a10.6 10.6 0 0 1 14.2 0Z" opacity="0.95"/></svg>
+                <span id="battPct" style="font-size:12.5px;font-weight:600;">84%</span>
+                <div class="batt" id="battIcon"><div class="fill" id="battFill"></div></div>
+              </div>
+            </div>
+
+            <div class="island" aria-hidden="true"><div class="lens"></div></div>
+
+            <!-- LOCK SCREEN -->
+            <button class="lock" id="lockScreen" aria-label="Lock screen. Press Enter or click to unlock the phone.">
+              <svg class="lock-glyph" width="21" height="27" viewBox="0 0 21 27" fill="none" stroke="#f4f8ff" stroke-width="2" aria-hidden="true"><rect x="1.5" y="11" width="18" height="14.5" rx="4" fill="rgba(244,248,255,0.12)"/><path d="M5.5 11V7.5a5 5 0 0 1 10 0V11"/></svg>
+              <div class="lock-date" id="lockDate">Friday, August 29</div>
+              <div class="lock-clock" id="lockClock">9:41</div>
+              <div class="lock-notif">
+                <img src="images/linkedinpfp.jpg" alt="" />
+                <div class="nt"><b>Messages</b><span id="lockNotifTxt">3 new messages from Vinh</span></div>
+                <time id="lockNotifTime">now</time>
+              </div>
+              <div class="lock-owner">
+                <div class="who" id="lockWho">Vinh Le</div>
+                <div class="what" id="lockWhat">AI Engineer &middot; M.S. CS @ Georgia Tech</div>
+              </div>
+              <div class="lock-hint">
+                <svg width="17" height="10" viewBox="0 0 17 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m2 8 6.5-6L15 8"/></svg>
+                <span>swipe up to unlock</span>
+              </div>
+            </button>
+
+            <!-- HOME SCREEN -->
+            <main class="home" id="homeScreen" aria-label="Home screen" hidden>
+              <div class="widget">
+                <img src="images/linkedinpfp.jpg" alt="" />
+                <div class="w-txt">
+                  <div class="w-name" id="wName">Vinh Le</div>
+                  <div class="w-role" id="wRole">AI Engineer &middot; M.S. CS @ Georgia Tech</div>
+                  <div class="w-loc" id="wLoc">Atlanta, GA</div>
+                </div>
+              </div>
+
+              <div class="grid" id="linkGrid" role="group" aria-label="Links">
+                <a class="app-ic" id="icLinkedin" target="_blank" rel="noopener" aria-label="Open LinkedIn profile in a new tab">
+                  <span class="tile t-li"><span class="in-word" aria-hidden="true">in</span></span>
+                  <span class="lbl">LinkedIn</span>
+                </a>
+                <a class="app-ic" id="icGithub" target="_blank" rel="noopener" aria-label="Open GitHub profile in a new tab">
+                  <span class="tile t-gh"><svg width="34" height="34" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span>
+                  <span class="lbl">GitHub</span>
+                </a>
+                <a class="app-ic" id="icDevpost" target="_blank" rel="noopener" aria-label="Open Devpost profile in a new tab">
+                  <span class="tile t-dp"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="#003e54"/><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="none" stroke="#5bd3f3" stroke-width="1.6"/><text x="17" y="20.5" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="15" font-weight="700" fill="#fff">D</text></svg></span>
+                  <span class="lbl">Devpost</span>
+                </a>
+                <a class="app-ic" id="icResume" target="_blank" rel="noopener" aria-label="Open resume in a new tab">
+                  <span class="tile t-cv"><svg width="30" height="34" viewBox="0 0 30 34" aria-hidden="true"><path d="M4 2h14l8 8v22a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" fill="#fff" stroke="#c6cede" stroke-width="1.4"/><path d="M18 2v8h8" fill="#e6ebf4" stroke="#c6cede" stroke-width="1.4"/><rect x="6.5" y="15" width="17" height="2" rx="1" fill="#9fb4d4"/><rect x="6.5" y="20" width="17" height="2" rx="1" fill="#9fb4d4"/><rect x="6.5" y="25" width="11" height="2" rx="1" fill="#9fb4d4"/><rect x="6" y="6" width="7" height="2.4" rx="1.2" fill="#e0463f"/></svg></span>
+                  <span class="lbl">Resume</span>
+                </a>
+              </div>
+
+              <button class="widget-photo" id="photoWidget" data-app="photos" aria-label="Open Photos app — recent project screenshots">
+                <img id="pwImg" src="" alt="" />
+                <span class="wpw-tag">Photos</span>
+                <span class="wpw-name" id="pwName"></span>
+              </button>
+
+              <div class="page-dot" aria-hidden="true"></div>
+
+              <nav class="dock" aria-label="Apps">
+                <button class="app-ic" data-app="messages" aria-label="Open Messages app">
+                  <span class="tile t-msg"><svg width="36" height="36" viewBox="0 0 36 36" fill="#fff" aria-hidden="true"><path d="M18 6C10.3 6 4 11.1 4 17.4c0 3.6 2 6.8 5.2 8.9-.2 1.7-1 3.2-2.2 4.3a.6.6 0 0 0 .5 1c2.5-.2 4.8-1.1 6.6-2.5 1.3.3 2.6.5 3.9.5 7.7 0 14-5.1 14-11.4S25.7 6 18 6Z"/></svg></span>
+                  <span class="lbl">Messages</span>
+                </button>
+                <button class="app-ic" data-app="photos" aria-label="Open Photos app">
+                  <span class="tile t-photos"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><g transform="translate(20 20)"><ellipse rx="4.4" ry="9" transform="translate(0 -9)" fill="#f7c948" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(45) translate(0 -9)" fill="#f78e3d" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(90) translate(0 -9)" fill="#ef4e6e" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(135) translate(0 -9)" fill="#c65ed1" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(180) translate(0 -9)" fill="#7a6ff0" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(225) translate(0 -9)" fill="#4a9df8" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(270) translate(0 -9)" fill="#3fc06e" opacity="0.85"/><ellipse rx="4.4" ry="9" transform="rotate(315) translate(0 -9)" fill="#a5d84a" opacity="0.85"/></g></svg></span>
+                  <span class="lbl">Photos</span>
+                </button>
+                <button class="app-ic" data-app="notes" aria-label="Open Notes app">
+                  <span class="tile t-notes"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="6" y="12" width="22" height="2.2" rx="1.1" fill="#b9b39a"/><rect x="6" y="18" width="22" height="2.2" rx="1.1" fill="#cfc9ad"/><rect x="6" y="24" width="14" height="2.2" rx="1.1" fill="#cfc9ad"/></svg></span>
+                  <span class="lbl">Notes</span>
+                </button>
+                <button class="app-ic" data-app="store" aria-label="Open Projects app">
+                  <span class="tile t-store"><svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M10 25 17 8l7 17"/><path d="M12.6 19.5h8.8"/></svg></span>
+                  <span class="lbl">Projects</span>
+                </button>
+              </nav>
+            </main>
+
+            <!-- APP: MESSAGES -->
+            <section class="app-view" id="app-messages" role="region" aria-label="Messages app" hidden>
+              <div class="app-head">
+                <button class="back-btn" data-close aria-label="Back to home screen">
+                  <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
+                </button>
+                <div class="msg-contact">
+                  <img src="images/linkedinpfp.jpg" alt="" />
+                  <span id="msgContactName">Vinh Le</span>
+                </div>
+              </div>
+              <div class="app-body">
+                <div class="thread" id="thread" aria-live="polite"></div>
+              </div>
+              <form class="composer" id="composer">
+                <label class="visually-hidden" for="composerInput">Type a message to Vinh. Sending opens your email app.</label>
+                <input id="composerInput" type="text" placeholder="Text Vinh — it becomes an email" autocomplete="off" />
+                <button type="submit" id="sendBtn" aria-label="Send message" disabled>
+                  <svg width="15" height="17" viewBox="0 0 15 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 15.5v-13M2 7l5.5-5.5L13 7"/></svg>
+                </button>
+              </form>
+            </section>
+
+            <!-- APP: PHOTOS -->
+            <section class="app-view" id="app-photos" role="region" aria-label="Photos app" hidden>
+              <div class="app-head">
+                <button class="back-btn" data-close aria-label="Back to home screen">
+                  <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
+                  <span>Back</span>
+                </button>
+                <span class="app-title">Recents</span>
+              </div>
+              <div class="app-body">
+                <div class="ph-count" id="phCount"></div>
+                <div class="ph-grid" id="phGrid"></div>
+              </div>
+              <div class="ph-viewer" id="phViewer" role="dialog" aria-modal="true" aria-label="Photo viewer">
+                <div class="v-top">
+                  <button class="v-btn" id="vClose" aria-label="Close photo viewer">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M1 1l12 12M13 1 1 13"/></svg>
+                  </button>
+                  <div class="v-nav">
+                    <button class="v-btn" id="vPrev" aria-label="Previous photo">
+                      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 1.5 2 7.5l5.5 6"/></svg>
+                    </button>
+                    <button class="v-btn" id="vNext" aria-label="Next photo">
+                      <svg width="9" height="15" viewBox="0 0 9 15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 1.5 7 7.5l-5.5 6"/></svg>
+                    </button>
+                  </div>
+                </div>
+                <div class="v-img"><img id="vImg" src="" alt="" /></div>
+                <div class="v-cap">
+                  <div class="v-name" id="vName"></div>
+                  <div class="v-meta" id="vMeta"></div>
+                  <div class="v-desc" id="vDesc"></div>
+                  <a class="v-link" id="vLink" target="_blank" rel="noopener">Open project</a>
+                </div>
+              </div>
+            </section>
+
+            <!-- APP: NOTES -->
+            <section class="app-view" id="app-notes" role="region" aria-label="Notes app" hidden>
+              <div class="app-head">
+                <button class="back-btn" data-close aria-label="Back to home screen">
+                  <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
+                  <span id="notesBackLbl">Back</span>
+                </button>
+                <span class="app-title">Notes</span>
+              </div>
+              <div class="app-body">
+                <div class="notes-list" id="notesList">
+                  <div class="notes-hd">Notes</div>
+                </div>
+                <div class="note-detail" id="noteDetail"></div>
+              </div>
+            </section>
+
+            <!-- APP: PROJECTS -->
+            <section class="app-view" id="app-store" role="region" aria-label="Projects app" hidden>
+              <div class="app-head">
+                <button class="back-btn" data-close aria-label="Back to home screen">
+                  <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
+                  <span>Back</span>
+                </button>
+                <span class="app-title">Projects</span>
+              </div>
+              <div class="app-body">
+                <div class="store-hd">
+                  <div class="today" id="storeDate">Friday, August 29</div>
+                  <h2>Shipped</h2>
+                </div>
+                <div class="store-list" id="storeList"></div>
+              </div>
+            </section>
+
+            <div class="home-indicator" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#050507;color:#eef3fb;font-family:sans-serif;text-align:center;padding:2rem;">
+      <p>This phone needs JavaScript. For the no-frills version, visit <a href="classic.html" style="color:#9fc9ff;">the classic view</a>.</p>
+    </div>
+  </noscript>
+
+  <script src="shared/data.js"></script>
+  <script src="shared/void.js" defer></script>
+  <script>
+  (function () {
+    'use strict';
+    var V = window.VINH;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var $ = function (id) { return document.getElementById(id); };
+
+    /* ============ scale-to-fit (desktop) ============ */
+    var scaleEl = $('phScale');
+    var mobileMQ = window.matchMedia('(max-width: 540px), (max-height: 620px)');
+    function fit() {
+      if (mobileMQ.matches) { scaleEl.style.transform = ''; return; }
+      var s = Math.min(1, (window.innerHeight * 0.9) / 844, (window.innerWidth * 0.92) / 390);
+      scaleEl.style.transform = 'scale(' + s + ')';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+
+    /* ============ identity ============ */
+    $('lockWho').textContent = V.name;
+    $('lockWhat').textContent = V.role;
+    $('wName').textContent = V.name;
+    $('wRole').textContent = V.role;
+    $('wLoc').textContent = V.location + ' · ' + V.tagline;
+    $('msgContactName').textContent = V.name;
+    $('lockNotifTxt').textContent = V.about.length + ' new messages from ' + V.name.split(' ')[0];
+    $('icLinkedin').href = V.links.linkedin;
+    $('icGithub').href = V.links.github;
+    $('icDevpost').href = V.links.devpost;
+    $('icResume').href = V.links.resume;
+
+    /* ============ clocks & battery ============ */
+    function fmtTime(d, withMeridiem) {
+      var h = d.getHours(), m = d.getMinutes();
+      var mer = h >= 12 ? ' PM' : ' AM';
+      h = h % 12 || 12;
+      return h + ':' + (m < 10 ? '0' : '') + m + (withMeridiem ? mer : '');
+    }
+    var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    function tick() {
+      var d = new Date();
+      $('sbClock').textContent = fmtTime(d, false);
+      $('lockClock').textContent = fmtTime(d, false);
+      var dateStr = DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate();
+      $('lockDate').textContent = dateStr;
+      $('storeDate').textContent = dateStr;
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    function setBatt(level, charging) {
+      var pct = Math.round(level * 100);
+      $('battPct').textContent = pct + '%';
+      $('battFill').style.width = Math.max(4, pct * 0.92) + '%';
+      $('battIcon').classList.toggle('charging', !!charging);
+    }
+    setBatt(0.84, false);
+    if (navigator.getBattery) {
+      navigator.getBattery().then(function (b) {
+        var upd = function () { setBatt(b.level, b.charging); };
+        upd();
+        b.addEventListener('levelchange', upd);
+        b.addEventListener('chargingchange', upd);
+      }).catch(function () {});
+    }
+
+    /* ============ wallpaper parallax + phone tilt ============ */
+    var phone = $('phone');
+    var layers = document.querySelectorAll('.wp-layer');
+    var finePointer = window.matchMedia('(pointer: fine)').matches;
+    if (!reduced && finePointer) {
+      $('stage').addEventListener('mousemove', function (e) {
+        var nx = e.clientX / window.innerWidth - 0.5;
+        var ny = e.clientY / window.innerHeight - 0.5;
+        phone.style.setProperty('--ry', (nx * 5).toFixed(2) + 'deg');
+        phone.style.setProperty('--rx', (-ny * 4).toFixed(2) + 'deg');
+        layers.forEach(function (l) {
+          var d = parseFloat(l.dataset.depth || 0);
+          l.style.transform = 'translate3d(' + (-nx * d) + 'px,' + (-ny * d) + 'px,0)';
+        });
+      });
+      $('stage').addEventListener('mouseleave', function () {
+        phone.style.setProperty('--rx', '0deg');
+        phone.style.setProperty('--ry', '0deg');
+      });
+    }
+
+    /* ============ lock screen ============ */
+    var lock = $('lockScreen');
+    var home = $('homeScreen');
+    var locked = true;
+    function unlock() {
+      if (!locked) return;
+      locked = false;
+      home.hidden = false;
+      requestAnimationFrame(function () {
+        lock.classList.add('away');
+        home.classList.add('on');
+      });
+      setTimeout(function () {
+        lock.hidden = true;
+        var first = home.querySelector('.dock .app-ic');
+        if (first) first.focus({ preventScroll: true });
+      }, reduced ? 30 : 580);
+    }
+    lock.addEventListener('click', unlock);
+    var touchY = null;
+    lock.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
+    lock.addEventListener('touchmove', function (e) {
+      if (touchY !== null && touchY - e.touches[0].clientY > 55) { touchY = null; unlock(); }
+    }, { passive: true });
+    document.addEventListener('keydown', function (e) {
+      if (locked && (e.key === 'Enter' || e.key === ' ') && document.activeElement !== lock) unlock();
+    });
+
+    /* ============ app open / close ============ */
+    var screen = $('screen');
+    var openApp = null;
+    var lastIcon = null;
+
+    function open(appId, iconEl) {
+      var view = $('app-' + appId);
+      if (!view || openApp) return;
+      openApp = view;
+      lastIcon = iconEl;
+      if (iconEl && !reduced) {
+        var sr = screen.getBoundingClientRect();
+        var ir = iconEl.getBoundingClientRect();
+        var ox = ((ir.left + ir.width / 2 - sr.left) / sr.width) * 100;
+        var oy = ((ir.top + ir.height / 2 - sr.top) / sr.height) * 100;
+        view.style.transformOrigin = ox + '% ' + oy + '%';
+      }
+      view.hidden = false;
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { view.classList.add('open'); });
+      });
+      setTimeout(function () {
+        var back = view.querySelector('[data-close]');
+        if (back) back.focus({ preventScroll: true });
+      }, reduced ? 30 : 430);
+      if (appId === 'messages') startThread();
+    }
+
+    function close() {
+      if (!openApp) return;
+      var view = openApp;
+      openApp = null;
+      view.classList.remove('open');
+      setTimeout(function () { view.hidden = true; }, reduced ? 30 : 440);
+      if (view.id === 'app-messages') stopThread();
+      if (lastIcon) { lastIcon.focus({ preventScroll: true }); lastIcon = null; }
+    }
+
+    document.querySelectorAll('[data-app]').forEach(function (btn) {
+      btn.addEventListener('click', function () { open(btn.dataset.app, btn); });
+    });
+    document.querySelectorAll('[data-close]').forEach(function (btn) {
+      btn.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if ($('phViewer').classList.contains('open')) { closeViewer(); return; }
+      close();
+    });
+
+    /* ============ MESSAGES ============ */
+    var thread = $('thread');
+    var composerInput = $('composerInput');
+    var sendBtn = $('sendBtn');
+    var threadStarted = false;
+    var timers = [];
+    function later(fn, ms) { timers.push(setTimeout(fn, reduced ? Math.min(ms, 120) : ms)); }
+    function stopThread() { timers.forEach(clearTimeout); timers = []; }
+
+    function bubble(cls, text) {
+      var b = document.createElement('div');
+      b.className = 'bubble ' + cls;
+      b.textContent = text;
+      thread.appendChild(b);
+      thread.parentElement.scrollTop = thread.parentElement.scrollHeight;
+      return b;
+    }
+    function typingDots() {
+      var t = document.createElement('div');
+      t.className = 'bubble in typing';
+      t.setAttribute('aria-label', 'Vinh is typing');
+      t.innerHTML = '<i></i><i></i><i></i>';
+      thread.appendChild(t);
+      thread.parentElement.scrollTop = thread.parentElement.scrollHeight;
+      return t;
+    }
+
+    function startThread() {
+      if (threadStarted) return;
+      threadStarted = true;
+      var stamp = document.createElement('div');
+      stamp.className = 'stamp';
+      stamp.textContent = 'iMessage · Today ' + fmtTime(new Date(), true);
+      thread.appendChild(stamp);
+
+      var msgs = ['hey — ' + V.name.split(' ')[0] + ' here. thanks for picking up.']
+        .concat(V.about)
+        .concat(['want to reach me for real? type below — it goes straight to ' + V.email + '.']);
+
+      var delay = 500;
+      msgs.forEach(function (m) {
+        var typeFor = Math.min(700 + m.length * 9, 1900);
+        later(function () {
+          var t = typingDots();
+          later(function () { t.remove(); bubble('in', m); }, typeFor);
+        }, delay);
+        delay += typeFor + 650;
+      });
+    }
+
+    composerInput.addEventListener('input', function () {
+      sendBtn.disabled = composerInput.value.trim() === '';
+    });
+    $('composer').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = composerInput.value.trim();
+      if (!text) return;
+      bubble('out', text);
+      composerInput.value = '';
+      sendBtn.disabled = true;
+      var mailto = 'mailto:' + V.email +
+        '?subject=' + encodeURIComponent('Hello ' + V.name.split(' ')[0] + ' — from your portfolio phone') +
+        '&body=' + encodeURIComponent(text + '\n\n— sent from the phone at ' + V.links.site);
+      later(function () {
+        var t = typingDots();
+        later(function () {
+          t.remove();
+          bubble('in', 'got it — opening your mail app so this actually reaches me.');
+          later(function () { window.location.href = mailto; }, 900);
+        }, 1100);
+      }, 500);
+    });
+
+    /* ============ PHOTOS ============ */
+    function primaryLink(p) {
+      var L = p.links || {};
+      return L.demo || L.app || L.devpost || L.dorahacks || L.github || V.links.github;
+    }
+    var shots = V.projects.concat(V.earlier).filter(function (p) { return p.image; });
+    $('phCount').textContent = shots.length + ' Photos · ' + V.name.split(' ')[0] + "'s builds";
+    var phGrid = $('phGrid');
+    shots.forEach(function (p, i) {
+      var b = document.createElement('button');
+      b.setAttribute('aria-label', 'View ' + p.name);
+      var img = document.createElement('img');
+      img.src = p.image;
+      img.alt = p.name + ' screenshot';
+      img.loading = 'lazy';
+      b.appendChild(img);
+      b.addEventListener('click', function () { openViewer(i); });
+      phGrid.appendChild(b);
+    });
+
+    /* home-screen photo widget: rotates through project shots */
+    var pwImg = $('pwImg');
+    var pwName = $('pwName');
+    var pwIdx = 0;
+    function setWidgetShot(i) {
+      var p = shots[i];
+      pwImg.src = p.image;
+      pwImg.alt = '';
+      pwName.textContent = p.name;
+    }
+    if (shots.length) {
+      setWidgetShot(0);
+      if (!reduced && shots.length > 1) {
+        setInterval(function () {
+          pwImg.style.opacity = '0.15';
+          setTimeout(function () {
+            pwIdx = (pwIdx + 1) % shots.length;
+            setWidgetShot(pwIdx);
+            pwImg.style.opacity = '1';
+          }, 450);
+        }, 6500);
+      }
+    }
+
+    var viewer = $('phViewer');
+    var vIdx = 0;
+    var viewerReturnFocus = null;
+    function openViewer(i) {
+      viewerReturnFocus = document.activeElement;
+      vIdx = i;
+      renderViewer();
+      viewer.classList.add('open');
+      $('vClose').focus({ preventScroll: true });
+    }
+    function renderViewer() {
+      var p = shots[vIdx];
+      $('vImg').src = p.image;
+      $('vImg').alt = p.name + ' screenshot';
+      $('vName').textContent = p.name;
+      $('vMeta').textContent = [p.event, p.award, p.date].filter(Boolean).join(' · ');
+      $('vDesc').textContent = p.desc;
+      $('vLink').href = primaryLink(p);
+    }
+    function closeViewer() {
+      viewer.classList.remove('open');
+      if (viewerReturnFocus) viewerReturnFocus.focus({ preventScroll: true });
+    }
+    $('vClose').addEventListener('click', closeViewer);
+    $('vPrev').addEventListener('click', function () { vIdx = (vIdx - 1 + shots.length) % shots.length; renderViewer(); });
+    $('vNext').addEventListener('click', function () { vIdx = (vIdx + 1) % shots.length; renderViewer(); });
+    document.addEventListener('keydown', function (e) {
+      if (!viewer.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft') $('vPrev').click();
+      if (e.key === 'ArrowRight') $('vNext').click();
+    });
+
+    /* ============ NOTES ============ */
+    var notesData = [
+      { title: 'About', preview: V.about[0] },
+      { title: 'Education', preview: V.education.map(function (e) { return e.school; }).join(' · ') },
+      { title: 'Skills', preview: Object.keys(V.skills).join(' · ') },
+      { title: 'Experience', preview: V.experience.map(function (e) { return e.org; }).join(' · ') }
+    ];
+    var notesList = $('notesList');
+    var noteDetail = $('noteDetail');
+    var notesBackLbl = $('notesBackLbl');
+    var noteBackBtn = document.querySelector('#app-notes [data-close]');
+
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+    function noteBody(title) {
+      var h = '';
+      if (title === 'About') {
+        V.about.forEach(function (p) { h += '<p>' + esc(p) + '</p>'; });
+      } else if (title === 'Education') {
+        V.education.forEach(function (e) {
+          h += '<div class="edu-block"><b>' + esc(e.school) + '</b><em>' + esc(e.degree) + '</em><em>' + esc(e.dates) + (e.note ? ' · ' + esc(e.note) : '') + '</em></div>';
+        });
+      } else if (title === 'Skills') {
+        Object.keys(V.skills).forEach(function (cat) {
+          h += '<h3>' + esc(cat) + '</h3><p>' + esc(V.skills[cat].join(', ')) + '</p>';
+        });
+      } else if (title === 'Experience') {
+        V.experience.forEach(function (e) {
+          h += '<h3>' + esc(e.org) + '</h3><div class="edu-block"><b>' + esc(e.title) + '</b><em>' + esc(e.dates) + '</em></div><ul>';
+          e.bullets.forEach(function (b) { h += '<li>' + esc(b) + '</li>'; });
+          h += '</ul>';
+        });
+      }
+      return h;
+    }
+    var noteOpen = false;
+    function showNote(title) {
+      noteOpen = true;
+      notesList.style.display = 'none';
+      noteDetail.classList.add('on');
+      noteDetail.innerHTML = '<h2>' + esc(title) + '</h2><div class="n-date">' + esc($('lockDate').textContent) + '</div>' + noteBody(title);
+      notesBackLbl.textContent = 'Notes';
+      noteDetail.parentElement.scrollTop = 0;
+    }
+    function showNotesList() {
+      noteOpen = false;
+      noteDetail.classList.remove('on');
+      notesList.style.display = '';
+      notesBackLbl.textContent = 'Back';
+    }
+    noteBackBtn.addEventListener('click', function (e) {
+      if (noteOpen) { e.stopImmediatePropagation(); showNotesList(); }
+    }, true);
+    notesData.forEach(function (n) {
+      var row = document.createElement('button');
+      row.className = 'note-row';
+      row.innerHTML = '<b>' + esc(n.title) + '</b><span>' + esc(n.preview) + '</span>';
+      row.addEventListener('click', function () { showNote(n.title); });
+      notesList.appendChild(row);
+    });
+
+    /* ============ PROJECTS ("store") ============ */
+    var ICON_HUES = [
+      'linear-gradient(160deg,#f7b733,#f75c2f)',
+      'linear-gradient(160deg,#8e7bf7,#4b3dd4)',
+      'linear-gradient(160deg,#38b6ff,#1d5ff2)',
+      'linear-gradient(160deg,#3fc06e,#1a8f5c)',
+      'linear-gradient(160deg,#ef4e6e,#b32b64)',
+      'linear-gradient(160deg,#67e0d4,#1e9c9c)',
+      'linear-gradient(160deg,#f78ec5,#c153b8)'
+    ];
+    var storeList = $('storeList');
+    V.projects.forEach(function (p, i) {
+      var row = document.createElement('div');
+      row.className = 'store-row';
+
+      var main = document.createElement('button');
+      main.className = 'store-main';
+      main.setAttribute('aria-expanded', 'false');
+      main.setAttribute('aria-label', p.name + ' — show details');
+      var sub = [p.event, p.award ? p.award : null].filter(Boolean).join(' · ');
+      main.innerHTML =
+        '<span class="store-app-ic" style="background:' + ICON_HUES[i % ICON_HUES.length] + '" aria-hidden="true">' + esc(p.name.charAt(0).toUpperCase()) + '</span>' +
+        '<span class="store-txt"><b>' + esc(p.name) + '</b><span>' + (p.award ? '<span class="award">' + esc(p.award) + '</span> · ' : '') + esc(p.event) + '</span></span>';
+
+      var get = document.createElement('a');
+      get.className = 'get-btn';
+      get.href = primaryLink(p);
+      get.target = '_blank';
+      get.rel = 'noopener';
+      get.textContent = 'GET';
+      get.setAttribute('aria-label', 'Open ' + p.name + ' in a new tab');
+      main.appendChild(get);
+      get.addEventListener('click', function (e) { e.stopPropagation(); });
+
+      var more = document.createElement('div');
+      more.className = 'store-more';
+      var moreHtml = '<p>' + esc(p.desc) + '</p>';
+      if (p.bullets && p.bullets.length) {
+        moreHtml += '<ul>';
+        p.bullets.forEach(function (b) { moreHtml += '<li>' + esc(b) + '</li>'; });
+        moreHtml += '</ul>';
+      }
+      moreHtml += '<div class="chips">';
+      (p.tech || []).forEach(function (t) { moreHtml += '<span class="chip">' + esc(t) + '</span>'; });
+      moreHtml += '</div><div class="store-links">';
+      Object.keys(p.links || {}).forEach(function (k) {
+        moreHtml += '<a href="' + esc(p.links[k]) + '" target="_blank" rel="noopener">' + esc(k) + '</a>';
+      });
+      moreHtml += '</div>';
+      more.innerHTML = moreHtml;
+
+      main.addEventListener('click', function () {
+        var on = row.classList.toggle('expanded');
+        main.setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+
+      row.appendChild(main);
+      row.appendChild(more);
+      storeList.appendChild(row);
+    });
+  })();
+  </script>
+</body>
+</html>

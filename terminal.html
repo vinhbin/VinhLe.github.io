@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vinh Le — The Terminal</title>
+  <meta name="description" content="Vinh Le — AI engineer, M.S. CS student at Georgia Tech. The Terminal: a real working shell over his portfolio. Type help to begin." />
+  <meta name="theme-color" content="#050507" />
+  <link rel="icon" href="images/linkedinpfp.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/void.css" />
+  <style>
+    :root {
+      --bg: #050507;
+      --ph: #33ff66;               /* pure phosphor — cursor, prompt, hot elements */
+      --tx: #3ddc6f;               /* base text */
+      --dim: rgba(61, 220, 111, 0.52);
+      --faint: rgba(61, 220, 111, 0.28);
+      --bright: #b7ffd0;
+      --hot: #eafff1;
+      --glow: 0 0 6px rgba(51, 255, 102, 0.30);
+      --glow-hot: 0 0 6px rgba(51, 255, 102, 0.55), 0 0 18px rgba(51, 255, 102, 0.25);
+    }
+
+    html { color-scheme: dark; }
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(51, 255, 102, 0.055), transparent 62%),
+        radial-gradient(90% 70% at 50% 110%, rgba(51, 255, 102, 0.03), transparent 60%),
+        var(--bg);
+      color: var(--tx);
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      line-height: 1.55;
+      text-shadow: var(--glow);
+      overflow: hidden;
+    }
+    @media (max-width: 560px) { body { font-size: 13px; } }
+
+    ::selection { background: var(--ph); color: #031007; text-shadow: none; }
+
+    /* ---------- CRT layers (pointer-events: none, under the void overlays) ---------- */
+    .crt-scan {
+      position: fixed; inset: 0; z-index: 997; pointer-events: none;
+      background: repeating-linear-gradient(0deg,
+        rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 1px,
+        transparent 1px, transparent 3px);
+    }
+    .crt-vignette {
+      position: fixed; inset: 0; z-index: 998; pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
+      box-shadow: inset 0 0 9rem rgba(0, 0, 0, 0.55);
+    }
+    .crt-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 18vh;
+      z-index: 996; pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(51, 255, 102, 0.05), transparent);
+      animation: crt-bar-drift 9s linear infinite;
+    }
+    @keyframes crt-bar-drift {
+      from { transform: translateY(-25vh); }
+      to   { transform: translateY(120vh); }
+    }
+    @keyframes crt-flicker {
+      0%, 100% { opacity: 1; }
+      4%  { opacity: 0.982; }
+      6%  { opacity: 1; }
+      52% { opacity: 0.988; }
+      55% { opacity: 1; }
+      81% { opacity: 0.992; }
+      84% { opacity: 1; }
+    }
+
+    /* ---------- The screen ---------- */
+    .screen {
+      position: fixed; inset: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: clamp(1rem, 3vw, 2.4rem);
+      padding-bottom: 5.5rem; /* keep the flow clear of the bottom-left hallway hatch */
+      animation: crt-flicker 7s infinite;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(51, 255, 102, 0.35) transparent;
+    }
+    .screen::-webkit-scrollbar { width: 8px; }
+    .screen::-webkit-scrollbar-thumb { background: rgba(51, 255, 102, 0.28); border-radius: 4px; }
+    .screen::-webkit-scrollbar-track { background: transparent; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; margin: -1px;
+      padding: 0; border: 0; clip: rect(0 0 0 0); overflow: hidden; white-space: nowrap;
+    }
+    .hidden { display: none !important; }
+
+    /* ---------- Output ---------- */
+    .line {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      margin: 0 0 1px;
+      min-height: 1.2em;
+    }
+    .block { margin: 0.7em 0; }
+
+    .dim   { color: var(--dim); }
+    .faint { color: var(--faint); }
+    .bright { color: var(--bright); text-shadow: var(--glow-hot); }
+    .hot   { color: var(--hot); font-weight: 700; text-shadow: var(--glow-hot); }
+    .err   { color: #9fdca0; }
+    .award { color: var(--hot); text-shadow: var(--glow-hot); }
+    .echo  { color: var(--bright); }
+    .ok    { color: var(--ph); }
+
+    code {
+      font-family: inherit;
+      color: var(--bright);
+      background: rgba(51, 255, 102, 0.08);
+      border: 1px solid rgba(51, 255, 102, 0.18);
+      border-radius: 3px;
+      padding: 0 0.3em;
+    }
+
+    a {
+      color: #9dffbb;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      word-break: break-all;
+    }
+    a:hover, a:focus-visible {
+      background: var(--ph);
+      color: #031007;
+      text-shadow: none;
+      outline: none;
+    }
+
+    .cmdbtn {
+      font: inherit;
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--bright);
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+      cursor: pointer;
+      text-shadow: inherit;
+    }
+    .cmdbtn:hover, .cmdbtn:focus-visible {
+      background: var(--ph);
+      color: #031007;
+      text-shadow: none;
+      outline: none;
+    }
+
+    .banner {
+      margin: 0.9em 0 0.35em;
+      color: var(--ph);
+      text-shadow: var(--glow-hot);
+      font-size: clamp(6.5px, 1.85vw, 13px);
+      line-height: 1.25;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .trow {
+      display: grid;
+      grid-template-columns: 16ch minmax(0, 1fr);
+      column-gap: 1ch;
+    }
+    .trow-wide { grid-template-columns: 24ch minmax(0, 1fr); }
+    .trow-help { grid-template-columns: 17ch minmax(0, 1fr); }
+    @media (max-width: 620px) {
+      .trow, .trow-wide, .trow-help { grid-template-columns: 1fr; }
+      .trow > .tcell:last-child { padding-left: 2ch; }
+    }
+    .tid { color: var(--ph); }
+    .tcell { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    /* ---------- Prompt ---------- */
+    .promptrow {
+      position: relative;
+      margin-top: 0.35em;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .p-user { color: var(--ph); }
+    .p-dim  { color: var(--dim); }
+    .mirror { color: var(--bright); }
+
+    .cursor {
+      display: inline-block;
+      min-width: 1ch;
+      background: var(--ph);
+      color: #031007;
+      text-shadow: none;
+      box-shadow: 0 0 8px rgba(51, 255, 102, 0.55);
+      animation: cursor-blink 1.06s steps(1) infinite;
+    }
+    .promptrow.unfocused .cursor {
+      animation: none;
+      background: transparent;
+      color: var(--bright);
+      box-shadow: inset 0 0 0 1px rgba(51, 255, 102, 0.6);
+    }
+    @keyframes cursor-blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.12; }
+    }
+
+    #cmd {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      border: none; outline: none;
+      background: transparent; color: transparent;
+      font: inherit; font-size: 16px; /* prevents iOS focus zoom */
+      caret-color: transparent;
+      padding: 0; margin: 0;
+    }
+
+    /* ---------- Command chips (touch / small screens) ---------- */
+    #chips {
+      display: none;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+    @media (pointer: coarse), (max-width: 720px) {
+      body.ready #chips { display: flex; }
+    }
+    .chip {
+      font: inherit;
+      font-size: 0.86em;
+      color: var(--tx);
+      background: rgba(51, 255, 102, 0.06);
+      border: 1px solid rgba(51, 255, 102, 0.30);
+      border-radius: 999px;
+      padding: 0.35em 0.85em;
+      cursor: pointer;
+      text-shadow: var(--glow);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .chip:hover, .chip:focus-visible {
+      background: var(--ph);
+      color: #031007;
+      text-shadow: none;
+      outline: none;
+    }
+
+    /* ---------- Reduced motion ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      .screen { animation: none; }
+      .crt-bar { display: none; }
+      .cursor { animation: none; }
+      .chip { transition: none; }
+    }
+  </style>
+</head>
+<body data-accent="#33ff66" data-room="terminal">
+
+  <h1 class="sr-only">Vinh Le — The Terminal</h1>
+
+  <div class="crt-bar" aria-hidden="true"></div>
+  <div class="crt-scan" aria-hidden="true"></div>
+  <div class="crt-vignette" aria-hidden="true"></div>
+
+  <main class="screen" id="screen">
+    <div id="boot" aria-hidden="true"></div>
+    <pre id="banner-src" class="banner hidden" aria-hidden="true">
+__     __ ___  _   _  _   _     _      _____
+\ \   / /|_ _|| \ | || | | |   | |    | ____|
+ \ \ / /  | | |  \| || |_| |   | |    |  _|
+  \ V /   | | | |\  ||  _  |   | |___ | |___
+   \_/   |___||_| \_||_| |_|   |_____||_____|</pre>
+
+    <div id="out" role="log" aria-live="polite"></div>
+
+    <div class="promptrow hidden" id="promptrow"><span class="p-user">visitor@vinhle.xyz</span><span class="p-dim">:~$</span><span> </span><span class="mirror" id="m-before"></span><span class="cursor" id="m-cursor">&nbsp;</span><span class="mirror" id="m-after"></span><input id="cmd" type="text" aria-label="Terminal command input" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="go" /></div>
+
+    <div id="chips" aria-label="Quick commands"></div>
+  </main>
+
+  <script src="shared/data.js"></script>
+  <script src="shared/void.js" defer></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var V = window.VINH;
+    var screen = document.getElementById('screen');
+    var boot = document.getElementById('boot');
+    var out = document.getElementById('out');
+    var promptrow = document.getElementById('promptrow');
+    var input = document.getElementById('cmd');
+    var mBefore = document.getElementById('m-before');
+    var mCursor = document.getElementById('m-cursor');
+    var mAfter = document.getElementById('m-after');
+    var chips = document.getElementById('chips');
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var ready = false;
+    var state = { vim: false };
+    var hist = [];
+    var hIdx = null;
+    var draft = '';
+
+    /* ---------------- helpers ---------------- */
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function anchor(href, label) {
+      var ext = /^https?:/i.test(href);
+      return '<a href="' + esc(href) + '"' + (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + esc(label || href) + '</a>';
+    }
+    function cmdBtn(cmd, label) {
+      return '<button type="button" class="cmdbtn" data-cmd="' + esc(cmd) + '">' + esc(label || cmd) + '</button>';
+    }
+    function promptHTML() {
+      return '<span class="p-user">visitor@vinhle.xyz</span><span class="p-dim">:~$</span> ';
+    }
+    function line(html, cls, target) {
+      var d = document.createElement('div');
+      d.className = 'line' + (cls ? ' ' + cls : '');
+      d.innerHTML = html;
+      (target || out).appendChild(d);
+      return d;
+    }
+    function blank(target) { line('', 'faint', target); }
+    function scrollBottom() { screen.scrollTop = screen.scrollHeight; }
+    function focusInput() {
+      try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+    }
+    function rule(width) {
+      return '<span class="faint">' + new Array((width || 46) + 1).join('─') + '</span>';
+    }
+    function techChips(list) {
+      return (list || []).map(function (t) { return '<span class="dim">[</span>' + esc(t) + '<span class="dim">]</span>'; }).join(' ');
+    }
+    function row(left, right, wideCls) {
+      return '<div class="trow ' + (wideCls || '') + '"><span class="tcell tid">' + left + '</span><span class="tcell">' + right + '</span></div>';
+    }
+
+    /* Damerau-Levenshtein (OSA) — transpositions like "hlep" cost 1, not 2 */
+    function lev(a, b) {
+      a = a.toLowerCase(); b = b.toLowerCase();
+      var m = a.length, n = b.length, i, j;
+      if (!m) return n; if (!n) return m;
+      var d = [];
+      for (i = 0; i <= m; i++) { d[i] = [i]; }
+      for (j = 0; j <= n; j++) { d[0][j] = j; }
+      for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+          var cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+          if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+            d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+          }
+        }
+      }
+      return d[m][n];
+    }
+
+    function norm(s) { return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+    function allWork() { return V.projects.concat(V.earlier); }
+    function findWork(q) {
+      var qq = norm(q);
+      if (!qq) return null;
+      var all = allWork();
+      var hit = null, i;
+      for (i = 0; i < all.length; i++) if (norm(all[i].id) === qq || norm(all[i].name) === qq) return all[i];
+      var pref = all.filter(function (p) { return norm(p.id).indexOf(qq) === 0 || norm(p.name).indexOf(qq) === 0; });
+      if (pref.length === 1) return pref[0];
+      var sub = all.filter(function (p) { return norm(p.id).indexOf(qq) >= 0 || norm(p.name).indexOf(qq) >= 0; });
+      if (sub.length === 1) return sub[0];
+      return null;
+    }
+
+    /* ---------------- command output ---------------- */
+
+    var VISIBLE = [
+      ['help', 'this menu'],
+      ['whoami', 'who is vinh le'],
+      ['ls projects', 'featured work'],
+      ['ls earlier', 'the archive'],
+      ['open <id>', 'project details'],
+      ['skills', 'the toolbox'],
+      ['experience', 'where i’ve worked'],
+      ['education', 'where i’ve studied'],
+      ['resume', 'the pdf, in a new tab'],
+      ['contact', 'reach me'],
+      ['clear', 'wipe the screen'],
+      ['hallway', 'back to the doors']
+    ];
+    var SUGGESTABLE = ['help', 'whoami', 'ls', 'open', 'resume', 'skills', 'experience', 'education', 'contact', 'clear', 'hallway', 'exit'];
+
+    var H = {};
+
+    H.help = function () {
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML = VISIBLE.map(function (c) {
+        var runnable = c[0].indexOf('<') < 0 ? cmdBtn(c[0]) : esc(c[0]);
+        return row(runnable, '<span class="dim">' + esc(c[1]) + '</span>', 'trow-help');
+      }).join('');
+      out.appendChild(b);
+      line('<span class="faint">tab completes commands and project ids · ↑↓ history · try ' + cmdBtn('open ' + V.projects[0].id) + '</span>');
+      line('<span class="faint">…and a few undocumented commands.</span>');
+    };
+
+    H.whoami = function () {
+      line('<span class="dim">visitor</span>');
+      line('<span class="faint">…but you probably meant this guy:</span>');
+      blank();
+      line('<span class="hot">' + esc(V.name.toLowerCase()) + '</span> <span class="dim">— ' + esc(V.role.toLowerCase()) + ' · ' + esc(V.location.toLowerCase()) + '</span>');
+      blank();
+      V.about.forEach(function (p) { line(esc(p)); blank(); });
+    };
+    H.about = H.whoami;
+
+    function listProjects() {
+      line('<span class="bright">featured work</span> <span class="faint">(' + V.projects.length + ' entries)</span>');
+      blank();
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML = V.projects.map(function (p) {
+        var right = '<span class="bright">' + esc(p.name) + '</span>' +
+          '<span class="dim"> · ' + esc(p.event) + ' · ' + esc(p.date) + '</span>' +
+          (p.award ? '  <span class="award">★ ' + esc(p.award) + '</span>' : '');
+        return row(cmdBtn('open ' + p.id, p.id), right);
+      }).join('');
+      out.appendChild(b);
+      line('<span class="faint">' + cmdBtn('open ' + V.projects[0].id) + ' for details · the archive lives in ' + cmdBtn('ls earlier') + '</span>');
+    }
+
+    function listEarlier() {
+      line('<span class="bright">earlier work</span> <span class="faint">(' + V.earlier.length + ' entries)</span>');
+      blank();
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML = V.earlier.map(function (p) {
+        var right = '<span class="bright">' + esc(p.name) + '</span>' +
+          '<span class="dim"> · ' + esc(p.date) + ' · ' + esc((p.tech || []).join(', ')) + '</span>';
+        return row(cmdBtn('open ' + p.id, p.id), right);
+      }).join('');
+      out.appendChild(b);
+      line('<span class="faint">' + cmdBtn('open ' + V.earlier[0].id) + ' for details</span>');
+    }
+
+    H.ls = function (arg) {
+      var a = (arg || '').toLowerCase().replace(/\/$/, '');
+      if (!a) {
+        line('<span class="ok">projects/</span>  <span class="ok">earlier/</span>');
+        line('<span class="faint">try ' + cmdBtn('ls projects') + ' or ' + cmdBtn('ls earlier') + '</span>');
+      } else if (a === 'projects') listProjects();
+      else if (a === 'earlier') listEarlier();
+      else line('<span class="err">ls: cannot access ‘' + esc(arg) + '’: no such directory</span> <span class="faint">(there’s only projects/ and earlier/)</span>');
+    };
+
+    H.open = function (arg) {
+      if (!arg) {
+        line('<span class="dim">usage:</span> open &lt;id&gt;');
+        line('<span class="faint">ids: ' + allWork().map(function (p) { return cmdBtn('open ' + p.id, p.id); }).join('  ') + '</span>');
+        return;
+      }
+      var p = findWork(arg);
+      if (!p) {
+        line('<span class="err">open: no project matching ‘' + esc(arg) + '’</span>');
+        var best = null, bd = 1e9;
+        allWork().forEach(function (w) {
+          var d = Math.min(lev(arg, w.id), lev(arg, w.name));
+          if (d < bd) { bd = d; best = w; }
+        });
+        if (best && bd <= 3) line('<span class="dim">did you mean ' + cmdBtn('open ' + best.id) + '?</span>');
+        else line('<span class="faint">' + cmdBtn('ls projects') + ' lists everything</span>');
+        return;
+      }
+      var b = document.createElement('div');
+      b.className = 'block';
+      var html = '';
+      var title = '== ' + p.name + ' ';
+      html += '<div class="line"><span class="hot">' + esc(title) + '</span><span class="faint">' + new Array(Math.max(2, 44 - title.length)).join('=') + '</span></div>';
+      var meta = [];
+      if (p.award) meta.push('<span class="award">★ ' + esc(p.award) + '</span>');
+      if (p.event) meta.push(esc(p.event));
+      if (p.date) meta.push(esc(p.date));
+      if (meta.length) html += '<div class="line dim">' + meta.join(' · ') + '</div>';
+      html += '<div class="line">&nbsp;</div>';
+      html += '<div class="line">' + esc(p.desc) + '</div>';
+      if (p.bullets && p.bullets.length) {
+        html += '<div class="line">&nbsp;</div>';
+        p.bullets.forEach(function (bl) {
+          html += '<div class="line"><span class="dim">-</span> ' + esc(bl) + '</div>';
+        });
+      }
+      html += '<div class="line">&nbsp;</div>';
+      html += '<div class="line"><span class="dim">tech:</span>  ' + techChips(p.tech) + '</div>';
+      if (p.links) {
+        var keys = Object.keys(p.links);
+        if (keys.length) {
+          html += '<div class="line"><span class="dim">links:</span></div>';
+          keys.forEach(function (k) {
+            html += '<div class="line">  <span class="dim">' + esc(k) + ':</span> ' + anchor(p.links[k]) + '</div>';
+          });
+        }
+      }
+      b.innerHTML = html;
+      out.appendChild(b);
+    };
+
+    H.resume = function () {
+      window.open(V.links.resume, '_blank', 'noopener');
+      line('<span class="ok">opening resume in a new tab…</span>');
+      line('<span class="dim">pop-up blocked? →</span> ' + anchor(V.links.resume, 'resume (google drive)'));
+    };
+
+    H.skills = function () {
+      line('<span class="bright">skills</span>');
+      blank();
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML = Object.keys(V.skills).map(function (cat) {
+        return row(esc(cat.toLowerCase()), esc(V.skills[cat].join(' · ')), 'trow-wide');
+      }).join('');
+      out.appendChild(b);
+    };
+
+    H.experience = function () {
+      V.experience.forEach(function (job) {
+        var b = document.createElement('div');
+        b.className = 'block';
+        var html = '<div class="line"><span class="hot">' + esc(job.title) + '</span></div>';
+        html += '<div class="line dim">' + esc(job.org) + ' · ' + esc(job.dates) + '</div>';
+        (job.bullets || []).forEach(function (bl) {
+          html += '<div class="line"><span class="dim">-</span> ' + esc(bl) + '</div>';
+        });
+        html += '<div class="line"><span class="dim">tech:</span>  ' + techChips(job.tech) + '</div>';
+        b.innerHTML = html;
+        out.appendChild(b);
+      });
+    };
+    H.work = H.experience;
+
+    H.education = function () {
+      V.education.forEach(function (ed) {
+        var b = document.createElement('div');
+        b.className = 'block';
+        b.innerHTML =
+          '<div class="line"><span class="bright">' + esc(ed.school) + '</span></div>' +
+          '<div class="line">' + esc(ed.degree) + '</div>' +
+          '<div class="line dim">' + esc(ed.dates) + (ed.note ? ' · ' + esc(ed.note) : '') + '</div>';
+        out.appendChild(b);
+      });
+    };
+    H.edu = H.education;
+
+    H.contact = function () {
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML =
+        row('email', anchor('mailto:' + V.email, V.email)) +
+        row('phone', anchor('tel:' + V.phone.replace(/[^\d+]/g, ''), V.phone)) +
+        row('where', esc(V.location)) +
+        row('github', anchor(V.links.github)) +
+        row('linkedin', anchor(V.links.linkedin)) +
+        row('devpost', anchor(V.links.devpost)) +
+        row('site', anchor(V.links.site));
+      out.appendChild(b);
+      line('<span class="faint">inbox is open. seriously.</span>');
+    };
+
+    H.clear = function () {
+      boot.innerHTML = '';
+      out.innerHTML = '';
+    };
+    H.cls = H.clear;
+
+    function goHallway() {
+      line('<span class="dim">logout</span>');
+      line('<span class="ok">returning to the hallway…</span>');
+      scrollBottom();
+      setTimeout(function () {
+        var hatch = document.querySelector('.void-hatch');
+        if (hatch) hatch.click();
+        else window.location.href = 'index.html';
+      }, 350);
+    }
+    H.hallway = goHallway;
+    H.exit = goHallway;
+    H.logout = goHallway;
+
+    H.cd = function (arg) {
+      if ((arg || '').trim() === '..') { goHallway(); return; }
+      line('<span class="dim">cd: there’s no place like ~</span> <span class="faint">(try ' + cmdBtn('hallway') + ' to leave)</span>');
+    };
+
+    /* ---------------- easter eggs ---------------- */
+
+    H.sudo = function (arg) {
+      var a = (arg || '').trim().toLowerCase();
+      if (a === 'hire me') {
+        line('<span class="dim">[sudo] password for visitor:</span> ********');
+        line('<span class="ok">access granted.</span>');
+        blank();
+        line(rule(40));
+        line('  <span class="hot">OFFER PROTOCOL v1.0</span>');
+        line('  <span class="dim">candidate:</span>  ' + esc(V.name.toLowerCase()));
+        line('  <span class="dim">role:</span>       ' + esc(V.role.toLowerCase()));
+        line('  <span class="dim">status:</span>     <span class="ok">ready to ship</span>');
+        line('  <span class="dim">next step:</span>  ' + anchor('mailto:' + V.email, V.email));
+        line(rule(40));
+        blank();
+        line('<span class="bright">excellent judgment. the inbox is open.</span>');
+      } else if (a.indexOf('rm') === 0) {
+        line('<span class="err">even with sudo, no.</span>');
+      } else {
+        line('<span class="err">visitor is not in the sudoers file. this incident will be reported.</span>');
+        line('<span class="faint">(unless… you were trying to hire someone?)</span>');
+      }
+    };
+
+    H.hire = function () {
+      line('<span class="err">hire: permission denied.</span> <span class="faint">you’ll need elevated privileges for that.</span>');
+    };
+
+    H.vim = function () {
+      state.vim = true;
+      line('<span class="dim">opening vim…</span>');
+      line('you are now inside vim. there is no way out.');
+      line('<span class="faint">(fine — <code>:q!</code> if you must. everyone googles it eventually.)</span>');
+    };
+    H.vi = H.vim;
+    H.nano = function () {
+      line('<span class="dim">nano? bold choice.</span> <span class="faint">around here we get trapped in ' + cmdBtn('vim') + ' like professionals.</span>');
+    };
+
+    H.coffee = function () {
+      var b = document.createElement('div');
+      b.className = 'block';
+      b.innerHTML =
+        '<div class="line dim">      ( (</div>' +
+        '<div class="line dim">       ) )</div>' +
+        '<div class="line">    <span class="bright">.________.</span></div>' +
+        '<div class="line">    <span class="bright">|        |]</span></div>' +
+        '<div class="line">    <span class="bright">\\        /</span></div>' +
+        '<div class="line">    <span class="bright"> `------\'</span></div>';
+      out.appendChild(b);
+      line('<span class="ok">brewing…</span> <span class="dim">backend engineers are just coffee-to-API converters.</span>');
+    };
+
+    H.rm = function (arg) {
+      if (/(-rf?|--recursive)/.test(arg || '') || /\//.test(arg || '')) {
+        line('<span class="err">rm: permission denied — this portfolio is load-bearing.</span>');
+      } else {
+        line('<span class="err">rm: nothing here is yours to delete, visitor.</span>');
+      }
+    };
+
+    H.echo = function (arg) {
+      line(esc(arg || ''));
+    };
+
+    H.git = function (arg) {
+      var a = (arg || '').trim().toLowerCase();
+      if (a === 'push') line('<span class="dim">everything’s already pushed →</span> ' + anchor(V.links.github));
+      else line('<span class="dim">the real repos live here →</span> ' + anchor(V.links.github));
+    };
+
+    H.whois = H.whoami;
+    H.man = function (arg) {
+      if (arg) line('<span class="dim">no manual entry for ' + esc(arg) + ' — but ' + cmdBtn('help') + ' has you covered.</span>');
+      else line('<span class="dim">what manual page do you want? try ' + cmdBtn('help') + '.</span>');
+    };
+    H.pwd = function () { line('/home/visitor/the-terminal'); };
+    H.date = function () { line(esc(new Date().toString())); };
+    H.ping = function () { line('<span class="ok">pong.</span> <span class="faint">latency: acceptable. hire-ability: high.</span>'); };
+
+    /* ---------------- interpreter ---------------- */
+
+    function unknown(c) {
+      line('<span class="err">command not found: ' + esc(c) + '</span>');
+      var best = null, bd = 1e9;
+      SUGGESTABLE.forEach(function (s) {
+        var d = lev(c, s);
+        if (d < bd) { bd = d; best = s; }
+      });
+      var limit = best && best.length <= 4 ? 1 : 2;
+      if (best && bd <= limit) {
+        line('<span class="dim">did you mean ' + cmdBtn(best) + '?</span>');
+      } else {
+        line('<span class="faint">type ' + cmdBtn('help') + ' for the menu</span>');
+      }
+    }
+
+    function runCommand(raw, opts) {
+      opts = opts || {};
+      if (opts.echo !== false) {
+        line(promptHTML() + '<span class="echo">' + esc(raw) + '</span>');
+      }
+      var t = String(raw).trim();
+      if (!t) { scrollBottom(); return; }
+
+      if (hist[hist.length - 1] !== t) hist.push(t);
+      hIdx = null; draft = '';
+
+      /* vim escape trap */
+      if (state.vim && /^(:q!?|:wq!?|:x|ZZ)$/i.test(t)) {
+        state.vim = false;
+        line('<span class="ok">vim closed. you’re free. that puts you ahead of most.</span>');
+        scrollBottom();
+        return;
+      }
+      state.vim = false;
+
+      var sp = t.indexOf(' ');
+      var c = (sp < 0 ? t : t.slice(0, sp)).toLowerCase();
+      var arg = sp < 0 ? '' : t.slice(sp + 1).trim();
+
+      if (H[c]) H[c](arg);
+      else unknown(c);
+      scrollBottom();
+    }
+
+    /* ---------------- tab completion ---------------- */
+
+    var COMPLETE_CMDS = ['help', 'whoami', 'ls', 'open', 'resume', 'skills', 'experience', 'education', 'contact', 'clear', 'hallway'];
+
+    function complete() {
+      var v = input.value;
+      var lead = v.match(/^\s*/)[0];
+      var t = v.slice(lead.length);
+      var sp = t.indexOf(' ');
+      var cands, word, prefix;
+
+      if (sp < 0) {
+        word = t; prefix = lead;
+        cands = COMPLETE_CMDS;
+      } else {
+        var c = t.slice(0, sp).toLowerCase();
+        word = t.slice(sp + 1).replace(/^\s*/, '');
+        prefix = lead + t.slice(0, sp) + ' ';
+        if (c === 'open') cands = allWork().map(function (p) { return p.id; });
+        else if (c === 'ls' || c === 'cd') cands = ['projects', 'earlier'];
+        else return;
+      }
+
+      var wl = word.toLowerCase();
+      var matches = cands.filter(function (x) { return x.toLowerCase().indexOf(wl) === 0; });
+      if (!matches.length) return;
+
+      if (matches.length === 1) {
+        setInput(prefix + matches[0] + ' ');
+        return;
+      }
+      /* extend to longest common prefix */
+      var lcp = matches[0];
+      matches.forEach(function (m) {
+        var i = 0;
+        while (i < lcp.length && i < m.length && lcp[i].toLowerCase() === m[i].toLowerCase()) i++;
+        lcp = lcp.slice(0, i);
+      });
+      if (lcp.length > word.length) setInput(prefix + lcp);
+      line('<span class="dim">' + matches.map(esc).join('  ') + '</span>');
+      scrollBottom();
+    }
+
+    function setInput(v) {
+      input.value = v;
+      input.setSelectionRange(v.length, v.length);
+      renderLine();
+    }
+
+    /* ---------------- prompt mirror ---------------- */
+
+    function renderLine() {
+      var v = input.value;
+      var s = input.selectionStart;
+      if (s === null || s === undefined) s = v.length;
+      mBefore.textContent = v.slice(0, s);
+      var ch = v.slice(s, s + 1);
+      mCursor.textContent = ch || ' ';
+      mAfter.textContent = v.slice(s + 1);
+    }
+
+    input.addEventListener('input', renderLine);
+    input.addEventListener('keyup', renderLine);
+    input.addEventListener('click', renderLine);
+    document.addEventListener('selectionchange', function () {
+      if (document.activeElement === input) renderLine();
+    });
+    input.addEventListener('focus', function () { promptrow.classList.remove('unfocused'); });
+    input.addEventListener('blur', function () { promptrow.classList.add('unfocused'); });
+
+    input.addEventListener('keydown', function (e) {
+      if (!ready) { e.preventDefault(); return; }
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var v = input.value;
+        setInput('');
+        runCommand(v);
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        complete();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!hist.length) return;
+        if (hIdx === null) { draft = input.value; hIdx = hist.length - 1; }
+        else if (hIdx > 0) hIdx--;
+        setInput(hist[hIdx]);
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (hIdx === null) return;
+        if (hIdx < hist.length - 1) { hIdx++; setInput(hist[hIdx]); }
+        else { hIdx = null; setInput(draft); }
+      } else if (e.key === 'l' && e.ctrlKey) {
+        e.preventDefault();
+        H.clear();
+        scrollBottom();
+      } else if (e.key === 'c' && e.ctrlKey && !window.getSelection().toString()) {
+        e.preventDefault();
+        line(promptHTML() + '<span class="echo">' + esc(input.value) + '</span>^C');
+        setInput('');
+        scrollBottom();
+      }
+    });
+
+    /* click anywhere focuses the input (unless clicking a link/button or selecting text) */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('.cmdbtn, .chip');
+      if (btn) {
+        if (ready) { runCommand(btn.dataset.cmd); focusInput(); }
+        return;
+      }
+      if (e.target.closest('a, button')) return;
+      if (window.getSelection && String(window.getSelection())) return;
+      if (ready) focusInput();
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', scrollBottom);
+    }
+
+    /* ---------------- chips ---------------- */
+
+    var CHIP_CMDS = ['help', 'ls projects', 'open ' + V.projects[0].id, 'skills', 'experience', 'contact', 'resume', 'clear'];
+    chips.innerHTML = CHIP_CMDS.map(function (c) {
+      return '<button type="button" class="chip" data-cmd="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join('');
+    chips.addEventListener('click', function (e) {
+      var b = e.target.closest('.chip');
+      if (b && ready) { runCommand(b.dataset.cmd); focusInput(); }
+    });
+
+    /* ---------------- boot sequence ---------------- */
+
+    var BOOT_LINES = [
+      ['VINHOS BIOS v3.3 — phosphor self-test… OK', 'dim'],
+      ['memory check: 640K… that should be enough for anybody', 'dim'],
+      ['mounting /dev/portfolio… done', 'dim'],
+      ['loading modules: django.ko fastapi.ko pgvector.ko… done', 'dim'],
+      ['starting sshd… [ OK ]', 'dim'],
+      ['last login: ' + new Date().toDateString() + ' from the-hallway', 'dim']
+    ];
+
+    var skipBoot = false;
+    function armSkip() {
+      var skip = function () { skipBoot = true; };
+      document.addEventListener('keydown', skip, { once: true });
+      document.addEventListener('pointerdown', skip, { once: true });
+    }
+
+    function sleep(ms) {
+      return new Promise(function (res) {
+        if (skipBoot || reduced) res();
+        else setTimeout(res, ms);
+      });
+    }
+
+    function typeLine(text, cls) {
+      return new Promise(function (res) {
+        var d = line('', cls, boot);
+        if (skipBoot || reduced) { d.textContent = text; res(); return; }
+        var i = 0;
+        (function tick() {
+          if (skipBoot) { d.textContent = text; res(); return; }
+          d.textContent = text.slice(0, ++i);
+          scrollBottom();
+          if (i < text.length) setTimeout(tick, 4);
+          else res();
+        })();
+      });
+    }
+
+    function runBoot() {
+      armSkip();
+      var p = Promise.resolve();
+      BOOT_LINES.forEach(function (bl) {
+        p = p.then(function () { return typeLine(bl[0], bl[1]); })
+             .then(function () { return sleep(90); });
+      });
+      p.then(function () {
+        var banner = document.getElementById('banner-src');
+        banner.classList.remove('hidden');
+        boot.appendChild(banner);
+        var sr = document.createElement('span');
+        sr.className = 'sr-only';
+        sr.textContent = V.name;
+        boot.appendChild(sr);
+        line('<span class="bright">' + esc(V.role.toLowerCase()) + '</span> <span class="dim">· ' + esc(V.location.toLowerCase()) + '</span>', null, boot);
+        line('<span class="dim">' + esc(V.tagline.toLowerCase()) + '</span>', null, boot);
+        return sleep(140);
+      }).then(function () {
+        blank(out);
+        line('type ' + cmdBtn('help') + ' to begin.', null, out);
+        promptrow.classList.remove('hidden');
+        document.body.classList.add('ready');
+        ready = true;
+        renderLine();
+        focusInput();
+        scrollBottom();
+      });
+    }
+
+    runBoot();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+  <title>Vinh Le — Software Engineer</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/jpeg" href="images/linkedinpfp.jpg" />
+  <meta name="description"
+    content="Vinh Le — AI engineer working across software and hardware: on-device agents, multi-vector retrieval, multi-tenant platforms, and tested REST APIs. M.S. CS at Georgia Tech OMSCS." />
+  <meta property="og:title" content="Vinh Le — Software Engineer" />
+  <meta property="og:description" content="AI Engineer | M.S. CS @ Georgia Tech | Real problems, shipped answers." />
+  <meta property="og:image" content="images/linkedinpfp.jpg" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/void.css" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper: #faf9f6;
+      --ink: #1c1a16;
+      --muted: #6f6a60;
+      --faint: #a39d91;
+      --rule: #e6e2d9;
+      --accent: #a07c2c;
+    }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15.5px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: clamp(3rem, 8vh, 5.5rem) 1.5rem 4rem;
+    }
+
+    a { color: inherit; }
+
+    /* ── Header ── */
+    .masthead h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(2.4rem, 6vw, 3.2rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+    .masthead .role {
+      margin-top: 0.4rem;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+    .masthead .links {
+      margin-top: 1.1rem;
+      display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .masthead .links a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .masthead .links a:hover { border-bottom-color: var(--accent); }
+    .summary {
+      margin-top: 1.6rem;
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    /* ── Sections ── */
+    section { margin-top: 3.2rem; }
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 1.4rem;
+    }
+
+    /* ── Experience ── */
+    .xp { margin-bottom: 2rem; }
+    .xp:last-child { margin-bottom: 0; }
+    .row {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .row h3 { font-size: 1rem; font-weight: 600; }
+    .row .dates {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: var(--faint); white-space: nowrap;
+    }
+    .org { color: var(--accent); font-size: 0.9rem; margin-top: 0.1rem; }
+    .xp ul { margin-top: 0.6rem; padding-left: 1.1rem; }
+    .xp li { margin-bottom: 0.35rem; color: var(--muted); font-size: 0.92rem; }
+    .xp li::marker { color: var(--faint); }
+    .tech {
+      margin-top: 0.55rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: var(--faint);
+    }
+
+    /* ── Projects ── */
+    .proj { margin-bottom: 1.6rem; }
+    .proj:last-child { margin-bottom: 0; }
+    .proj .row h3 { font-size: 0.98rem; }
+    .award {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem; font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+      border-radius: 3px;
+      padding: 0.08rem 0.4rem;
+      margin-left: 0.55rem;
+      vertical-align: 0.1em;
+      white-space: nowrap;
+    }
+    .proj .event { font-size: 0.8rem; color: var(--faint); margin-top: 0.1rem; }
+    .proj .desc { margin-top: 0.4rem; color: var(--muted); font-size: 0.92rem; max-width: 62ch; }
+    .proj .out {
+      margin-top: 0.4rem;
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+    }
+    .proj .out a { color: var(--accent); text-decoration: none; }
+    .proj .out a:hover { text-decoration: underline; }
+
+    /* earlier one-liners */
+    .earlier-item {
+      display: flex; align-items: baseline; gap: 0.6rem;
+      margin-bottom: 0.5rem; flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+    .earlier-item b { font-weight: 600; }
+    .earlier-item span { color: var(--muted); }
+    .earlier-item a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: var(--accent); text-decoration: none;
+    }
+    .earlier-item a:hover { text-decoration: underline; }
+
+    /* ── Skills ── */
+    .skill-row {
+      display: grid;
+      grid-template-columns: 172px 1fr;
+      gap: 0.4rem 1.25rem;
+      margin-bottom: 0.55rem;
+      font-size: 0.9rem;
+    }
+    .skill-row dt {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; color: var(--faint);
+      letter-spacing: 0.04em; padding-top: 0.15rem;
+    }
+    .skill-row dd { color: var(--muted); }
+    @media (max-width: 540px) { .skill-row { grid-template-columns: 1fr; gap: 0.1rem; margin-bottom: 0.9rem; } }
+
+    /* ── Education ── */
+    .edu { margin-bottom: 1.1rem; }
+    .edu .school { font-weight: 600; font-size: 0.95rem; }
+    .edu .deg { color: var(--muted); font-size: 0.9rem; }
+    .edu .note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: var(--accent); margin-top: 0.1rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--rule);
+      display: flex; justify-content: space-between; align-items: baseline;
+      flex-wrap: wrap; gap: 0.5rem;
+      font-size: 0.8rem; color: var(--faint);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media print {
+      body { font-size: 12px; }
+      .page { padding: 0; max-width: none; }
+      footer .hall-link { display: none; }
+      .masthead .links a { border: none; }
+      a { text-decoration: none !important; }
+    }
+  </style>
+</head>
+
+<body data-accent="#c9a84c" data-room="classic">
+  <div class="page">
+    <header class="masthead">
+      <h1>Vinh Le</h1>
+      <p class="role" id="m-role"></p>
+      <nav class="links" id="m-links" aria-label="Contact links"></nav>
+      <p class="summary" id="m-summary"></p>
+    </header>
+
+    <section aria-labelledby="s-xp">
+      <h2 class="label" id="s-xp">Experience</h2>
+      <div id="xp"></div>
+    </section>
+
+    <section aria-labelledby="s-proj">
+      <h2 class="label" id="s-proj">Selected Projects</h2>
+      <div id="projects"></div>
+    </section>
+
+    <section aria-labelledby="s-earlier">
+      <h2 class="label" id="s-earlier">Earlier Work</h2>
+      <div id="earlier"></div>
+    </section>
+
+    <section aria-labelledby="s-skills">
+      <h2 class="label" id="s-skills">Skills</h2>
+      <dl id="skills"></dl>
+    </section>
+
+    <section aria-labelledby="s-edu">
+      <h2 class="label" id="s-edu">Education</h2>
+      <div id="edu"></div>
+    </section>
+
+    <footer>
+      <span>&#169; 2026 Vinh Le</span>
+      <a class="hall-link" href="index.html">&#8592; back to the hallway</a>
+    </footer>
+  </div>
+
+  <noscript>
+    <div style="max-width:700px;margin:0 auto;padding:1rem 1.5rem;">
+      Vinh Le — AI engineer, M.S. CS student at Georgia Tech.
+      <a href="mailto:vinhhle24@gmail.com">vinhhle24@gmail.com</a> ·
+      <a href="https://github.com/vinhbin">github.com/vinhbin</a> ·
+      <a href="https://www.linkedin.com/in/vinh-thaile/">LinkedIn</a>
+    </div>
+  </noscript>
+
+  <script src="shared/data.js"></script>
+  <script>
+    (function () {
+      var V = window.VINH;
+      if (!V) return;
+
+      function el(tag, cls, html) {
+        var e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html !== undefined) e.innerHTML = html;
+        return e;
+      }
+      function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      document.getElementById('m-role').textContent = V.role + ' · ' + V.location;
+      document.getElementById('m-summary').textContent = V.about[0] + ' ' + V.about[1];
+
+      var links = [
+        ['Email', 'mailto:' + V.email],
+        ['GitHub', V.links.github],
+        ['LinkedIn', V.links.linkedin],
+        ['Devpost', V.links.devpost],
+        ['Resume PDF', V.links.resume]
+      ];
+      var nav = document.getElementById('m-links');
+      links.forEach(function (l) {
+        var a = el('a', null, esc(l[0]));
+        a.href = l[1];
+        if (l[1].indexOf('http') === 0) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+        nav.appendChild(a);
+      });
+
+      /* experience */
+      var xp = document.getElementById('xp');
+      V.experience.forEach(function (job) {
+        var d = el('div', 'xp');
+        d.appendChild(el('div', 'row',
+          '<h3>' + esc(job.title) + '</h3><span class="dates">' + esc(job.dates) + '</span>'));
+        d.appendChild(el('p', 'org', esc(job.org)));
+        var ul = el('ul');
+        job.bullets.forEach(function (b) { ul.appendChild(el('li', null, esc(b))); });
+        d.appendChild(ul);
+        d.appendChild(el('p', 'tech', esc(job.tech.join(' · '))));
+        xp.appendChild(d);
+      });
+
+      /* projects */
+      var linkLabels = { demo: 'live demo', github: 'github', devpost: 'devpost', dorahacks: 'dorahacks', app: 'app' };
+      var pr = document.getElementById('projects');
+      V.projects.forEach(function (p) {
+        var d = el('div', 'proj');
+        var award = p.award ? '<span class="award">' + esc(p.award) + '</span>' : '';
+        d.appendChild(el('div', 'row',
+          '<h3>' + esc(p.name) + award + '</h3><span class="dates">' + esc(p.date) + '</span>'));
+        d.appendChild(el('p', 'event', esc(p.event)));
+        d.appendChild(el('p', 'desc', esc(p.desc)));
+        var out = el('div', 'out');
+        Object.keys(p.links || {}).forEach(function (k) {
+          var a = el('a', null, esc(linkLabels[k] || k) + ' &#8599;');
+          a.href = p.links[k];
+          a.target = '_blank'; a.rel = 'noopener noreferrer';
+          out.appendChild(a);
+        });
+        d.appendChild(out);
+        pr.appendChild(d);
+      });
+
+      /* earlier */
+      var er = document.getElementById('earlier');
+      V.earlier.forEach(function (p) {
+        var d = el('div', 'earlier-item');
+        d.appendChild(el('b', null, esc(p.name)));
+        d.appendChild(el('span', null, esc(p.desc)));
+        var k = Object.keys(p.links || {})[0];
+        if (k) {
+          var a = el('a', null, esc(linkLabels[k] || k) + ' &#8599;');
+          a.href = p.links[k];
+          a.target = '_blank'; a.rel = 'noopener noreferrer';
+          d.appendChild(a);
+        }
+        er.appendChild(d);
+      });
+
+      /* skills */
+      var sk = document.getElementById('skills');
+      Object.keys(V.skills).forEach(function (cat) {
+        var row = el('div', 'skill-row');
+        row.appendChild(el('dt', null, esc(cat)));
+        row.appendChild(el('dd', null, esc(V.skills[cat].join(', '))));
+        sk.appendChild(row);
+      });
+
+      /* education */
+      var ed = document.getElementById('edu');
+      V.education.forEach(function (e) {
+        var d = el('div', 'edu');
+        d.appendChild(el('div', 'row',
+          '<span class="school">' + esc(e.school) + '</span><span class="dates">' + esc(e.dates) + '</span>'));
+        d.appendChild(el('p', 'deg', esc(e.degree)));
+        d.appendChild(el('p', 'note', esc(e.note)));
+        ed.appendChild(d);
+      });
+    })();
+  </script>
+  <script src="shared/void.js" defer></script>
+</body>
+</html>

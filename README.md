@@ -1,9 +1,9 @@
 # Vinh Le — Portfolio
 
-Personal portfolio website for Vinh Le, backend-focused software engineer. B.S. CS from Georgia State University (Dec 2025), M.S. CS at Georgia Tech OMSCS (Aug 2026 – May 2028).
+Personal portfolio website for Vinh Le — AI engineer building across software and hardware. B.S. CS from Georgia State University (Dec 2025), M.S. CS at Georgia Tech OMSCS (Aug 2026 – May 2028).
 
 🌐 **Live Site:** https://vinhle.xyz/
-📄 **Resume:** [Resume Link](https://drive.google.com/file/d/12-XkvyMMROpmAihpwPXNC2v53SX-WWIK/view?usp=sharing)
+📄 **Resume:** [Resume Link](https://drive.google.com/file/d/1Jyk3KfmpQvOFum6Bcvi72CNqa8acZHWd/view?usp=sharing)
 💼 **LinkedIn:** [linkedin.com/in/vinh-thaile](https://www.linkedin.com/in/vinh-thaile/)
 🐙 **GitHub:** [github.com/vinhbin](https://github.com/vinhbin)
 

@@ -2,1845 +2,362 @@
 <html lang="en">
 
 <head>
-  <title>Vinh Le — Software Engineer</title>
+  <title>Vinh Le — Pick a Door</title>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/jpeg" href="images/linkedinpfp.jpg" />
   <meta name="description"
-    content="Vinh Le — Backend-focused software engineer. Multi-tenant Django platforms, FastAPI services, vector search, and tested REST APIs. M.S. CS at Georgia Tech OMSCS." />
-  <meta property="og:title" content="Vinh Le — Software Engineer" />
-  <meta property="og:description" content="Backend-focused engineer | Python, Django, FastAPI | Multi-tenant systems & AI-powered products." />
+    content="Vinh Le — AI engineer and M.S. CS student at Georgia Tech. Five fractures in the dark. Contents unknown. Choose one." />
+  <meta property="og:title" content="Vinh Le — Pick a Door" />
+  <meta property="og:description" content="AI Engineer | M.S. CS @ Georgia Tech | Five fractures. Choose one." />
   <meta property="og:image" content="images/linkedinpfp.jpg" />
   <meta property="og:type" content="website" />
 
-  <!-- Google Fonts: Cormorant Garamond (serif display) + DM Sans (body) + JetBrains Mono (accent) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      corePlugins: { preflight: true },
-      theme: {
-        extend: {
-          colors: {
-            bg: '#0d0c0b',
-            'bg-warm': '#141310',
-            card: '#1a1918',
-            gold: '#c9a84c',
-            cream: '#e8e0d0',
-            copper: '#b5634b',
-            muted: '#8a8478',
-            border: 'rgba(201,168,76,0.12)',
-          },
-          fontFamily: {
-            display: ['"Cormorant Garamond"', 'serif'],
-            body: ['"DM Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared/void.css" />
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
 
     body {
-      background: #0d0c0b;
-      color: #e8e0d0;
-      font-family: 'DM Sans', sans-serif;
-      overflow-x: hidden;
+      background: #000;
+      color: #cdd6ec;
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
     }
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #0d0c0b; }
-    ::-webkit-scrollbar-thumb { background: #1a1918; border-radius: 4px; border: 2px solid #0d0c0b; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.3); }
-
-    /* ── Skip link ── */
-    .skip-link { position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
-    .skip-link:focus { position: static; width: auto; height: auto; padding: 0.5rem 1rem; background: #000; color: #fff; z-index: 9999; }
-
-    /* ── Custom cursor ── */
-    @media (pointer: fine) { html, * { cursor: none !important; } }
-    #cursor-dot {
-      position: fixed; width: 5px; height: 5px; background: #c9a84c; border-radius: 50%;
-      pointer-events: none; z-index: 99999; transform: translate(-50%, -50%);
-      transition: background 0.2s ease, transform 0.15s ease; will-change: left, top;
-    }
-    #cursor-ring {
-      position: fixed; width: 36px; height: 36px; border: 1px solid rgba(201,168,76,0.45);
-      border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%, -50%);
-      transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      will-change: left, top;
-    }
-    #cursor-ring.hovering {
-      width: 60px; height: 60px;
-      border-color: rgba(201,168,76,0.8);
-      box-shadow: 0 0 20px rgba(201,168,76,0.2);
-    }
-
-    /* ── Sparkle ── */
-    .sparkle {
-      position: fixed; width: 3px; height: 3px; border-radius: 50%;
-      pointer-events: none; z-index: 99997; transform: translate(-50%, -50%);
-      animation: sparkle-fade 0.8s ease forwards;
-    }
-    @keyframes sparkle-fade {
-      0%   { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-      100% { opacity: 0;   transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.1); }
-    }
-
-    /* ── Sticky nav ── */
-    #sticky-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 9000;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 56px;
-      background: rgba(13, 12, 11, 0.85);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(201,168,76,0.08);
-      transform: translateY(-100%);
-      transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    #sticky-nav.visible { transform: translateY(0); }
-    #sticky-nav .nav-name {
-      font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.2rem;
-      letter-spacing: 0.04em; color: #c9a84c;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    #sticky-nav .nav-links {
-      display: flex; align-items: center; gap: 0.15rem; list-style: none;
-    }
-    #sticky-nav .nav-links a {
-      color: rgba(232,224,208,0.5); text-decoration: none;
-      font-size: 0.78rem; font-family: 'DM Sans', sans-serif; font-weight: 400;
-      padding: 0.3rem 0.65rem; border-radius: 4px;
-      transition: color 0.3s; white-space: nowrap; letter-spacing: 0.03em;
-    }
-    #sticky-nav .nav-links a:hover { color: #c9a84c; }
-    #sticky-nav .nav-links a.active { color: #c9a84c; }
-    #sticky-nav .nav-links a.active::after {
-      content: ''; display: block; width: 3px; height: 3px; border-radius: 50%;
-      background: #c9a84c; margin: 2px auto 0;
-    }
-    #sticky-nav .nav-links a.nav-cta {
-      background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3);
-      color: #c9a84c; margin-left: 0.5rem; font-weight: 500;
-    }
-    #sticky-nav .nav-links a.nav-cta:hover { background: rgba(201,168,76,0.2); color: #e8e0d0; }
-    @media (max-width: 640px) {
-      #sticky-nav { padding: 0 1rem; }
-      #sticky-nav .nav-links .hide-sm { display: none; }
-    }
-
-    /* ── Section reveal ── */
-    body.js-ready [data-reveal="up"]:not(.revealed)    { opacity: 0; transform: translateY(52px); }
-    body.js-ready [data-reveal="left"]:not(.revealed)  { opacity: 0; transform: translateX(-52px); }
-    body.js-ready [data-reveal="right"]:not(.revealed) { opacity: 0; transform: translateX(52px); }
-    body.js-ready [data-reveal="scale"]:not(.revealed) { opacity: 0; transform: scale(0.90); }
-    [data-reveal] {
-      transition: opacity 0.8s cubic-bezier(0.25,0.46,0.45,0.94),
-                  transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
-    }
-    [data-reveal].revealed { opacity: 1 !important; transform: none !important; }
-
-    /* ── Hero character stagger ── */
-    .char-stagger span {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(40px) rotate(8deg);
-      animation: char-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes char-in {
-      to { opacity: 1; transform: translateY(0) rotate(0deg); }
-    }
-    .char-stagger span.space { width: 0.35em; }
-
-    /* ── Typewriter ── */
-    .typewriter-text {
-      border-right: 2px solid #c9a84c;
-      animation: blink-caret 0.9s step-end infinite;
-    }
-    @keyframes blink-caret {
-      0%, 100% { border-color: #c9a84c; }
-      50% { border-color: transparent; }
-    }
-
-    /* ── Text scramble ── */
-    .scramble-text { display: inline; }
-
-    /* ── Ornamental divider ── */
-    .ornament-divider {
-      display: flex; align-items: center; justify-content: center;
-      gap: 1rem; padding: 2rem 0; opacity: 0.35;
-    }
-    .ornament-divider .line {
-      flex: 1; max-width: 120px; height: 1px;
-      background: linear-gradient(to right, transparent, #c9a84c, transparent);
-    }
-    .ornament-divider .diamond {
-      width: 6px; height: 6px; background: #c9a84c;
-      transform: rotate(45deg); flex-shrink: 0;
-    }
-
-    /* ── Section label ── */
-    .section-label {
-      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.2em;
-      text-transform: uppercase; color: #c9a84c;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    /* ── Card ── */
-    .card {
-      background: #1a1918; border: 1px solid rgba(201,168,76,0.08);
-      border-radius: 8px; position: relative;
-      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
-    }
-    .card:hover {
-      border-color: rgba(201,168,76,0.25);
-      box-shadow: 0 20px 60px rgba(201,168,76,0.06);
-      transform: translateY(-4px);
-    }
-
-    /* ── Decorative corner brackets on cards ── */
-    .card-bracketed::before,
-    .card-bracketed::after {
-      content: ''; position: absolute; width: 16px; height: 16px;
-      border-color: rgba(201,168,76,0.25); border-style: solid;
-      transition: border-color 0.4s;
-    }
-    .card-bracketed::before {
-      top: -1px; left: -1px; border-width: 1px 0 0 1px; border-radius: 4px 0 0 0;
-    }
-    .card-bracketed::after {
-      bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-radius: 0 0 4px 0;
-    }
-    .card-bracketed:hover::before,
-    .card-bracketed:hover::after { border-color: rgba(201,168,76,0.5); }
-
-    /* ── Experience timeline ── */
-    .exp-bar {
-      position: absolute; left: 0; top: 0; bottom: 0; width: 2px; border-radius: 2px;
-      background: linear-gradient(to bottom, #c9a84c, #b5634b);
-    }
-    .exp-diamond {
-      position: absolute; left: -3px; top: 0; width: 8px; height: 8px;
-      background: #c9a84c; transform: rotate(45deg); border-radius: 1px;
-    }
-
-    /* ── Skill chip ── */
-    .skill-chip {
-      display: inline-block; padding: 0.3rem 0.85rem; border-radius: 4px;
-      background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.15);
-      font-size: 0.82rem; font-family: 'DM Sans', sans-serif; color: #e8e0d0;
-      transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s, color 0.3s;
-    }
-    .skill-chip:hover {
-      background: rgba(201,168,76,0.12); border-color: rgba(201,168,76,0.35);
-      transform: translateY(-2px); box-shadow: 0 4px 12px rgba(201,168,76,0.1);
-      color: #c9a84c;
-    }
-
-    /* ── Button ── */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.7rem 1.5rem; border-radius: 4px; font-weight: 500;
-      background: #c9a84c; color: #0d0c0b; font-family: 'DM Sans', sans-serif;
-      text-decoration: none; font-size: 0.88rem; letter-spacing: 0.02em;
-      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
-    }
-    .btn-primary:hover { background: #d4b55a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.25); }
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.7rem 1.5rem; border-radius: 4px; font-weight: 500;
-      background: transparent; border: 1px solid rgba(201,168,76,0.3); color: #c9a84c;
-      font-family: 'DM Sans', sans-serif; text-decoration: none; font-size: 0.88rem;
-      letter-spacing: 0.02em;
-      transition: background 0.3s, border-color 0.3s, transform 0.3s, color 0.3s;
-    }
-    .btn-outline:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.5); transform: translateY(-2px); color: #e8e0d0; }
-    .btn-sm {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      padding: 0.4rem 0.9rem; border-radius: 4px; font-weight: 500;
-      background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.15); color: #c9a84c;
-      font-family: 'DM Sans', sans-serif; text-decoration: none; font-size: 0.8rem;
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
-    }
-    .btn-sm:hover { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.4); color: #e8e0d0; }
-
-    /* ── Badge chip ── */
-    .badge {
-      display: inline-block; padding: 0.2rem 0.65rem; border-radius: 4px;
-      font-size: 0.7rem; font-weight: 600; background: rgba(201,168,76,0.1);
-      border: 1px solid rgba(201,168,76,0.25); color: #c9a84c;
-      font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em;
-    }
-
-    /* ── Tech tag ── */
-    .tech-tag {
-      display: inline-block; padding: 0.2rem 0.55rem; border-radius: 3px;
-      font-size: 0.72rem; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.1);
-      color: #8a8478; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em;
-    }
-
-    /* ── Education top bar ── */
-    .edu-bar {
-      position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 8px 8px 0 0;
-      background: linear-gradient(to right, #c9a84c, #b5634b);
-    }
-
-    /* ── Footer social ── */
-    .social-btn {
-      display: flex; align-items: center; justify-content: center;
-      width: 42px; height: 42px; border-radius: 6px;
-      background: #1a1918; border: 1px solid rgba(201,168,76,0.1);
-      color: #8a8478; text-decoration: none;
-      transition: color 0.3s, border-color 0.3s, background 0.3s;
-    }
-    .social-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.35); background: rgba(201,168,76,0.06); }
-
-    /* ── Hero noise / texture overlay ── */
-    .hero-noise {
-      position: absolute; inset: 0; pointer-events: none; z-index: 0;
-      background-image:
-        radial-gradient(ellipse 70% 50% at 65% 45%, rgba(201,168,76,0.04) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 35% at 20% 75%, rgba(181,99,75,0.03) 0%, transparent 60%);
-    }
-    .hero-noise::after {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      background-size: 200px 200px;
-      opacity: 0.5;
-    }
-
-    /* ── Global grain overlay ── */
+    /* barely-there grain so the black isn't dead pixels */
     body::after {
       content: '';
-      position: fixed; inset: 0; pointer-events: none; z-index: 99990;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E");
-      opacity: 0.6;
-    }
-
-    /* ── Status badge ── */
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.3rem 0.85rem; border-radius: 4px;
-      background: rgba(110,180,120,0.08); border: 1px solid rgba(110,180,120,0.2);
-      font-size: 0.75rem; font-weight: 500; color: rgba(140,200,140,0.85);
-      font-family: 'DM Sans', sans-serif;
-    }
-    .status-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: rgba(140,200,140,0.85);
-      box-shadow: 0 0 0 0 rgba(140,200,140,0.4);
-      animation: pulse-dot 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(140,200,140,0.4); }
-      50%       { box-shadow: 0 0 0 5px rgba(140,200,140,0); }
-    }
-
-    /* ── Scroll indicator ── */
-    .scroll-indicator {
-      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
-      color: rgba(201,168,76,0.3); font-size: 0.68rem; font-family: 'DM Sans', sans-serif;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      animation: bounce-indicator 2.5s ease-in-out infinite;
-    }
-    @keyframes bounce-indicator {
-      0%, 100% { transform: translateY(0); opacity: 0.3; }
-      50%       { transform: translateY(8px); opacity: 0.6; }
-    }
-
-    /* ── Mobile menu ── */
-    #mobile-menu-btn {
-      display: none; align-items: center; justify-content: center;
-      width: 36px; height: 36px; background: none; border: 1px solid rgba(201,168,76,0.15);
-      border-radius: 4px; color: #8a8478;
-      transition: border-color 0.3s, color 0.3s;
-    }
-    #mobile-menu-btn:hover { border-color: rgba(201,168,76,0.4); color: #c9a84c; }
-    @media (max-width: 640px) {
-      #mobile-menu-btn { display: flex; }
-    }
-    #mobile-drawer {
-      display: none; position: fixed; top: 57px; left: 0; right: 0; z-index: 8999;
-      background: rgba(13,12,11,0.97); backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(201,168,76,0.1);
-      padding: 1rem 1.5rem 1.5rem; flex-direction: column; gap: 0.25rem;
-    }
-    #mobile-drawer.open { display: flex; }
-    #mobile-drawer a {
-      color: rgba(232,224,208,0.6); text-decoration: none; font-size: 0.95rem;
-      font-family: 'DM Sans', sans-serif; padding: 0.65rem 0;
-      border-bottom: 1px solid rgba(201,168,76,0.05);
-      transition: color 0.3s;
-    }
-    #mobile-drawer a:last-child { border-bottom: none; }
-    #mobile-drawer a:hover { color: #c9a84c; }
-    #mobile-drawer a.drawer-cta {
-      margin-top: 0.75rem; text-align: center; padding: 0.7rem;
-      border-radius: 4px; border: 1px solid rgba(201,168,76,0.25);
-      color: #c9a84c; background: rgba(201,168,76,0.06);
-    }
-
-    /* ── Hero floating photo ── */
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-10px); }
-    }
-    .hero-photo { animation: float 6s ease-in-out infinite; }
-
-    /* ── Drop cap ── */
-    .drop-cap::first-letter {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 3.5rem; font-weight: 600; color: #c9a84c;
-      float: left; line-height: 0.75; margin-right: 0.5rem; margin-top: 0.15rem;
-    }
-
-    /* ── Decorative quote marks ── */
-    .editorial-quote {
-      position: relative;
-      padding: 2rem 2.5rem;
-      border: 1px solid rgba(201,168,76,0.08); border-radius: 8px;
-      background: rgba(201,168,76,0.02);
-    }
-    .editorial-quote::before {
-      content: '\201C';
-      position: absolute; top: -0.1rem; left: 0.8rem;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 4rem; color: rgba(201,168,76,0.2); line-height: 1;
-    }
-
-    /* ── Infinite canvas parallax layers ── */
-    .parallax-layer {
-      position: absolute; pointer-events: none; will-change: transform;
-    }
-    .parallax-orb {
-      border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.035;
-    }
-
-    /* ── Handwritten annotation style ── */
-    .hand-note {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic; font-weight: 400;
-      color: #c9a84c; font-size: 0.85rem;
-      transform: rotate(-2deg);
-      display: inline-block;
-    }
-
-    /* ── Project image vignette ── */
-    .img-vignette {
-      position: relative; overflow: hidden;
-    }
-    .img-vignette::after {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 50%, rgba(13,12,11,0.4) 100%);
-      pointer-events: none;
-    }
-
-    /* ── Shimmer on skill chips ── */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .skill-chip:hover {
-      background-image: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 50%, transparent 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s ease infinite;
-    }
-
-    /* ── Guided scrolling (scroll snap) ── */
-    @media (min-height: 600px) and (min-width: 769px) {
-      #wrapper {
-        scroll-snap-type: y proximity;
-      }
-      #wrapper > main > section,
-      #wrapper > footer {
-        scroll-snap-align: start;
-        scroll-snap-stop: normal;
-      }
-    }
-
-    /* ── Hand-drawn underline ── */
-    .hand-underline {
-      position: relative; display: inline;
-    }
-    .hand-underline::after {
-      content: '';
-      position: absolute; left: 0; right: 0; bottom: -3px; height: 6px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='6' viewBox='0 0 120 6'%3E%3Cpath d='M0 4 Q15 0 30 3.5 T60 3 T90 4 T120 2.5' fill='none' stroke='%23c9a84c' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-size: 120px 6px;
-      background-repeat: repeat-x;
+      position: fixed; inset: 0; pointer-events: none; z-index: 40;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.02'/%3E%3C/svg%3E");
       opacity: 0.5;
     }
 
-    /* ── Paper texture overlay (for experience cards) ── */
-    .paper-texture {
-      position: relative;
+    .skip-link { position: absolute; left: -999px; }
+    .skip-link:focus { position: fixed; left: 1rem; top: 1rem; z-index: 10000; background: #000; color: #fff; padding: 0.5rem 1rem; }
+
+    /* ── quick view, top ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      display: flex; justify-content: center;
+      padding-top: 1.6rem;
+      pointer-events: none;
     }
-    .paper-texture::after {
+    .topbar a {
+      pointer-events: auto;
+      font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase;
+      color: rgba(201, 168, 76, 0.85);
+      text-decoration: none;
+      padding: 0.45rem 1.1rem;
+      border: 1px solid rgba(201, 168, 76, 0.22);
+      transition: color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .topbar a:hover {
+      color: #e6c96e;
+      border-color: rgba(201, 168, 76, 0.55);
+      box-shadow: 0 0 18px rgba(201, 168, 76, 0.12);
+    }
+
+    /* ── the field of fractures ── */
+    #field {
+      position: fixed; inset: 0; z-index: 5;
+      list-style: none;
+    }
+    .crack {
+      position: absolute;
+      display: block;
+      outline: none;
+      text-decoration: none;
+      transform: rotate(var(--rot));
+      transition: transform 0.5s cubic-bezier(0.25, 0.9, 0.3, 1), filter 0.5s ease;
+      filter: brightness(0.9);
+    }
+    .crack svg { display: block; overflow: visible; }
+    .crack .glow {
+      filter:
+        drop-shadow(0 0 6px var(--c))
+        drop-shadow(0 0 22px var(--cdim));
+      animation: crack-breathe var(--dur) ease-in-out infinite;
+    }
+    @keyframes crack-breathe {
+      0%, 100% { opacity: 0.82; }
+      45%      { opacity: 1; }
+      55%      { opacity: 0.9; }
+    }
+    .crack:hover, .crack:focus-visible {
+      transform: rotate(var(--rot)) scale(1.18, 1.04);
+      filter: brightness(1.35);
+      z-index: 6;
+    }
+    .crack:hover .glow, .crack:focus-visible .glow {
+      filter:
+        drop-shadow(0 0 10px var(--c))
+        drop-shadow(0 0 34px var(--c))
+        drop-shadow(0 0 70px var(--cdim));
+    }
+    .crack.opening {
+      transform: rotate(var(--rot)) scale(3.2, 1.15);
+      filter: brightness(2.4);
+      transition-duration: 0.6s;
+    }
+    /* faint halo behind each crack */
+    .crack::before {
       content: '';
-      position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.015'/%3E%3C/svg%3E");
-      opacity: 0.8;
-      mix-blend-mode: overlay;
+      position: absolute; inset: -40% -180%;
+      background: radial-gradient(ellipse 45% 55% at 50% 50%, var(--cdim) 0%, transparent 70%);
+      opacity: 0.24;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .crack:hover::before, .crack:focus-visible::before { opacity: 0.55; }
+
+    /* ── SYSTEM window ── */
+    .system {
+      position: fixed; z-index: 15;
+      left: 50%; bottom: clamp(1.4rem, 4vh, 3rem);
+      transform: translateX(-50%);
+      width: min(480px, calc(100vw - 2rem));
+      background: rgba(6, 9, 18, 0.78);
+      border: 1px solid rgba(140, 170, 255, 0.38);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.6),
+        0 0 28px rgba(140, 170, 255, 0.10),
+        inset 0 0 40px rgba(140, 170, 255, 0.04);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      padding: 0.95rem 1.15rem 1.05rem;
+      font-size: 0.7rem;
+      line-height: 1.85;
+      letter-spacing: 0.04em;
+    }
+    .system .sys-head {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.62rem; letter-spacing: 0.3em;
+      color: rgba(160, 185, 255, 0.9);
+      border-bottom: 1px solid rgba(140, 170, 255, 0.18);
+      padding-bottom: 0.55rem; margin-bottom: 0.6rem;
+    }
+    .system .sys-head .diamond {
+      width: 6px; height: 6px; background: rgba(160, 185, 255, 0.9);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px rgba(160, 185, 255, 0.7);
+    }
+    .system .line {
+      display: flex; gap: 0.9rem;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .system .line.on { opacity: 1; transform: none; }
+    .system .k {
+      color: rgba(140, 170, 255, 0.55);
+      min-width: 4.6rem;
+      flex-shrink: 0;
+    }
+    .system .v { color: #dde4f8; }
+    .system .v .dim { color: rgba(221, 228, 248, 0.5); }
+    .system .v.gold { color: #d9bc6a; }
+    .system .v a { color: rgba(160, 185, 255, 0.9); text-decoration: none; }
+    .system .v a:hover { color: #fff; text-decoration: underline; }
+    .system .caret {
+      display: inline-block; width: 0.55em; height: 1em;
+      background: rgba(160, 185, 255, 0.9);
+      vertical-align: -0.15em;
+      animation: caret-blink 0.9s step-end infinite;
+      margin-left: 0.2rem;
+    }
+    @keyframes caret-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── mobile ── */
+    @media (max-width: 640px) {
+      body { overflow-y: auto; }
+      .system { font-size: 0.62rem; }
+      .system .k { min-width: 4rem; }
     }
 
-    /* ── Coursework tag ── */
-    .course-tag {
-      display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px;
-      font-size: 0.78rem; background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.12);
-      color: rgba(232,224,208,0.55); font-family: 'DM Sans', sans-serif;
-      transition: color 0.3s, border-color 0.3s, background 0.3s;
-    }
-    .course-tag:hover {
-      color: #c9a84c; border-color: rgba(201,168,76,0.3);
-      background: rgba(201,168,76,0.08);
+    @media (prefers-reduced-motion: reduce) {
+      .crack, .crack .glow, .crack::before { transition: none !important; animation: none !important; }
+      .system .line { opacity: 1 !important; transform: none !important; transition: none; }
+      .system .caret { animation: none; }
     }
 
-    /* ── Contact card ornamental left border ── */
-    .contact-card {
-      border-left: 2px solid rgba(201,168,76,0.2) !important;
-      transition: border-left-color 0.4s;
+    /* click flood */
+    #flood {
+      position: fixed; inset: 0; z-index: 99998; pointer-events: none;
+      opacity: 0; transition: opacity 0.55s ease;
     }
-    .contact-card:hover {
-      border-left-color: rgba(201,168,76,0.6) !important;
-    }
-
-    /* ── Project card tilt on hover ── */
-    .card-tilt {
-      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), border-color 0.4s, box-shadow 0.4s;
-    }
-    .card-tilt:hover {
-      transform: translateY(-6px) rotate(-0.5deg) scale(1.01);
-    }
-
-    /* ── Magazine grid: featured project spans 2 columns ── */
-    @media (min-width: 700px) {
-      .project-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
-      .project-grid .project-featured {
-        grid-column: span 2;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0;
-      }
-      .project-grid .project-featured .img-vignette {
-        border-radius: 8px 0 0 8px;
-        min-height: 100%;
-      }
-      .project-grid .project-featured .img-vignette img {
-        height: 100%;
-        aspect-ratio: auto;
-      }
-      .project-grid .project-featured > div:last-child {
-        display: flex; flex-direction: column; justify-content: center;
-      }
-    }
+    #flood.on { opacity: 0.96; }
   </style>
 </head>
 
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
+<body data-accent="#050507" data-room="hallway">
+  <a class="skip-link" href="#field">Skip to the doors</a>
 
-  <!-- Custom cursor -->
-  <div id="cursor-dot"></div>
-  <div id="cursor-ring"></div>
+  <div class="topbar">
+    <a href="classic.html">Quick View</a>
+  </div>
 
-  <!-- Infinite canvas parallax orbs (decorative depth layers) -->
-  <div class="parallax-layer parallax-orb" data-speed="0.02" style="width:500px;height:500px;background:#c9a84c;top:10%;left:-10%;"></div>
-  <div class="parallax-layer parallax-orb" data-speed="0.04" style="width:400px;height:400px;background:#b5634b;top:60%;right:-15%;"></div>
-  <div class="parallax-layer parallax-orb" data-speed="0.015" style="width:600px;height:600px;background:#c9a84c;top:150%;left:60%;"></div>
-  <div class="parallax-layer parallax-orb" data-speed="0.03" style="width:350px;height:350px;background:#b5634b;top:250%;left:-5%;"></div>
-  <div class="parallax-layer parallax-orb" data-speed="0.025" style="width:450px;height:450px;background:#c9a84c;top:350%;right:-10%;"></div>
+  <ul id="field" aria-label="Five fractures — each leads somewhere different"></ul>
 
-  <!-- ═══════════════════════════════
-       STICKY NAV
-  ═══════════════════════════════ -->
-  <nav id="sticky-nav" aria-label="Site navigation">
-    <span class="nav-name">Vinh Le</span>
-    <ul class="nav-links">
-      <li class="hide-sm"><a href="#about" data-section="about">About</a></li>
-      <li class="hide-sm"><a href="#experience" data-section="experience">Experience</a></li>
-      <li class="hide-sm"><a href="#projects" data-section="projects">Projects</a></li>
-      <li class="hide-sm"><a href="#skills" data-section="skills">Skills</a></li>
-      <li class="hide-sm"><a href="#contact" data-section="contact">Contact</a></li>
-      <li class="hide-sm"><a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-      <li><a href="https://drive.google.com/file/d/12-XkvyMMROpmAihpwPXNC2v53SX-WWIK/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="nav-cta">Resume</a></li>
+  <aside class="system" aria-label="System window">
+    <div class="sys-head"><span class="diamond" aria-hidden="true"></span>SYSTEM</div>
+    <div id="sys-lines">
+      <p class="line"><span class="k">&gt;</span><span class="v">You have crossed over.</span></p>
+      <p class="line"><span class="k">PLAYER</span><span class="v">VINH LE</span></p>
+      <p class="line"><span class="k">CLASS</span><span class="v">AI ENGINEER <span class="dim">· M.S. CS — Georgia Tech</span></span></p>
+      <p class="line"><span class="k">TITLES</span><span class="v gold">Best Hack for Good · 1st — VectorAI Build</span></p>
+      <p class="line"><span class="k">LINKS</span><span class="v">
+        <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer">github</a> ·
+        <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer">linkedin</a> ·
+        <a href="https://devpost.com/vinhbin" target="_blank" rel="noopener noreferrer">devpost</a> ·
+        <a href="mailto:vinhhle24@gmail.com">email</a>
+      </span></p>
+      <p class="line"><span class="k">QUEST</span><span class="v">Five fractures detected. Contents unknown.</span></p>
+      <p class="line"><span class="k">&gt;</span><span class="v">Choose one.<span class="caret" aria-hidden="true"></span></span></p>
+    </div>
+  </aside>
+
+  <noscript>
+    <ul style="position:fixed;top:5rem;left:0;right:0;list-style:none;display:flex;flex-direction:column;gap:0.75rem;text-align:center;z-index:50;">
+      <li><a style="color:#c9a84c;" href="classic.html">Classic portfolio</a></li>
+      <li><a style="color:#c9a84c;" href="terminal.html">The Terminal</a></li>
+      <li><a style="color:#c9a84c;" href="phone.html">The Phone</a></li>
+      <li><a style="color:#c9a84c;" href="retro.html">Retro Windows</a></li>
+      <li><a style="color:#c9a84c;" href="game.html">The Arcade</a></li>
     </ul>
-    <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
-      <svg id="menu-icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
-      <svg id="menu-icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
-    </button>
-  </nav>
+  </noscript>
 
-  <!-- Mobile drawer -->
-  <div id="mobile-drawer" role="navigation" aria-label="Mobile navigation">
-    <a href="#about">About</a>
-    <a href="#experience">Experience</a>
-    <a href="#projects">Projects</a>
-    <a href="#skills">Skills</a>
-    <a href="#contact">Contact</a>
-    <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer">GitHub</a>
-    <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    <a href="https://drive.google.com/file/d/12-XkvyMMROpmAihpwPXNC2v53SX-WWIK/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="drawer-cta">Resume</a>
-  </div>
+  <div id="flood" aria-hidden="true"></div>
 
-  <div id="wrapper">
-    <main id="main">
-
-      <!-- ═══════════════════════════════
-           HERO
-      ═══════════════════════════════ -->
-      <section id="hero" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:5rem 1.5rem 4rem;position:relative;overflow:hidden;">
-        <div class="hero-noise"></div>
-        <div style="max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:1;">
-          <div class="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
-
-            <!-- Text (3 cols) -->
-            <div style="display:flex;flex-direction:column;gap:1.75rem;" class="lg:col-span-3">
-
-              <!-- Status badge -->
-              <div>
-                <span class="status-badge">
-                  <span class="status-dot"></span>
-                  M.S. CS @ Georgia Tech &middot; Open to opportunities
-                </span>
-              </div>
-
-              <!-- Name: Character stagger -->
-              <div>
-                <p class="section-label" style="margin-bottom:0.6rem;"><span class="hand-underline">Backend-Focused Software Engineer</span></p>
-                <h1 id="hero-name" class="char-stagger" style="font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,8vw,6rem);font-weight:300;line-height:1;letter-spacing:-0.02em;color:#e8e0d0;">
-                </h1>
-              </div>
-
-              <!-- Typewriter subtitle -->
-              <div>
-                <p id="hero-subtitle" class="typewriter-text" style="font-size:1.1rem;color:#8a8478;font-weight:400;line-height:1.6;max-width:520px;font-family:'DM Sans',sans-serif;"></p>
-              </div>
-
-              <!-- Ornamental flourish -->
-              <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.2;">
-                <div style="width:60px;height:1px;background:linear-gradient(to right,transparent,#c9a84c);"></div>
-                <div style="width:5px;height:5px;background:#c9a84c;transform:rotate(45deg);"></div>
-                <div style="width:60px;height:1px;background:linear-gradient(to left,transparent,#c9a84c);"></div>
-              </div>
-
-              <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
-                <a href="#projects" class="btn-primary">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  View Projects
-                </a>
-                <a href="mailto:vinhhle24@gmail.com" class="btn-outline">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                  Get in Touch
-                </a>
-              </div>
-
-              <!-- Social row -->
-              <div style="display:flex;align-items:center;gap:0.6rem;padding-top:0.25rem;">
-                <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="GitHub">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                </a>
-                <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                </a>
-                <a href="mailto:vinhhle24@gmail.com" class="social-btn" aria-label="Email">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                </a>
-              </div>
-            </div>
-
-            <!-- Photo (2 cols) -->
-            <div style="display:flex;justify-content:center;align-items:center;position:relative;" class="lg:col-span-2">
-              <!-- Glow -->
-              <div style="position:absolute;inset:-20%;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 65%);filter:blur(40px);"></div>
-              <!-- Ornate circular frame -->
-              <div style="position:relative;padding:3px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#b5634b,#c9a84c);">
-                <div style="background:#0d0c0b;border-radius:50%;padding:3px;">
-                  <img
-                    src="images/linkedinpfp.jpg"
-                    alt="Portrait of Vinh Le"
-                    class="hero-photo"
-                    style="width:clamp(200px,28vw,300px);height:clamp(200px,28vw,300px);border-radius:50%;object-fit:cover;display:block;"
-                    width="300" height="300"
-                  />
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Scroll indicator -->
-          <div style="display:flex;justify-content:center;margin-top:3.5rem;">
-            <a href="#about" style="text-decoration:none;">
-              <div class="scroll-indicator">
-                <span>Scroll</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Ornamental Divider -->
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           ABOUT
-      ═══════════════════════════════ -->
-      <section id="about" style="padding:5rem 1.5rem;">
-        <div style="max-width:700px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:2.5rem;">
-            <p class="section-label">About Me</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;color:#e8e0d0;">Background</h2>
-          </div>
-
-          <div data-reveal="up" style="transition-delay:0.1s;display:flex;flex-direction:column;gap:1.25rem;color:rgba(232,224,208,0.7);line-height:1.8;font-size:1rem;">
-            <p class="drop-cap">
-              I'm a backend-focused software engineer. I've <span class="hand-underline">co-led production work on a multi-tenant Django platform</span> and led a winning hackathon team, with projects spanning vector search to tested REST APIs. I pick up unfamiliar stacks fast and work end-to-end: scoping, building, testing, and handing off. B.S. in Computer Science from Georgia State University (GPA 3.5, Dean's List), now pursuing my M.S. CS through <span class="hand-underline">Georgia Tech's OMSCS program</span>.
-            </p>
-            <p>
-              Outside of code: good food, videography, and Muay Thai.
-            </p>
-          </div>
-
-          <div data-reveal="up" style="transition-delay:0.2s;margin-top:2rem;">
-            <h3 style="font-size:0.75rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#8a8478;margin-bottom:0.75rem;font-family:'DM Sans',sans-serif;">Relevant Coursework</h3>
-            <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-              <span class="course-tag">Operating Systems</span>
-              <span class="course-tag">Algorithms</span>
-              <span class="course-tag">Data Structures</span>
-              <span class="course-tag">Systems Programming</span>
-              <span class="course-tag">Software Engineering</span>
-              <span class="course-tag">Computer Organization</span>
-              <span class="course-tag">Mobile App Development</span>
-              <span class="course-tag">Web Programming</span>
-              <span class="course-tag">Data Science</span>
-            </div>
-          </div>
-
-          <div data-reveal="up" style="transition-delay:0.3s;display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:2rem;">
-            <a href="https://drive.google.com/file/d/12-XkvyMMROpmAihpwPXNC2v53SX-WWIK/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-primary">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Resume
-            </a>
-            <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer" class="btn-outline">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              LinkedIn
-            </a>
-          </div>
-
-        </div>
-      </section>
-
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           EXPERIENCE
-      ═══════════════════════════════ -->
-      <section id="experience" style="padding:5rem 1.5rem;">
-        <div style="max-width:700px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:3rem;">
-            <p class="section-label">Experience</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;">Professional Journey</h2>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:3rem;">
-
-            <!-- SkyIT -->
-            <div class="paper-texture" data-reveal="up" style="position:relative;padding-left:2rem;">
-              <div class="exp-bar"></div>
-              <div class="exp-diamond"></div>
-              <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
-                  <div>
-                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:#e8e0d0;">Software Engineering Intern <span style="color:#c9a84c;font-style:italic;font-weight:500;">&middot; Co-Lead</span></h3>
-                    <p style="color:#c9a84c;font-weight:500;margin-top:0.2rem;font-size:0.95rem;">SkyIT (GBCS Group)</p>
-                  </div>
-                  <span style="color:#8a8478;font-size:0.82rem;white-space:nowrap;padding-top:0.2rem;font-family:'JetBrains Mono',monospace;font-size:0.75rem;">Mar 2026 – Jun 2026</span>
-                </div>
-              </div>
-              <ul style="display:flex;flex-direction:column;gap:0.6rem;color:rgba(232,224,208,0.6);padding-left:0;list-style:none;font-size:0.95rem;line-height:1.6;">
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Promoted to co-lead; organized the modernization roadmap and led stabilization of a legacy Django/React fleet platform serving 3 branded frontend clients on a shared backend</span></li>
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Led a multi-tenant enterprise port of the GHG emissions module, designing tenant-scoped Django models and a two-schema MySQL test harness, and coordinating an intern team across parallel feature lanes</span></li>
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Fixed Django backend defects across 14+ endpoints involving CORS middleware, serializers, ORM filters, blob fallbacks, and API runtime failures</span></li>
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Consolidated backend work into a master-backend branch and standardized API configs across 3 frontend clients; modernized the frontend by auditing 12+ dependencies and migrating 55+ files across major Axios/PrimeReact versions</span></li>
-              </ul>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:1rem;">
-                <span class="tech-tag">Django</span>
-                <span class="tech-tag">MySQL</span>
-                <span class="tech-tag">React</span>
-                <span class="tech-tag">Multi-tenant</span>
-                <span class="tech-tag">REST APIs</span>
-              </div>
-            </div>
-
-            <!-- Headstarter -->
-            <div class="paper-texture" data-reveal="up" style="transition-delay:0.1s;position:relative;padding-left:2rem;">
-              <div class="exp-bar"></div>
-              <div class="exp-diamond"></div>
-              <div style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
-                  <div>
-                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:#e8e0d0;">Technical Fellow</h3>
-                    <p style="color:#c9a84c;font-weight:500;margin-top:0.2rem;font-size:0.95rem;">CodePath &middot; Foundations of AI Engineering</p>
-                  </div>
-                  <span style="color:#8a8478;font-family:'JetBrains Mono',monospace;font-size:0.75rem;white-space:nowrap;padding-top:0.2rem;">Jun 2026 – Aug 2026</span>
-                </div>
-              </div>
-              <ul style="display:flex;flex-direction:column;gap:0.6rem;color:rgba(232,224,208,0.6);padding-left:0;list-style:none;font-size:0.95rem;line-height:1.6;">
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Supported live class sessions and breakout rooms for a 200+ learner AI course, answering technical questions in real time</span></li>
-                <li style="display:flex;gap:0.6rem;"><span style="color:#c9a84c;margin-top:0.1rem;flex-shrink:0;font-size:0.7rem;">&#9670;</span><span>Awarded CodePath's Certificate of Leadership (Summer 2026) for performance supporting students in the program</span></li>
-              </ul>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:1rem;">
-                <span class="tech-tag">AI Engineering</span>
-                <span class="tech-tag">Python</span>
-                <span class="tech-tag">Mentorship</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           PROJECTS
-      ═══════════════════════════════ -->
-      <section id="projects" style="padding:5rem 1.5rem;">
-        <div style="max-width:1100px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:3rem;">
-            <p class="section-label">Projects</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;">Featured Work</h2>
-            <p style="color:#8a8478;margin-top:0.75rem;max-width:520px;line-height:1.65;font-size:0.95rem;">
-              Award-winning hackathon builds and backend systems — vector search, data pipelines, and tested REST APIs.
-            </p>
-          </div>
-
-          <div class="project-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;">
-
-            <!-- WATTLINE (Featured) -->
-            <article class="card card-bracketed card-tilt project-featured" data-reveal="up" style="transition-delay:0.05s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/wattline.png" alt="WATTLINE screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Best Hack for Good</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">WATTLINE</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Aug 2026 &middot; Hack RenderATL / MLH</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Led a 4-person team to Best Hack for Good — mapping electricity-dependent medical equipment users to neighborhood-level outage exposure across 25 Atlanta NPUs.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Verified the federal HHS emPOWER pipeline end-to-end, reconciling a 92,233-person state anchor across ZIP, county, and state layers with small-cell suppression handled as intervals</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Built the React/MapLibre frontend with a 24-hour timeline scrubber; read path is precomputed JSON served by FastAPI with no database in the request path</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">React</span>
-                  <span class="tech-tag">MapLibre</span>
-                  <span class="tech-tag">FastAPI</span>
-                  <span class="tech-tag">Data Pipeline</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                  <a href="https://wattline-web.onrender.com" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                  <a href="https://devpost.com/software/wattline" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-                    Devpost
-                  </a>
-                  <a href="https://github.com/vinhbin/wattline" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Trace -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.1s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/trace.png" alt="Trace screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">1st Place</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">Trace</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Apr 2026 &middot; Actian VectorAI DB Build Challenge</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Won 1st place for an AI forensic-search platform matching missing persons with unidentified remains.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Engineered a multi-vector retrieval pipeline: SapBERT, BGE-M3, CLIP, Reciprocal Rank Fusion</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Pre-filtered vector search to improve accuracy and cut retrieval overhead</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">FastAPI</span>
-                  <span class="tech-tag">React</span>
-                  <span class="tech-tag">Vector Search</span>
-                  <span class="tech-tag">CLIP</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                  <a href="https://trace-forensic-search-ssookra-7703s-projects.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                  <a href="https://dorahacks.io/buidl/43227" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg>
-                    DoraHacks
-                  </a>
-                  <a href="https://github.com/StephenSook/trace-forensic-search" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- APEX -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.15s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/apex.png" alt="APEX screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">IBM Granite</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">APEX</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">May 2026 &middot; IBM SkillsBuild AI Builders Challenge</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Backend for an AI race-engineer built on IBM Granite, coaching adaptive racers who don't have one.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Owned API routes and Granite tool integration across 20 live endpoints</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Authored the backend test suite (192 tests) and wired CI to gate every merge</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">IBM Granite</span>
-                  <span class="tech-tag">REST APIs</span>
-                  <span class="tech-tag">Testing</span>
-                  <span class="tech-tag">CI/CD</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                  <a href="https://github.com/StephenSook/apex" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                  <a href="https://apex-one-black.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Hometown Pathway Atlas -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.20s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/atlas.png" alt="Hometown Pathway Atlas screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Team USA</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">Hometown Pathway Atlas</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">May 2026 &middot; Team USA &times; Google Cloud Hackathon</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    County-level Olympic/Paralympic parity analytics across all 3,222 U.S. counties.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Built the data pipeline with per-capita normalization and empirical-Bayes shrinkage</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Integrated Vertex AI Gemini and deployed the service on Google Cloud Run</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Python</span>
-                  <span class="tech-tag">Vertex AI</span>
-                  <span class="tech-tag">Gemini</span>
-                  <span class="tech-tag">Cloud Run</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                  <a href="https://github.com/StephenSook/Hometown-Pathway-Atlas" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                  <a href="https://atlas-frontend-635524063449.us-central1.run.app" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- ContextMod -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.25s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/contextmod.png" alt="ContextMod on the Reddit developer portal" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Published App</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">ContextMod</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">May 2026 &middot; Reddit Mod Tools Hackathon</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Rule-engine backend for a native Devvit moderation bot, published on the Reddit developer platform.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>JSON5 rules with multiple rule kinds and action handlers</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Strict-TypeScript, fully-tested codebase</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">TypeScript</span>
-                  <span class="tech-tag">Devvit</span>
-                  <span class="tech-tag">JSON5</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-                  <a href="https://developers.reddit.com/apps/cm-devvit" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    View App
-                  </a>
-                  <a href="https://github.com/StephenSook/context-mod-devvit" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Bearing Witness -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.30s;padding:1.5rem;display:flex;flex-direction:column;">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:1rem;">
-                <div>
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">Bearing Witness</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;font-family:'JetBrains Mono',monospace;">Dell &times; NVIDIA AI Hackathon &middot; NYC</p>
-                </div>
-                <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;flex-shrink:0;">On-Device AI</span>
-              </div>
-              <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;margin-bottom:1rem;">
-                Always-on, fully local bearing-screening agent on the Dell Pro Max GB10. Physics does the diagnosis, a local model files the paperwork, a human has to say yes.
-              </p>
-              <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;margin-top:auto;">
-                <span class="tech-tag">Python</span>
-                <span class="tech-tag">Local LLM</span>
-                <span class="tech-tag">Signal Processing</span>
-              </div>
-              <div style="display:flex;gap:0.5rem;">
-                <a href="https://github.com/StephenSook/bearing-witness" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                  GitHub
-                </a>
-              </div>
-            </article>
-
-            <!-- Rivals Coach -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.35s;padding:1.5rem;display:flex;flex-direction:column;">
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:1rem;">
-                <div>
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">Rivals Coach</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;font-family:'JetBrains Mono',monospace;">Side Project</p>
-                </div>
-                <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;flex-shrink:0;">Gaming</span>
-              </div>
-              <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;margin-bottom:1rem;">
-                Live coaching companion for Marvel Rivals: reads the match roster via Overwolf GEP and suggests one pick, swap, or hold from your own comfort pool. Decision support, not a stats tracker.
-              </p>
-              <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;margin-top:auto;">
-                <span class="tech-tag">TypeScript</span>
-                <span class="tech-tag">Overwolf</span>
-              </div>
-              <div style="display:flex;gap:0.5rem;">
-                <a href="https://github.com/vinhbin/Marvel-Rivals-Live-Coach" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                  GitHub
-                </a>
-              </div>
-            </article>
-
-          </div>
-
-          <!-- Earlier work -->
-          <div data-reveal="up" style="margin:3rem 0 1.5rem;">
-            <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:rgba(232,224,208,0.75);">Earlier Work</h3>
-          </div>
-
-          <div class="project-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;">
-
-            <!-- VibeCheck -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.05s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/vibechecklp.png" alt="VibeCheck screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Hackathon</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">VibeCheck</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Mar 2026 &middot; Built in 12 hours</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Full-stack real-time networking platform deployed within 12 hours under hackathon constraints. AI-powered matching using embeddings (pgvector, cosine similarity) and streaming responses.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Designed backend architecture, Express proxy, and Supabase schema</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Implemented AI matching via pgvector cosine similarity with streaming</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Express</span>
-                  <span class="tech-tag">Supabase</span>
-                  <span class="tech-tag">pgvector</span>
-                  <span class="tech-tag">AI Embeddings</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://vibe-check-seven-bay.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- CareCircle -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.1s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/carecirclelp.png" alt="CareCircle screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Hackathon</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">CareCircle</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Apr 2026 &middot; 12 APIs &middot; 9 tables</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Multilingual caregiving platform built with Next.js, Supabase, and Gemini 2.5 Flash. Supports 10 languages with multimodal AI pipeline for OCR, voice transcription, and medical translation.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Engineered multimodal AI pipeline: OCR, voice transcription, medical translation</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Designed emergency QR system for instant patient-critical information access</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Next.js</span>
-                  <span class="tech-tag">Supabase</span>
-                  <span class="tech-tag">Gemini 2.5</span>
-                  <span class="tech-tag">OCR</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- FinanceFlow -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.15s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/financeflow5.png" alt="FinanceFlow screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-                <div style="position:absolute;top:0.75rem;right:0.75rem;z-index:2;">
-                  <span class="hand-note" style="background:rgba(13,12,11,0.7);padding:0.15rem 0.5rem;border-radius:3px;">Top 3</span>
-                </div>
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">FinanceFlow</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Fall 2024 &middot; FinTech &middot; Capstone</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Full-stack financial management platform with RESTful APIs, Plaid integration, JWT authentication, and AI-powered financial insights. Ranked Top 3 at capstone showcase.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Built RESTful APIs with Node.js/Express for auth, transactions, Plaid integration</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Designed relational MySQL schema with JWT-based authentication</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Node.js</span>
-                  <span class="tech-tag">Express</span>
-                  <span class="tech-tag">MySQL</span>
-                  <span class="tech-tag">Plaid API</span>
-                  <span class="tech-tag">JWT</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://financeflow.icu/login" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- TripBoard -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.20s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/tripboard.png" alt="TripBoard screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">TripBoard</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Fall 2025</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Collaborative travel planning platform with REST APIs, MongoDB, and real-time scheduling features for group coordination and itinerary management.
-                  </p>
-                </div>
-                <ul style="display:flex;flex-direction:column;gap:0.35rem;color:rgba(232,224,208,0.55);font-size:0.83rem;margin-bottom:1rem;list-style:none;padding:0;">
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Session-based authentication and REST APIs with full CRUD functionality</span></li>
-                  <li style="display:flex;gap:0.5rem;"><span style="color:#c9a84c;flex-shrink:0;font-size:0.6rem;">&#9670;</span><span>Real-time collaborative scheduling with MongoDB backend</span></li>
-                </ul>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">React</span>
-                  <span class="tech-tag">Node.js</span>
-                  <span class="tech-tag">MongoDB</span>
-                  <span class="tech-tag">REST APIs</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://app.tripboard.xyz/dashboard" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                    Live Demo
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- SmartBook -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.25s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/smartbook3.png" alt="SmartBook screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">SmartBook</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Jan – May 2025 &middot; Mobile</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Flutter-based mobile reading companion integrating Google Books API for real-time search, Firebase Authentication, and Firestore for user data management.
-                  </p>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Flutter</span>
-                  <span class="tech-tag">Dart</span>
-                  <span class="tech-tag">Firebase</span>
-                  <span class="tech-tag">Google Books API</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://github.com/vinhbin/smartbook" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Heart Disease -->
-            <article class="card card-bracketed card-tilt" data-reveal="up" style="transition-delay:0.30s;padding:0;overflow:hidden;">
-              <div class="img-vignette">
-                <img src="images/heartdisease.jfif" alt="Heart Disease Prediction screenshot" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" />
-              </div>
-              <div style="padding:1.5rem;">
-                <div style="margin-bottom:1rem;">
-                  <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:0.35rem;color:#e8e0d0;">Heart Disease Prediction</h3>
-                  <p style="font-size:0.78rem;color:#8a8478;margin-bottom:0.75rem;font-family:'JetBrains Mono',monospace;">Fall 2025 &middot; Machine Learning</p>
-                  <p style="color:rgba(232,224,208,0.6);font-size:0.88rem;line-height:1.65;">
-                    Built and evaluated Logistic Regression and Random Forest models on clinical datasets. Performed feature engineering and statistical analysis evaluated via ROC-AUC, precision, and recall.
-                  </p>
-                </div>
-                <div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:1rem;">
-                  <span class="tech-tag">Python</span>
-                  <span class="tech-tag">scikit-learn</span>
-                  <span class="tech-tag">Pandas</span>
-                  <span class="tech-tag">NumPy</span>
-                </div>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="https://github.com/vinhbin/heartdiseaseDS" target="_blank" rel="noopener noreferrer" class="btn-sm">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-                    GitHub
-                  </a>
-                </div>
-              </div>
-            </article>
-
-          </div>
-        </div>
-      </section>
-
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           SKILLS
-      ═══════════════════════════════ -->
-      <section id="skills" style="padding:5rem 1.5rem;">
-        <div style="max-width:900px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:3rem;">
-            <p class="section-label">Technical Skills</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;">Technologies &amp; Tools</h2>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2.5rem;">
-
-            <div data-reveal="up" style="transition-delay:0.05s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Languages</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">Python</span>
-                <span class="skill-chip">Java</span>
-                <span class="skill-chip">SQL</span>
-                <span class="skill-chip">JavaScript</span>
-                <span class="skill-chip">TypeScript</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.10s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Backend</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">FastAPI</span>
-                <span class="skill-chip">Django</span>
-                <span class="skill-chip">Django REST Framework</span>
-                <span class="skill-chip">Node.js</span>
-                <span class="skill-chip">Express</span>
-                <span class="skill-chip">REST APIs</span>
-                <span class="skill-chip">JWT Auth</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.15s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Databases</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">PostgreSQL</span>
-                <span class="skill-chip">MySQL</span>
-                <span class="skill-chip">MongoDB</span>
-                <span class="skill-chip">Supabase</span>
-                <span class="skill-chip">pgvector</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.20s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Architecture &amp; Testing</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">Multi-tenant systems</span>
-                <span class="skill-chip">API design</span>
-                <span class="skill-chip">Data pipelines</span>
-                <span class="skill-chip">pytest</span>
-                <span class="skill-chip">Automated testing</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.25s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Cloud &amp; Tools</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">Docker</span>
-                <span class="skill-chip">Git</span>
-                <span class="skill-chip">AWS</span>
-                <span class="skill-chip">Azure</span>
-                <span class="skill-chip">Vercel</span>
-                <span class="skill-chip">Railway</span>
-                <span class="skill-chip">Render</span>
-                <span class="skill-chip">Postman</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.30s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">AI / ML</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">OpenAI API</span>
-                <span class="skill-chip">Claude API</span>
-                <span class="skill-chip">Gemini API</span>
-                <span class="skill-chip">Embeddings</span>
-                <span class="skill-chip">RAG</span>
-                <span class="skill-chip">scikit-learn</span>
-              </div>
-            </div>
-
-            <div data-reveal="up" style="transition-delay:0.35s;">
-              <h3 style="font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#8a8478;margin-bottom:0.85rem;font-family:'DM Sans',sans-serif;">Frontend</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:0.35rem;">
-                <span class="skill-chip">React</span>
-                <span class="skill-chip">Next.js</span>
-                <span class="skill-chip">MapLibre</span>
-                <span class="skill-chip">HTML</span>
-                <span class="skill-chip">CSS</span>
-                <span class="skill-chip">Bootstrap</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           EDUCATION
-      ═══════════════════════════════ -->
-      <section id="education" style="padding:5rem 1.5rem;">
-        <div style="max-width:700px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:3rem;">
-            <p class="section-label">Education</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;">Academic Background</h2>
-          </div>
-
-          <div style="display:flex;flex-direction:column;gap:1.25rem;">
-
-            <!-- Georgia Tech -->
-            <div class="card" data-reveal="up" style="position:relative;padding:1.75rem;overflow:hidden;">
-              <div class="edu-bar"></div>
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:0.75rem;">
-                <div>
-                  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#e8e0d0;">M.S. Computer Science</h3>
-                  </div>
-                  <p style="color:#c9a84c;font-weight:500;font-size:0.95rem;">Georgia Institute of Technology</p>
-                  <p style="color:#8a8478;font-size:0.82rem;margin-top:0.15rem;">OMSCS — Online Master of Science</p>
-                </div>
-                <span class="badge" style="flex-shrink:0;">In Progress</span>
-              </div>
-              <p style="color:#8a8478;font-size:0.8rem;font-family:'JetBrains Mono',monospace;">
-                Aug 2026 – May 2028
-              </p>
-            </div>
-
-            <!-- GSU -->
-            <div class="card" data-reveal="up" style="transition-delay:0.1s;position:relative;padding:1.75rem;overflow:hidden;">
-              <div class="edu-bar"></div>
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:0.75rem;">
-                <div>
-                  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#e8e0d0;">B.S. Computer Science</h3>
-                  </div>
-                  <p style="color:#c9a84c;font-weight:500;font-size:0.95rem;">Georgia State University</p>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.35rem;flex-shrink:0;">
-                  <span class="badge">GPA 3.5</span>
-                  <span style="display:inline-block;padding:0.2rem 0.65rem;border-radius:4px;font-size:0.7rem;font-weight:600;background:rgba(232,224,208,0.05);border:1px solid rgba(232,224,208,0.1);color:#8a8478;font-family:'DM Sans',sans-serif;">Dean's List</span>
-                </div>
-              </div>
-              <p style="color:#8a8478;font-size:0.8rem;font-family:'JetBrains Mono',monospace;">
-                Aug 2022 – Dec 2025
-              </p>
-            </div>
-
-          </div>
-
-          <!-- Editorial Quote -->
-          <div data-reveal="up" style="transition-delay:0.2s;margin-top:3rem;">
-            <div class="editorial-quote">
-              <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:rgba(232,224,208,0.7);line-height:1.6;text-align:center;padding-left:1rem;">
-                <span class="hand-underline">Be one percent better</span> than you were yesterday.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <div class="ornament-divider">
-        <div class="line"></div>
-        <div class="diamond"></div>
-        <div class="line"></div>
-      </div>
-
-      <!-- ═══════════════════════════════
-           CONTACT
-      ═══════════════════════════════ -->
-      <section id="contact" style="padding:5rem 1.5rem;">
-        <div style="max-width:600px;margin:0 auto;">
-
-          <div data-reveal="up" style="margin-bottom:3rem;text-align:center;">
-            <p class="section-label">Contact</p>
-            <h2 class="scramble-heading" style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:400;margin-top:0.5rem;letter-spacing:-0.01em;">Let's Work Together</h2>
-            <p style="color:#8a8478;margin-top:0.75rem;line-height:1.65;font-size:0.95rem;">
-              Open to new opportunities, collaborations, and interesting projects.
-            </p>
-          </div>
-
-          <!-- Contact cards -->
-          <div data-reveal="up" style="transition-delay:0.1s;display:flex;flex-direction:column;gap:0.6rem;">
-
-            <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer" class="card contact-card" style="display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;text-decoration:none;">
-              <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:6px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.12);flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#c9a84c"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              </div>
-              <div style="flex:1;">
-                <p style="font-weight:600;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#e8e0d0;">LinkedIn</p>
-                <p style="color:#8a8478;font-size:0.8rem;margin-top:0.1rem;">linkedin.com/in/vinh-thaile</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-            </a>
-
-            <a href="mailto:vinhhle24@gmail.com" class="card contact-card" style="display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;text-decoration:none;">
-              <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:6px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.12);flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              </div>
-              <div style="flex:1;">
-                <p style="font-weight:600;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#e8e0d0;">Email</p>
-                <p style="color:#8a8478;font-size:0.8rem;margin-top:0.1rem;">vinhhle24@gmail.com</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-            </a>
-
-            <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer" class="card contact-card" style="display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;text-decoration:none;">
-              <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:6px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.12);flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#c9a84c"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-              </div>
-              <div style="flex:1;">
-                <p style="font-weight:600;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#e8e0d0;">GitHub</p>
-                <p style="color:#8a8478;font-size:0.8rem;margin-top:0.1rem;">github.com/vinhbin</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-            </a>
-
-            <a href="https://devpost.com/vinhbin" target="_blank" rel="noopener noreferrer" class="card contact-card" style="display:flex;align-items:center;gap:1rem;padding:1.15rem 1.4rem;text-decoration:none;">
-              <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:6px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.12);flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-              </div>
-              <div style="flex:1;">
-                <p style="font-weight:600;font-family:'Cormorant Garamond',serif;font-size:1rem;color:#e8e0d0;">Devpost</p>
-                <p style="color:#8a8478;font-size:0.8rem;margin-top:0.1rem;">devpost.com/vinhbin</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a8478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-            </a>
-
-          </div>
-
-        </div>
-      </section>
-
-    </main>
-
-    <!-- ═══════════════════════════════
-         FOOTER
-    ═══════════════════════════════ -->
-    <footer style="padding:3rem 1.5rem 2.5rem;border-top:1px solid rgba(201,168,76,0.08);">
-      <div style="max-width:1100px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
-
-        <!-- Ornamental flourish -->
-        <div style="display:flex;align-items:center;gap:0.5rem;opacity:0.15;">
-          <div style="width:40px;height:1px;background:linear-gradient(to right,transparent,#c9a84c);"></div>
-          <div style="width:4px;height:4px;background:#c9a84c;transform:rotate(45deg);"></div>
-          <div style="width:40px;height:1px;background:linear-gradient(to left,transparent,#c9a84c);"></div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:0.6rem;">
-          <a href="https://github.com/vinhbin" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="GitHub">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          </a>
-          <a href="https://www.linkedin.com/in/vinh-thaile/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          </a>
-          <a href="mailto:vinhhle24@gmail.com" class="social-btn" aria-label="Email">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          </a>
-        </div>
-
-        <div style="text-align:center;">
-          <p style="font-size:0.82rem;color:#8a8478;font-family:'Cormorant Garamond',serif;font-style:italic;">&#169; 2026 Vinh Le</p>
-          <p style="font-size:0.7rem;color:rgba(138,132,120,0.5);margin-top:0.25rem;font-family:'DM Sans',sans-serif;">Crafted with intention</p>
-        </div>
-
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;">
-          <button onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})" style="background:none;border:none;color:#8a8478;font-size:0.78rem;font-family:'DM Sans',sans-serif;transition:color 0.3s;" onmouseenter="this.style.color='#c9a84c'" onmouseleave="this.style.color='#8a8478'">Back to Top</button>
-          <a href="#projects" style="color:#8a8478;font-size:0.78rem;text-decoration:none;transition:color 0.3s;" onmouseenter="this.style.color='#c9a84c'" onmouseleave="this.style.color='#8a8478'">Projects</a>
-          <a href="#contact" style="color:#8a8478;font-size:0.78rem;text-decoration:none;transition:color 0.3s;" onmouseenter="this.style.color='#c9a84c'" onmouseleave="this.style.color='#8a8478'">Contact</a>
-          <a href="https://drive.google.com/file/d/12-XkvyMMROpmAihpwPXNC2v53SX-WWIK/view?usp=sharing" target="_blank" rel="noopener noreferrer" style="color:#8a8478;font-size:0.78rem;text-decoration:none;transition:color 0.3s;" onmouseenter="this.style.color='#c9a84c'" onmouseleave="this.style.color='#8a8478'">Resume</a>
-        </div>
-
-      </div>
-    </footer>
-  </div>
-
-  <!-- ═══════════════════════════════
-       SCRIPTS
-  ═══════════════════════════════ -->
-
-  <!-- Hero: character stagger + typewriter -->
+  <script src="shared/data.js"></script>
   <script>
     (function () {
-      // Character stagger for hero name
-      var nameEl = document.getElementById('hero-name');
-      if (nameEl) {
-        var name = 'Vinh Le';
-        var html = '';
-        for (var i = 0; i < name.length; i++) {
-          if (name[i] === ' ') {
-            html += '<span class="space" style="animation-delay:' + (i * 0.08) + 's;"> </span>';
-          } else {
-            html += '<span style="animation-delay:' + (i * 0.08) + 's;">' + name[i] + '</span>';
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function hexToRgb(hex) {
+        var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [200, 200, 200];
+      }
+
+      /* deterministic pseudo-random per crack so the composition is stable */
+      function mulberry(seed) {
+        return function () {
+          seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+          var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+
+      /* jagged fissure path with small branches */
+      function crackPath(rnd, w, h) {
+        var segs = 13;
+        var pts = [];
+        var x = w / 2 + (rnd() - 0.5) * w * 0.2;
+        for (var i = 0; i <= segs; i++) {
+          var y = (h / segs) * i;
+          if (i > 0) {
+            x += (rnd() - 0.5) * w * 0.42;
+            if (rnd() < 0.22) x += (rnd() - 0.5) * w * 0.6; /* hard kink */
+            x = Math.max(w * 0.12, Math.min(w * 0.88, x));
           }
+          pts.push([x, y]);
         }
-        nameEl.innerHTML = html;
-      }
-
-      // Typewriter for subtitle
-      var subtitleEl = document.getElementById('hero-subtitle');
-      if (subtitleEl) {
-        var text = 'Building multi-tenant platforms, data pipelines, and tested REST APIs. B.S. CS from Georgia State \u2014 M.S. CS at Georgia Tech OMSCS.';
-        var idx = 0;
-        function typeNext() {
-          if (idx <= text.length) {
-            subtitleEl.textContent = text.slice(0, idx);
-            idx++;
-            setTimeout(typeNext, 22 + Math.random() * 18);
-          } else {
-            subtitleEl.style.borderRight = 'none';
-          }
+        var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L');
+        /* branches */
+        var branches = '';
+        for (var b = 0; b < 3; b++) {
+          var idx = 2 + Math.floor(rnd() * (segs - 4));
+          var p = pts[idx];
+          var dir = rnd() < 0.5 ? -1 : 1;
+          var bx1 = p[0] + dir * (6 + rnd() * w * 0.22);
+          var by1 = p[1] + (rnd() - 0.3) * h * 0.07;
+          var bx2 = bx1 + dir * (4 + rnd() * w * 0.14);
+          var by2 = by1 + (rnd() - 0.2) * h * 0.06;
+          branches += ' M' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) +
+            ' L' + bx1.toFixed(1) + ' ' + by1.toFixed(1) +
+            ' L' + bx2.toFixed(1) + ' ' + by2.toFixed(1);
         }
-        setTimeout(typeNext, 800);
+        return d + branches;
       }
-    })();
-  </script>
 
-  <!-- Nav: sticky show/hide + scroll spy + mobile menu -->
-  <script>
-    (function () {
-      var nav    = document.getElementById('sticky-nav');
-      var hero   = document.getElementById('hero');
-      var drawer = document.getElementById('mobile-drawer');
-      var menuBtn = document.getElementById('mobile-menu-btn');
-      var iconOpen  = document.getElementById('menu-icon-open');
-      var iconClose = document.getElementById('menu-icon-close');
-      if (!nav) return;
+      /* hand-placed scatter — no order, no labels, no hints */
+      var spots = [
+        { x: 13, y: 16, h: 40, rot: -7, dur: '4.2s' },
+        { x: 31, y: 44, h: 30, rot: 6, dur: '5.1s' },
+        { x: 50, y: 12, h: 46, rot: -2, dur: '3.6s' },
+        { x: 68, y: 42, h: 32, rot: 8, dur: '4.7s' },
+        { x: 86, y: 18, h: 42, rot: -5, dur: '5.6s' }
+      ];
 
-      var sections = ['about','experience','projects','skills','contact'];
+      var field = document.getElementById('field');
+      var sceneEls = [];
 
-      function onScroll() {
-        var threshold = hero ? hero.offsetHeight * 0.55 : 400;
-        nav.classList.toggle('visible', window.scrollY > threshold);
-        updateScrollSpy();
-      }
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
+      (window.VINH ? VINH.rooms : []).forEach(function (room, idx) {
+        var rgb = hexToRgb(room.accent);
+        var spot = spots[idx % spots.length];
+        var rnd = mulberry(97 + idx * 131);
 
-      // Smooth scroll for all internal links
-      document.querySelectorAll('a[href^="#"]').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-          var target = document.querySelector(this.getAttribute('href'));
-          if (!target) return;
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.className = 'crack';
+        a.href = room.file;
+        a.style.setProperty('--c', room.accent);
+        a.style.setProperty('--cdim', 'rgba(' + rgb.join(',') + ',0.35)');
+        a.style.setProperty('--rot', spot.rot + 'deg');
+        a.style.setProperty('--dur', spot.dur);
+        a.style.left = spot.x + '%';
+        a.style.top = spot.y + '%';
+        a.setAttribute('aria-label', 'Fracture ' + (idx + 1) + ' — contents unknown');
+
+        var W = 90, H = Math.round(spot.h * 8);
+        var d = crackPath(rnd, W, H);
+        a.innerHTML =
+          '<svg class="glow" width="' + W + '" height="' + (spot.h) + 'vh" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+          '  <path d="' + d + '" fill="none" stroke="rgba(' + rgb.join(',') + ',0.35)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '  <path d="' + d + '" fill="none" stroke="' + room.accent + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '  <path d="' + d + '" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
+
+        a.addEventListener('click', function (e) {
+          if (reduced) return;
           e.preventDefault();
-          if (drawer) { drawer.classList.remove('open'); setMenuIcon(false); }
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          a.classList.add('opening');
+          var flood = document.getElementById('flood');
+          flood.style.background = room.accent;
+          requestAnimationFrame(function () { flood.classList.add('on'); });
+          setTimeout(function () { window.location.href = room.file; }, 600);
         });
+
+        li.appendChild(a);
+        field.appendChild(li);
+        sceneEls.push(a);
       });
 
-      // Mobile menu toggle
-      if (menuBtn && drawer) {
-        menuBtn.addEventListener('click', function () {
-          var isOpen = drawer.classList.toggle('open');
-          menuBtn.setAttribute('aria-expanded', isOpen);
-          setMenuIcon(isOpen);
-        });
-        document.addEventListener('click', function (e) {
-          if (!nav.contains(e.target) && !drawer.contains(e.target)) {
-            drawer.classList.remove('open');
-            menuBtn.setAttribute('aria-expanded', false);
-            setMenuIcon(false);
-          }
-        });
-      }
-
-      function setMenuIcon(open) {
-        if (!iconOpen || !iconClose) return;
-        iconOpen.style.display  = open ? 'none'  : 'block';
-        iconClose.style.display = open ? 'block' : 'none';
-      }
-
-      // Scroll spy
-      function updateScrollSpy() {
-        var scrollMid = window.scrollY + window.innerHeight / 2;
-        var active = '';
-        sections.forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el && el.offsetTop <= scrollMid) active = id;
-        });
-        nav.querySelectorAll('[data-section]').forEach(function (link) {
-          link.classList.toggle('active', link.dataset.section === active);
-        });
-      }
-    })();
-  </script>
-
-  <!-- Custom cursor + sparkle -->
-  <script>
-    (function () {
-      if (!window.matchMedia('(pointer: fine)').matches) return;
-      var dot  = document.getElementById('cursor-dot');
-      var ring = document.getElementById('cursor-ring');
-      if (!dot || !ring) return;
-
-      var mx = window.innerWidth / 2, my = window.innerHeight / 2;
-      var rx = mx, ry = my;
-
-      document.addEventListener('mousemove', function (e) {
-        mx = e.clientX; my = e.clientY;
-        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-        maybeSparkle(mx, my);
+      /* secret: 1–5 still works for those who figure it out */
+      document.addEventListener('keydown', function (e) {
+        if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+        var n = parseInt(e.key, 10);
+        if (n >= 1 && n <= sceneEls.length) sceneEls[n - 1].click();
       });
 
-      function animateRing() {
-        rx += (mx - rx) * 0.1;
-        ry += (my - ry) * 0.1;
-        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-        requestAnimationFrame(animateRing);
-      }
-      animateRing();
-
-      document.querySelectorAll('a, button, .card, .skill-chip, .btn-primary, .btn-outline, .btn-sm, .social-btn').forEach(function (el) {
-        el.addEventListener('mouseenter', function () { ring.classList.add('hovering'); });
-        el.addEventListener('mouseleave', function () { ring.classList.remove('hovering'); });
-      });
-
-      var sparkleColors = ['#c9a84c', '#e8e0d0', '#b5634b', '#8a8478'];
-      var lastSparkleTime = 0;
-
-      function maybeSparkle(x, y) {
-        var now = Date.now();
-        if (now - lastSparkleTime < 90) return;
-        lastSparkleTime = now;
-        var el = document.createElement('div');
-        el.className = 'sparkle';
-        var color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
-        var angle = Math.random() * Math.PI * 2;
-        var dist  = 10 + Math.random() * 20;
-        el.style.background = color;
-        el.style.left = x + 'px'; el.style.top = y + 'px';
-        el.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
-        el.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
-        document.body.appendChild(el);
-        setTimeout(function () { el.remove(); }, 800);
-      }
-    })();
-  </script>
-
-  <!-- Scroll reveal -->
-  <script>
-    (function () {
-      document.body.classList.add('js-ready');
-      if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('revealed'); });
-        return;
-      }
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        });
-      }, { threshold: 0.10, rootMargin: '0px 0px -60px 0px' });
-
-      document.querySelectorAll('[data-reveal]').forEach(function (el) { observer.observe(el); });
-    })();
-  </script>
-
-  <!-- Text scramble effect on section headings -->
-  <script>
-    (function () {
-      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
-      var headings = document.querySelectorAll('.scramble-heading');
-
-      if (!('IntersectionObserver' in window)) return;
-
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          scramble(entry.target);
-          observer.unobserve(entry.target);
-        });
-      }, { threshold: 0.3 });
-
-      headings.forEach(function (h) {
-        h.dataset.original = h.textContent;
-        observer.observe(h);
-      });
-
-      function scramble(el) {
-        var original = el.dataset.original;
-        var iterations = 0;
-        var maxIterations = original.length * 2;
-        var interval = setInterval(function () {
-          el.textContent = original.split('').map(function (char, i) {
-            if (i < iterations / 2) return original[i];
-            if (char === ' ') return ' ';
-            return chars[Math.floor(Math.random() * chars.length)];
-          }).join('');
-          iterations++;
-          if (iterations > maxIterations) {
-            el.textContent = original;
-            clearInterval(interval);
-          }
-        }, 30);
-      }
-    })();
-  </script>
-
-  <!-- Parallax orbs (infinite canvas depth) -->
-  <script>
-    (function () {
-      var orbs = document.querySelectorAll('.parallax-layer');
-      if (!orbs.length) return;
-
-      function onScroll() {
-        var scrollY = window.scrollY;
-        orbs.forEach(function (orb) {
-          var speed = parseFloat(orb.dataset.speed) || 0.02;
-          orb.style.transform = 'translateY(' + (-scrollY * speed * 100) + 'px)';
+      /* system window: line-by-line reveal */
+      var lines = document.querySelectorAll('#sys-lines .line');
+      if (reduced) {
+        lines.forEach(function (l) { l.classList.add('on'); });
+      } else {
+        lines.forEach(function (l, i) {
+          setTimeout(function () { l.classList.add('on'); }, 420 + i * 340);
         });
       }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
     })();
   </script>
-
+  <script src="shared/void.js" defer></script>
 </body>
 </html>
