@@ -74,9 +74,12 @@
       display: block;
       outline: none;
       text-decoration: none;
+      margin-left: -45px; /* x positions are crack centers */
       transform: rotate(var(--rot));
       transition: transform 0.5s cubic-bezier(0.25, 0.9, 0.3, 1), filter 0.5s ease;
       filter: brightness(0.9);
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .crack svg { display: block; overflow: visible; }
     .crack .glow {
@@ -177,8 +180,15 @@
     /* ── mobile ── */
     @media (max-width: 640px) {
       body { overflow-y: auto; }
-      .system { font-size: 0.62rem; }
-      .system .k { min-width: 4rem; }
+      .system {
+        font-size: 0.64rem;
+        line-height: 1.7;
+        bottom: max(1.1rem, calc(env(safe-area-inset-bottom) + 0.8rem));
+        padding: 0.85rem 1rem 0.95rem;
+      }
+      .system .line { white-space: normal; overflow: visible; text-overflow: clip; }
+      .system .k { min-width: 3.4rem; }
+      .topbar { padding-top: 1.1rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -288,20 +298,30 @@
       }
 
       /* hand-placed scatter — no order, no labels, no hints */
-      var spots = [
+      var spotsDesktop = [
         { x: 13, y: 16, h: 40, rot: -7, dur: '4.2s' },
         { x: 31, y: 44, h: 30, rot: 6, dur: '5.1s' },
         { x: 50, y: 12, h: 46, rot: -2, dur: '3.6s' },
         { x: 68, y: 42, h: 32, rot: 8, dur: '4.7s' },
         { x: 86, y: 18, h: 42, rot: -5, dur: '5.6s' }
       ];
+      /* portrait: everything on-screen, clear of the system window */
+      var spotsMobile = [
+        { x: 17, y: 5, h: 25, rot: -6, dur: '4.2s' },
+        { x: 30, y: 33, h: 22, rot: 5, dur: '5.1s' },
+        { x: 51, y: 4, h: 27, rot: -2, dur: '3.6s' },
+        { x: 71, y: 32, h: 23, rot: 7, dur: '4.7s' },
+        { x: 85, y: 5, h: 25, rot: -5, dur: '5.6s' }
+      ];
+      var mobileMq = window.matchMedia('(max-width: 640px)');
+      function spots() { return mobileMq.matches ? spotsMobile : spotsDesktop; }
 
       var field = document.getElementById('field');
       var sceneEls = [];
 
       (window.VINH ? VINH.rooms : []).forEach(function (room, idx) {
         var rgb = hexToRgb(room.accent);
-        var spot = spots[idx % spots.length];
+        var spot = spots()[idx % 5];
         var rnd = mulberry(97 + idx * 131);
 
         var li = document.createElement('li');
@@ -339,6 +359,19 @@
         field.appendChild(li);
         sceneEls.push(a);
       });
+
+      /* re-scatter when crossing the mobile breakpoint */
+      function applySpots() {
+        sceneEls.forEach(function (a, i) {
+          var s = spots()[i % 5];
+          a.style.left = s.x + '%';
+          a.style.top = s.y + '%';
+          a.style.setProperty('--rot', s.rot + 'deg');
+          var svg = a.querySelector('svg');
+          if (svg) svg.setAttribute('height', s.h + 'vh');
+        });
+      }
+      if (mobileMq.addEventListener) mobileMq.addEventListener('change', applySpots);
 
       /* secret: 1–5 still works for those who figure it out */
       document.addEventListener('keydown', function (e) {
