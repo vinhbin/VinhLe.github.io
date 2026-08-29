@@ -703,6 +703,12 @@
       .ph-grid img { transition: none; }
     }
   </style>
+  <style>
+    /* Cross-document morph from the launch page: the landing mock and this phone
+       share a view-transition-name, so supporting browsers animate one into the other. */
+    @view-transition { navigation: auto; }
+    .phone { view-transition-name: phone; }
+  </style>
 </head>
 <body data-accent="#9fc9ff" data-room="phone">
 

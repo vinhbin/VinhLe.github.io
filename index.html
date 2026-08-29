@@ -74,7 +74,7 @@
       display: flex; align-items: flex-end; justify-content: center;
       padding-bottom: 6vh;
     }
-    .moments { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100svh; }
+    .moments { position: relative; z-index: 2; margin-top: -100vh; margin-top: -100svh; pointer-events: none; }
     .moment {
       min-height: 100vh; min-height: 100svh;
       display: flex; align-items: center;
@@ -460,7 +460,22 @@
         specRow('Awards', 'Best Hack for Good — Hack RenderATL  ·  1st Place — Actian VectorAI Build Challenge', true);
         specRow('Battery', 'Muay Thai, travel, videography, good food.');
       }
-      /* Task 6 adds: try-it takeoff handoff */
+      /* try-it takeoff: scale the phone up, fade to black, hand off to phone.html.
+         View Transitions API (opted in via CSS) morphs the mock into the real phone
+         where supported; the manual takeoff below is the everywhere-fallback. */
+      function takeoff(e) {
+        try { sessionStorage.setItem('fromLaunch', '1'); } catch (err) {}
+        if (reduced) return; // plain navigation, flag still set
+        e.preventDefault();
+        document.body.classList.add('takeoff');
+        setTimeout(function () { window.location.href = 'phone.html'; }, 520);
+      }
+      document.querySelectorAll('[data-tryit]').forEach(function (a) {
+        a.addEventListener('click', takeoff);
+      });
+      if (mock) {
+        mock.addEventListener('click', takeoff);
+      }
     })();
   </script>
 </body>
