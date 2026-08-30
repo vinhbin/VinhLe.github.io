@@ -1007,7 +1007,7 @@
       var bullets = (p.bullets && p.bullets.length)
         ? '<ul>' + p.bullets.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '';
       var shot = p.image
-        ? '<div class="shot"><img src="' + esc(p.image) + '" alt="Screenshot of ' + esc(p.name) + '" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>' : '';
+        ? '<div class="shot"><img src="../' + esc(p.image) + '" alt="Screenshot of ' + esc(p.name) + '" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></div>' : '';
 
       var links = '';
       Object.keys(p.links || {}).forEach(function (k) {
