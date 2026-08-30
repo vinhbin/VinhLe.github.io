@@ -166,8 +166,18 @@ window.VINH = {
     { id: 'heartdisease', name: 'Heart Disease Prediction', date: 'Fall 2025', desc: 'Logistic Regression and Random Forest on clinical data, evaluated via ROC-AUC, precision, and recall.', tech: ['Python', 'scikit-learn', 'Pandas'], links: { github: 'https://github.com/vinhbin/heartdiseaseDS' }, image: 'images/heartdisease.jfif' }
   ],
   life: [
+    { src: 'images/life/shot-3.jpg', caption: 'Golden hour over Sutro Baths', album: 'Shots' },
+    { src: 'images/life/shot-4.jpg', caption: 'Wings out at Lands End', album: 'Shots' },
+    { src: 'images/life/shot-5.jpg', caption: 'Front row seats to the Pacific', album: 'Shots' },
+    { src: 'images/life/shot-6.jpg', caption: 'Sutro Baths at dusk', album: 'Shots' },
+    { src: 'images/life/shot-7.jpg', caption: 'Crissy Field, one good boy', album: 'Shots' },
+    { src: 'images/life/shot-8.jpg', caption: 'The climb to the bridge', album: 'Shots' },
+    { src: 'images/life/shot-9.jpg', caption: 'Golden Gate in bloom', album: 'Shots' },
+    { src: 'images/life/shot-10.jpg', caption: 'Japanese garden, deep summer', album: 'Shots' },
     { src: 'images/life/travel-1.jpg', caption: 'Sensō-ji Temple — Tokyo', album: 'Travel' },
     { src: 'images/life/travel-2.jpg', caption: 'Sunset wade with the crew', album: 'Travel' },
+    { src: 'images/life/travel-3.jpg', caption: 'Straight up, midnight towers', album: 'Travel' },
+    { src: 'images/life/travel-4.jpg', caption: 'City lights from the top', album: 'Travel' },
     { src: 'images/life/shot-1.jpg', caption: 'Above the valley', album: 'Shots' },
     { src: 'images/life/shot-2.jpg', caption: 'Golden hour local', album: 'Shots' },
     { src: 'images/life/muaythai-1.jpg', caption: 'After sparring', album: 'Muay Thai' }
