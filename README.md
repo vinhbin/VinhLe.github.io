@@ -78,6 +78,17 @@ VibeCheck (hackathon, pgvector matching) · CareCircle (multilingual caregiving,
 
 ---
 
+## Structure
+
+- `index.html` — Apple-style launch page for the phone: hero, sticky-phone scroll story, tech specs from `shared/data.js`, and a seamless "Try it" handoff.
+- `phone.html` — the product: a working iPhone (lock screen, iMessage thread that composes real email, Photos, project apps).
+- `classic.html` — the classic one-page portfolio; the quick view for recruiters.
+- `archive/` — retired rooms (terminal, retro Windows, arcade). Still deployed, just unlinked.
+- `shared/data.js` — single source of truth for all content. Edit once; every page updates.
+- `shared/void.js` / `void.css` — page transitions + the `‹ vinhle.xyz` corner link.
+
+---
+
 ## Run Locally
 
 ```bash
