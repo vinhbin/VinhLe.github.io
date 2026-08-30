@@ -65,33 +65,8 @@
       box-shadow: 0 0 18px rgba(201, 168, 76, 0.12);
     }
 
-    /* ── decorative fractures in the void ── */
-    #field { position: fixed; inset: 0; z-index: 1; pointer-events: none; list-style: none; }
-    .crack {
-      position: absolute;
-      margin-left: -45px;
-      transform: rotate(var(--rot));
-      opacity: 0.5;
-    }
-    .crack svg { display: block; overflow: visible; }
-    .crack .glow {
-      filter:
-        drop-shadow(0 0 6px var(--c))
-        drop-shadow(0 0 22px var(--cdim));
-      animation: crack-breathe var(--dur) ease-in-out infinite;
-    }
-    @keyframes crack-breathe {
-      0%, 100% { opacity: 0.75; }
-      45%      { opacity: 1; }
-      55%      { opacity: 0.85; }
-    }
-    .crack.lit { opacity: 0.95; }
-    .crack.lit .glow {
-      filter:
-        drop-shadow(0 0 10px var(--c))
-        drop-shadow(0 0 36px var(--c))
-        drop-shadow(0 0 70px var(--cdim));
-    }
+    /* ── void wisps: ambient canvas behind everything ── */
+    #voidfx { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
     /* ── SYSTEM window: the menu ── */
     .system {
@@ -237,7 +212,6 @@
 
     @media (prefers-reduced-motion: reduce) {
       #boot { display: none; }
-      .crack .glow { animation: none; }
       .system .line, .m-row, .hint-line { opacity: 1 !important; transform: none !important; transition: none !important; }
     }
   </style>
@@ -262,7 +236,7 @@
     <a href="classic.html">Quick View</a>
   </div>
 
-  <ul id="field" aria-hidden="true"></ul>
+  <canvas id="voidfx" aria-hidden="true"></canvas>
 
   <main class="system" aria-label="System window">
     <div class="sys-head"><span class="diamond" aria-hidden="true"></span>SYSTEM</div>
@@ -307,99 +281,94 @@
         var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [200, 200, 200];
       }
-      function mulberry(seed) {
-        return function () {
-          seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-          var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-          return ((t ^ t >>> 14) >>> 0) / 4294967296;
-        };
-      }
-      function crackPath(rnd, w, h) {
-        var segs = 13, pts = [];
-        var x = w / 2 + (rnd() - 0.5) * w * 0.2;
-        for (var i = 0; i <= segs; i++) {
-          var y = (h / segs) * i;
-          if (i > 0) {
-            x += (rnd() - 0.5) * w * 0.42;
-            if (rnd() < 0.22) x += (rnd() - 0.5) * w * 0.6;
-            x = Math.max(w * 0.12, Math.min(w * 0.88, x));
-          }
-          pts.push([x, y]);
+      /* ── void wisps: five drifting spirits, one per door; selected one flares ── */
+      var wisps = [];
+      (function () {
+        var canvas = document.getElementById('voidfx');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W, H, DPR = Math.min(window.devicePixelRatio || 1, 2);
+        function resize() {
+          W = window.innerWidth; H = window.innerHeight;
+          canvas.width = W * DPR; canvas.height = H * DPR;
+          canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
         }
-        var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L');
-        var branches = '';
-        for (var b = 0; b < 3; b++) {
-          var idx = 2 + Math.floor(rnd() * (segs - 4));
-          var p = pts[idx];
-          var dir = rnd() < 0.5 ? -1 : 1;
-          var bx1 = p[0] + dir * (6 + rnd() * w * 0.22);
-          var by1 = p[1] + (rnd() - 0.3) * h * 0.07;
-          var bx2 = bx1 + dir * (4 + rnd() * w * 0.14);
-          var by2 = by1 + (rnd() - 0.2) * h * 0.06;
-          branches += ' M' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) +
-            ' L' + bx1.toFixed(1) + ' ' + by1.toFixed(1) +
-            ' L' + bx2.toFixed(1) + ' ' + by2.toFixed(1);
-        }
-        return d + branches;
-      }
+        resize();
+        window.addEventListener('resize', resize);
 
-      var spotsDesktop = [
-        { x: 10, y: 12, h: 36, rot: -7, dur: '4.2s' },
-        { x: 22, y: 52, h: 28, rot: 6, dur: '5.1s' },
-        { x: 50, y: 6, h: 26, rot: -2, dur: '3.6s' },
-        { x: 79, y: 50, h: 30, rot: 8, dur: '4.7s' },
-        { x: 90, y: 10, h: 38, rot: -5, dur: '5.6s' }
-      ];
-      var spotsMobile = [
-        { x: 12, y: 3, h: 18, rot: -6, dur: '4.2s' },
-        { x: 88, y: 4, h: 16, rot: 5, dur: '5.1s' },
-        { x: 8, y: 70, h: 20, rot: -2, dur: '3.6s' },
-        { x: 92, y: 66, h: 18, rot: 7, dur: '4.7s' },
-        { x: 50, y: 84, h: 14, rot: -5, dur: '5.6s' }
-      ];
-      var mobileMq = window.matchMedia('(max-width: 640px)');
-      function spots() { return mobileMq.matches ? spotsMobile : spotsDesktop; }
-
-      /* decorative fractures — one per room, lit when its menu row is selected */
-      var field = document.getElementById('field');
-      var crackEls = [];
-      (window.VINH ? VINH.rooms : []).forEach(function (room, idx) {
-        var rgb = hexToRgb(room.accent);
-        var spot = spots()[idx % 5];
-        var rnd = mulberry(97 + idx * 131);
-        var li = document.createElement('li');
-        var d = document.createElement('div');
-        d.className = 'crack';
-        d.style.setProperty('--c', room.accent);
-        d.style.setProperty('--cdim', 'rgba(' + rgb.join(',') + ',0.35)');
-        d.style.setProperty('--rot', spot.rot + 'deg');
-        d.style.setProperty('--dur', spot.dur);
-        d.style.left = spot.x + '%';
-        d.style.top = spot.y + '%';
-        var W = 90, H = Math.round(spot.h * 8);
-        var path = crackPath(rnd, W, H);
-        d.innerHTML =
-          '<svg class="glow" width="' + W + '" height="' + spot.h + 'vh" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
-          '  <path d="' + path + '" fill="none" stroke="rgba(' + rgb.join(',') + ',0.35)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '  <path d="' + path + '" fill="none" stroke="' + room.accent + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '  <path d="' + path + '" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '</svg>';
-        li.appendChild(d);
-        field.appendChild(li);
-        crackEls.push(d);
-      });
-      function applySpots() {
-        crackEls.forEach(function (d, i) {
-          var s = spots()[i % 5];
-          d.style.left = s.x + '%';
-          d.style.top = s.y + '%';
-          d.style.setProperty('--rot', s.rot + 'deg');
-          var svg = d.querySelector('svg');
-          if (svg) svg.setAttribute('height', s.h + 'vh');
+        var anchors = [
+          { x: 0.11, y: 0.26 }, { x: 0.15, y: 0.74 }, { x: 0.5, y: 0.1 },
+          { x: 0.85, y: 0.72 }, { x: 0.89, y: 0.24 }
+        ];
+        (window.VINH ? VINH.rooms : []).forEach(function (room, i) {
+          var rgb = hexToRgb(room.accent);
+          wisps.push({
+            rgb: rgb,
+            ax: anchors[i % 5].x, ay: anchors[i % 5].y,
+            r: 48 + Math.random() * 24,
+            p1: Math.random() * Math.PI * 2,
+            p2: Math.random() * Math.PI * 2,
+            s1: 0.1 + Math.random() * 0.1,
+            s2: 0.08 + Math.random() * 0.1,
+            lit: 0, target: 0
+          });
         });
-      }
-      if (mobileMq.addEventListener) mobileMq.addEventListener('change', applySpots);
+        var motes = [];
+        for (var i = 0; i < 60; i++) {
+          motes.push({
+            x: Math.random(), y: Math.random(),
+            r: 0.4 + Math.random() * 1.1,
+            v: 0.00003 + Math.random() * 0.00009,
+            a: 0.05 + Math.random() * 0.11,
+            p: Math.random() * Math.PI * 2
+          });
+        }
+
+        function draw(t, animate) {
+          ctx.clearRect(0, 0, W, H);
+          ctx.globalCompositeOperation = 'lighter';
+          for (var i = 0; i < wisps.length; i++) {
+            var w = wisps[i];
+            w.lit += (w.target - w.lit) * 0.05;
+            var x = (w.ax + Math.sin(t * w.s1 + w.p1) * 0.055) * W;
+            var y = (w.ay + Math.cos(t * w.s2 + w.p2) * 0.075) * H;
+            var pulse = 1 + 0.12 * Math.sin(t * 0.9 + w.p1);
+            var R = w.r * pulse * (1 + w.lit * 0.9);
+            var alpha = 0.055 + 0.045 * Math.sin(t * 0.7 + w.p2) + w.lit * 0.2;
+            var g = ctx.createRadialGradient(x, y, 0, x, y, R);
+            g.addColorStop(0, 'rgba(' + w.rgb.join(',') + ',' + alpha + ')');
+            g.addColorStop(0.5, 'rgba(' + w.rgb.join(',') + ',' + alpha * 0.4 + ')');
+            g.addColorStop(1, 'rgba(' + w.rgb.join(',') + ',0)');
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(x, y, R, 0, Math.PI * 2);
+            ctx.fill();
+            /* bright soul-core */
+            var core = (0.22 + w.lit * 0.45) * (0.6 + 0.4 * Math.sin(t * 1.3 + w.p1));
+            ctx.fillStyle = 'rgba(255,255,255,' + Math.max(0, core) + ')';
+            ctx.beginPath();
+            ctx.arc(x, y, 1.6 + w.lit * 1.6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalCompositeOperation = 'source-over';
+          for (var j = 0; j < motes.length; j++) {
+            var m = motes[j];
+            if (animate) {
+              m.y -= m.v; m.p += 0.01;
+              if (m.y < -0.02) { m.y = 1.02; m.x = Math.random(); }
+            }
+            var tw = m.a * (0.6 + 0.4 * Math.sin(m.p));
+            ctx.fillStyle = 'rgba(215, 220, 235, ' + tw + ')';
+            ctx.fillRect(m.x * W, m.y * H, m.r, m.r);
+          }
+        }
+        if (!reduced) {
+          (function loop(now) { draw((now || 0) * 0.001, true); requestAnimationFrame(loop); })(0);
+        } else {
+          draw(1, false);
+        }
+      })();
 
       /* ── the menu ── */
       var menu = document.getElementById('gate-menu');
@@ -428,7 +397,7 @@
       function select(i) {
         selIdx = i;
         rows.forEach(function (r, j) { r.classList.toggle('sel', j === i); });
-        crackEls.forEach(function (c, j) { c.classList.toggle('lit', j === i); });
+        wisps.forEach(function (w, j) { w.target = j === i ? 1 : 0; });
       }
 
       function enter(i) {
