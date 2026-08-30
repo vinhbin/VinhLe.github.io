@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Vinh Le — The Phone</title>
-  <link rel="icon" href="images/linkedinpfp.jpg" type="image/jpeg" />
+  <link rel="icon" href="../images/linkedinpfp.jpg" type="image/jpeg" />
   <meta name="description" content="Vinh Le's portfolio as an iPhone. Unlock it, read the messages, browse the project photos, and send a text that becomes a real email." />
-  <link rel="stylesheet" href="shared/void.css" />
+  <link rel="stylesheet" href="../shared/void.css" />
   <style>
     /* ============================================================
        THE PHONE — a faithful iOS recreation floating in the void.
@@ -760,7 +760,7 @@
 
               <div class="lock-notifs">
                 <div class="lock-notif">
-                  <img class="n-ic" src="images/linkedinpfp.jpg" alt="" />
+                  <img class="n-ic" src="../images/linkedinpfp.jpg" alt="" />
                   <div class="nt"><b>About</b><span id="lockNotifTxt">AI engineer. Georgia Tech. The work is on this phone.</span></div>
                   <time>now</time>
                 </div>
@@ -793,7 +793,7 @@
             <!-- HOME SCREEN -->
             <main class="home" id="homeScreen" aria-label="Home screen" hidden>
               <button class="widget" id="aboutWidget" type="button" aria-label="Open About">
-                <img src="images/linkedinpfp.jpg" alt="" />
+                <img src="../images/linkedinpfp.jpg" alt="" />
                 <div class="w-txt">
                   <div class="w-kicker">About</div>
                   <div class="w-name" id="wName">Vinh Le</div>
@@ -861,7 +861,7 @@
                   <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
                 </button>
                 <div class="msg-contact">
-                  <img src="images/linkedinpfp.jpg" alt="" />
+                  <img src="../images/linkedinpfp.jpg" alt="" />
                   <span class="nm"><span id="msgContactName">Vinh Le</span>
                     <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m1 1 4 4-4 4"/></svg>
                   </span>
@@ -971,7 +971,7 @@
                 <div class="set-wrap">
                   <div class="set-hd">Settings</div>
                   <a class="set-profile" id="setProfile" href="#">
-                    <img src="images/linkedinpfp.jpg" alt="" />
+                    <img src="../images/linkedinpfp.jpg" alt="" />
                     <div class="sp-t"><b id="setName">Vinh Le</b><span id="setSub"></span></div>
                     <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg>
                   </a>
@@ -997,8 +997,8 @@
     </div>
   </noscript>
 
-  <script src="shared/data.js"></script>
-  <script src="shared/void.js" defer></script>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/void.js" defer></script>
   <script>
   (function () {
     'use strict';
@@ -1018,6 +1018,7 @@
     window.addEventListener('resize', fit);
 
     /* ============ identity ============ */
+    function asset(p) { return (!p || /^https?:/i.test(p)) ? p : '../' + p; }
     var first = V.name.split(' ')[0];
     $('lockWho').textContent = V.name;
     $('lockWhat').textContent = V.role;
@@ -1324,7 +1325,7 @@
       var b = document.createElement('button');
       b.setAttribute('aria-label', 'View ' + p.name);
       var img = document.createElement('img');
-      img.src = p.image;
+      img.src = asset(p.image);
       img.alt = p.life ? p.name : p.name + ' screenshot';
       img.loading = 'lazy';
       b.appendChild(img);
@@ -1338,7 +1339,7 @@
     var pwIdx = 0;
     function setWidgetShot(i) {
       var p = shots[i];
-      pwImg.src = p.image;
+      pwImg.src = asset(p.image);
       pwImg.alt = '';
       pwName.textContent = p.name;
     }
@@ -1368,7 +1369,7 @@
     }
     function renderViewer() {
       var p = shots[vIdx];
-      $('vImg').src = p.image;
+      $('vImg').src = asset(p.image);
       $('vImg').alt = p.life ? p.name : p.name + ' screenshot';
       $('vName').textContent = p.name;
       $('vMeta').textContent = p.life ? (p.album || '') : [p.event, p.award, p.date].filter(Boolean).join(' · ');
@@ -1483,7 +1484,7 @@
       art.setAttribute('aria-expanded', 'false');
       art.setAttribute('aria-label', p.name + ' — show details');
       if (p.image) {
-        art.style.backgroundImage = 'linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url("' + p.image + '")';
+        art.style.backgroundImage = 'linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url("' + asset(p.image) + '")';
       } else {
         art.style.background = ICON_HUES[i % ICON_HUES.length];
         var mono = document.createElement('span');

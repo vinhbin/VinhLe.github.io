@@ -76,7 +76,19 @@
     .summary {
       margin-top: 1.6rem;
       color: var(--muted);
-      max-width: 60ch;
+      max-width: 68ch;
+    }
+    .summary p { margin-top: 0.9rem; }
+    .summary p:first-child { margin-top: 0; }
+    .summary .kicker {
+      margin-top: 1.2rem;
+      font-size: 0.82rem;
+      color: var(--faint);
+    }
+    .summary .mission {
+      margin-top: 0.25rem;
+      color: var(--ink);
+      font-weight: 500;
     }
 
     /* ── Sections ── */
@@ -210,7 +222,7 @@
       <h1>Vinh Le</h1>
       <p class="role" id="m-role"></p>
       <nav class="links" id="m-links" aria-label="Contact links"></nav>
-      <p class="summary" id="m-summary"></p>
+      <div class="summary" id="m-summary"></div>
     </header>
 
     <section aria-labelledby="s-xp">
@@ -223,7 +235,7 @@
       <div id="projects"></div>
     </section>
 
-    <section aria-labelledby="s-earlier">
+    <section id="sec-earlier" aria-labelledby="s-earlier">
       <h2 class="label" id="s-earlier">Earlier Work</h2>
       <div id="earlier"></div>
     </section>
@@ -240,7 +252,7 @@
 
     <footer>
       <span>&#169; 2026 Vinh Le</span>
-      <a class="hall-link" href="index.html">&#8592; back to the hallway</a>
+      <a class="hall-link" href="index.html">&#8592; home</a>
     </footer>
   </div>
 
@@ -270,7 +282,14 @@
       }
 
       document.getElementById('m-role').textContent = V.role + ' · ' + V.location;
-      document.getElementById('m-summary').textContent = V.about[0] + ' ' + V.about[1];
+      var sum = document.getElementById('m-summary');
+      (V.about || []).forEach(function (para) {
+        var p = el('p');
+        p.textContent = para;
+        if (/^At the core/i.test(para)) p.className = 'kicker';
+        else if (/^turning /i.test(para)) p.className = 'mission';
+        sum.appendChild(p);
+      });
 
       var links = [
         ['Email', 'mailto:' + V.email],
@@ -323,20 +342,25 @@
       });
 
       /* earlier */
-      var er = document.getElementById('earlier');
-      V.earlier.forEach(function (p) {
-        var d = el('div', 'earlier-item');
-        d.appendChild(el('b', null, esc(p.name)));
-        d.appendChild(el('span', null, esc(p.desc)));
-        var k = Object.keys(p.links || {})[0];
-        if (k) {
-          var a = el('a', null, esc(linkLabels[k] || k) + ' &#8599;');
-          a.href = p.links[k];
-          a.target = '_blank'; a.rel = 'noopener noreferrer';
-          d.appendChild(a);
-        }
-        er.appendChild(d);
-      });
+      if (!V.earlier || !V.earlier.length) {
+        var earlierSec = document.getElementById('sec-earlier');
+        if (earlierSec) earlierSec.hidden = true;
+      } else {
+        var er = document.getElementById('earlier');
+        V.earlier.forEach(function (p) {
+          var d = el('div', 'earlier-item');
+          d.appendChild(el('b', null, esc(p.name)));
+          d.appendChild(el('span', null, esc(p.desc)));
+          var k = Object.keys(p.links || {})[0];
+          if (k) {
+            var a = el('a', null, esc(linkLabels[k] || k) + ' &#8599;');
+            a.href = p.links[k];
+            a.target = '_blank'; a.rel = 'noopener noreferrer';
+            d.appendChild(a);
+          }
+          er.appendChild(d);
+        });
+      }
 
       /* skills */
       var sk = document.getElementById('skills');

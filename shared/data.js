@@ -15,16 +15,45 @@ window.VINH = {
     site: 'https://vinhle.xyz'
   },
   about: [
-    "AI is my craft. I build with it daily, and I'm at Georgia Tech for my M.S. in CS to master what's underneath — the models, the deep learning, the systems that make it all work. The next frontier for me is hardware: bringing AI out of the cloud and into the physical world.",
-    "The work speaks for itself: Best Hack for Good at Hack RenderATL, 1st place in the Actian VectorAI Build Challenge, and a co-lead role on production software in my first internship — and I'm just getting started.",
-    "Off the clock: traveling, good food, videography, and Muay Thai."
+    "I'm an AI engineer passionate about pushing models out of the cloud and into the physical world. My work sits at the intersection of applied machine learning, production software, and hardware-aware systems — retrieval, multimodal search, geospatial intelligence, and on-device agents that still keep a human in the loop.",
+    "I specialize in shipping AI that has to hold up at a judging table and in production: WATTLINE (Best Hack for Good) mapped electricity-dependent medical equipment users to neighborhood outages across Atlanta; Trace (1st — Actian VectorAI) is a forensic search stack on SapBERT, BGE-M3, CLIP, and rank fusion; Bearing Witness runs a local screening agent on a Dell Pro Max GB10. The tools I actually reach for are Python, FastAPI, Django, React, vector search, RAG, and the model APIs the problem needs — then tests, CI, and a demo that doesn't flake.",
+    "I love the ugly middle: messy federal data, flaky endpoints, a pipeline that has to be right because the number is a person. I will sit in performance, retrieval quality, and backend correctness until the system is something I would put in front of a stranger.",
+    "In production I was promoted to co-lead on a Django/React fleet platform in my first internship — multi-tenant work, 14+ backend endpoints, three branded clients on one backend. I want that same discipline when the runtime is a sensor, a box with no cloud, or a robot. I'm at Georgia Tech for my M.S. in CS to go deeper on the models and systems underneath.",
+    "I thrive in rooms with a clock and a crowd: hackathons, live demos, CodePath sessions with 200+ learners. I like making the next person faster than I was.",
+    "At the core, I'm driven by one mission:",
+    "turning advanced AI into practical systems that interact with the physical world.",
+    "If you're building in applied AI, on-device inference, or software that has to survive contact with reality, I'd love to connect."
   ],
+  archive: {
+    pitch: "I'm an AI engineer passionate about pushing models out of the cloud and into the physical world.",
+    quest: "Bring AI out of the cloud and into the physical world. Georgia Tech is the training. Hardware is the quest that is not done.",
+    signal: "Write if you want this person in the room.",
+    memories: [
+      { src: 'images/life/wattline-winning-picture.jpg', caption: 'Best Hack for Good — Hack RenderATL' },
+      { src: 'images/life/cox-hackathon-pic.jpg', caption: 'Demo day — walking the table through it' },
+      { src: 'images/life/muaythai-1.jpg', caption: 'After sparring' }
+    ],
+    top10: ['wattline', 'trace', 'apex', 'atlas', 'contextmod', 'bearing-witness', 'rivals-coach'],
+    legendary: ['wattline', 'trace'],
+    trial: [
+      {
+        id: 'skyit',
+        beats: [
+          'Promoted to co-lead on a Django/React fleet platform serving 3 branded clients on one backend',
+          'Led the multi-tenant GHG emissions port: tenant-scoped models, a two-schema MySQL harness, intern lanes in parallel',
+          'Stabilized 14+ backend endpoints — CORS, serializers, ORM filters, blob fallbacks, runtime failures'
+        ]
+      },
+      { id: 'codepath' }
+    ]
+  },
   education: [
     { school: 'Georgia Institute of Technology', degree: 'M.S. Computer Science (OMSCS)', dates: 'Aug 2026 – May 2028', note: 'In Progress' },
     { school: 'Georgia State University', degree: 'B.S. Computer Science', dates: 'Aug 2022 – Dec 2025', note: 'GPA 3.5 · Dean’s List' }
   ],
   experience: [
     {
+      id: 'skyit',
       title: 'Software Engineering Intern · Co-Lead',
       org: 'SkyIT (GBCS Group)',
       dates: 'Mar 2026 – Jun 2026',
@@ -37,6 +66,7 @@ window.VINH = {
       tech: ['Django', 'MySQL', 'React', 'Multi-tenant', 'REST APIs']
     },
     {
+      id: 'codepath',
       title: 'Technical Fellow',
       org: 'CodePath · Foundations of AI Engineering',
       dates: 'Jun 2026 – Aug 2026',
@@ -157,14 +187,7 @@ window.VINH = {
       image: null
     }
   ],
-  earlier: [
-    { id: 'vibecheck', name: 'VibeCheck', date: 'Mar 2026', desc: 'Real-time networking platform built in 12 hours; AI matching via pgvector cosine similarity with streaming.', tech: ['Express', 'Supabase', 'pgvector'], links: { demo: 'https://vibe-check-seven-bay.vercel.app/' }, image: 'images/vibechecklp.png' },
-    { id: 'carecircle', name: 'CareCircle', date: 'Apr 2026', desc: 'Multilingual caregiving platform: 10 languages, multimodal AI pipeline for OCR, voice transcription, and medical translation.', tech: ['Next.js', 'Supabase', 'Gemini 2.5'], links: { github: 'https://github.com/vinhbin/CareCircle' }, image: 'images/carecirclelp.png' },
-    { id: 'financeflow', name: 'FinanceFlow', date: 'Fall 2024', desc: 'Top 3 capstone: financial platform with Plaid integration, JWT auth, and AI-powered insights.', tech: ['Node.js', 'Express', 'MySQL', 'Plaid'], links: { demo: 'https://financeflow.icu/login' }, image: 'images/financeflow5.png' },
-    { id: 'tripboard', name: 'TripBoard', date: 'Fall 2025', desc: 'Collaborative travel planning with REST APIs, MongoDB, and real-time group scheduling.', tech: ['React', 'Node.js', 'MongoDB'], links: { demo: 'https://app.tripboard.xyz/dashboard' }, image: 'images/tripboard.png' },
-    { id: 'smartbook', name: 'SmartBook', date: 'Jan – May 2025', desc: 'Flutter mobile reading companion: Google Books search, Firebase Auth, Firestore.', tech: ['Flutter', 'Dart', 'Firebase'], links: { github: 'https://github.com/vinhbin/smartbook' }, image: 'images/smartbook3.png' },
-    { id: 'heartdisease', name: 'Heart Disease Prediction', date: 'Fall 2025', desc: 'Logistic Regression and Random Forest on clinical data, evaluated via ROC-AUC, precision, and recall.', tech: ['Python', 'scikit-learn', 'Pandas'], links: { github: 'https://github.com/vinhbin/heartdiseaseDS' }, image: 'images/heartdisease.jfif' }
-  ],
+  earlier: [],
   life: [
     { src: 'images/life/wattline-winning-picture.jpg', caption: 'Best Hack for Good — Hack RenderATL', album: 'Builds' },
     { src: 'images/life/cox-hackathon-pic.jpg', caption: 'Demo day — walking the table through it', album: 'Builds' },
@@ -186,7 +209,6 @@ window.VINH = {
     { src: 'images/life/shot-2.jpg', caption: 'Golden hour local', album: 'Shots' }
   ],
   rooms: [
-    { id: 'phone', file: 'phone.html', name: 'The Phone', accent: '#9fc9ff', blurb: 'Slide to unlock.' },
     { id: 'classic', file: 'classic.html', name: 'The Classic View', accent: '#c9a84c', blurb: 'The portfolio, no games. Quick view.' }
   ]
 };
