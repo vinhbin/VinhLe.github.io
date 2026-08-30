@@ -17,7 +17,7 @@ window.VINH = {
   about: [
     "AI is my craft. I build with it daily, and I'm at Georgia Tech for my M.S. in CS to master what's underneath — the models, the deep learning, the systems that make it all work. The next frontier for me is hardware: bringing AI out of the cloud and into the physical world.",
     "The work speaks for itself: Best Hack for Good at Hack RenderATL, 1st place in the Actian VectorAI Build Challenge, and a co-lead role on production software in my first internship — and I'm just getting started.",
-    "Off the clock: good food, videography, and Muay Thai."
+    "Off the clock: traveling, good food, videography, and Muay Thai."
   ],
   education: [
     { school: 'Georgia Institute of Technology', degree: 'M.S. Computer Science (OMSCS)', dates: 'Aug 2026 – May 2028', note: 'In Progress' },
