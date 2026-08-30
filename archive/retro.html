@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vinh Le — Retro Windows</title>
 <meta name="description" content="Vinh Le's portfolio as a Windows XP desktop — projects, an archive of earlier work, a resume in Notepad, and a fully playable Minesweeper. Do not delete System32." />
-<link rel="icon" type="image/jpeg" href="images/linkedinpfp.jpg" />
+<link rel="icon" type="image/jpeg" href="../images/linkedinpfp.jpg" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,500;1,300;1,500;1,600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="shared/void.css" />
+<link rel="stylesheet" href="../shared/void.css" />
 <style>
   :root {
     --gray: #c0c0c0;
@@ -37,7 +37,7 @@
     color: #111;
     background-color: #4687dd;
     /* real Bliss photo (user-supplied, may not exist yet) layered over the vector homage */
-    background-image: url('images/bliss.jpg'), var(--wp-svg);
+    background-image: url('../images/bliss.jpg'), var(--wp-svg);
     background-size: cover, cover;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
@@ -296,7 +296,7 @@
   .mon-scr {
     height: 96px; border: 2px solid #2c2c2c; border-radius: 2px;
     background-color: #4687dd;
-    background-image: url('images/bliss.jpg'), var(--wp-svg);
+    background-image: url('../images/bliss.jpg'), var(--wp-svg);
     background-size: cover, cover; background-position: center, center; background-repeat: no-repeat, no-repeat;
   }
   .mon-scr.vec { background-image: var(--wp-svg); }
@@ -547,7 +547,7 @@
       <div class="wl-div" aria-hidden="true"></div>
       <div class="wl-right">
         <button class="wl-user" id="wl-user" aria-label="Log on as Vinh Le">
-          <img src="images/linkedinpfp.jpg" alt="" onerror="this.style.visibility='hidden'" />
+          <img src="../images/linkedinpfp.jpg" alt="" onerror="this.style.visibility='hidden'" />
           <span><b>Vinh Le</b><small>AI Engineer &middot; M.S. CS @ Georgia Tech</small></span>
         </button>
       </div>
@@ -592,7 +592,7 @@
 
   <div id="startmenu" hidden aria-label="Start menu">
     <div class="sm-head">
-      <img src="images/linkedinpfp.jpg" alt="" onerror="this.style.visibility='hidden'" />
+      <img src="../images/linkedinpfp.jpg" alt="" onerror="this.style.visibility='hidden'" />
       <b>Vinh Le</b>
     </div>
     <div class="sm-cols">
@@ -637,7 +637,7 @@
     </div>
   </div>
 
-  <script src="shared/data.js"></script>
+  <script src="../shared/data.js"></script>
   <script>
   (function () {
     'use strict';
@@ -1442,7 +1442,7 @@
       var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px;padding:12px;background:#fff;min-height:180px;max-height:320px;overflow:auto;">';
       (V.life || []).forEach(function (l, i) {
         html += '<button class="pic-it" data-i="' + i + '" style="border:1px solid #d5d2c8;background:#fff;padding:4px;cursor:pointer;text-align:left;" aria-label="Open ' + esc(l.caption) + '">' +
-          '<img src="' + esc(l.src) + '" alt="' + esc(l.caption) + '" loading="lazy" style="width:100%;height:86px;object-fit:cover;display:block;" />' +
+          '<img src="../' + esc(l.src) + '" alt="' + esc(l.caption) + '" loading="lazy" style="width:100%;height:86px;object-fit:cover;display:block;" />' +
           '<span style="display:block;font-size:10px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(l.caption) + '</span></button>';
       });
       html += '</div><div style="padding:4px 10px;background:#ece9d8;border-top:1px solid #d5d2c8;font-size:10px;">' + (V.life || []).length + ' objects &middot; life outside the terminal</div>';
@@ -1464,7 +1464,7 @@
       var l = V.life[picIdx];
       var body = win.querySelector('.win-body');
       body.innerHTML =
-        '<div style="background:#1a1a1a;text-align:center;padding:6px;"><img src="' + esc(l.src) + '" alt="' + esc(l.caption) + '" style="max-width:100%;max-height:300px;" /></div>' +
+        '<div style="background:#1a1a1a;text-align:center;padding:6px;"><img src="../' + esc(l.src) + '" alt="' + esc(l.caption) + '" style="max-width:100%;max-height:300px;" /></div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#ece9d8;font-size:11px;">' +
         '<button class="btn95" id="pic-prev" aria-label="Previous picture">&#9664;</button>' +
         '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(l.caption) + ' &middot; ' + esc(l.album) + '</span>' +
@@ -1572,7 +1572,7 @@
       var li = document.createElement('li');
       var a = document.createElement('a');
       a.className = 'sm-item';
-      a.href = r.file;
+      a.href = '../' + r.file;
       a.innerHTML = '<span class="swatch" style="background:' + esc(r.accent) + '"></span>' + esc(r.name);
       li.appendChild(a);
       roomsUl.appendChild(li);
@@ -1619,7 +1619,7 @@
       dialog('Turn Off Computer',
         'It is now safe to leave this room.<br><br>Turn off and return to the hallway?',
         [
-          { label: 'Turn Off', fn: function () { window.location.href = 'index.html'; } },
+          { label: 'Turn Off', fn: function () { window.location.href = '../index.html'; } },
           { label: 'Restart', fn: function () { window.location.reload(); } },
           { label: 'Cancel' }
         ], { opener: startBtn });
@@ -1638,6 +1638,6 @@
     setInterval(tickClock, 20000);
   })();
   </script>
-  <script src="shared/void.js" defer></script>
+  <script src="../shared/void.js" defer></script>
 </body>
 </html>
