@@ -466,7 +466,7 @@
     </p>
   </noscript>
 
-  <script src="shared/data.js"></script>
+  <script src="shared/data.js?v=20260830"></script>
   <script>
     (function () {
       var V = window.VINH;
@@ -541,8 +541,12 @@
       });
 
       var A = V.archive || {};
-      var top10 = A.top10 || [];
-      var featuredIds = A.legendary || top10.slice(0, 2);
+      var top10 = (A.top10 && A.top10.length)
+        ? A.top10
+        : (V.projects || []).map(function (p) { return p.id; }).filter(Boolean);
+      var featuredIds = (A.legendary && A.legendary.length)
+        ? A.legendary
+        : top10.slice(0, 2);
       var featuredSet = {};
       featuredIds.forEach(function (id) { featuredSet[id] = true; });
       var topSet = {};
