@@ -230,6 +230,16 @@
       font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
       color: rgba(255, 255, 255, 0.2);
     }
+    .boot-quick {
+      position: absolute; top: 1.5rem; right: 1.6rem;
+      font-size: 0.6rem; letter-spacing: 0.26em; text-transform: uppercase;
+      color: rgba(201, 168, 76, 0.85);
+      text-decoration: none;
+      padding: 0.45rem 0.95rem;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .boot-quick:hover { color: #e6c96e; border-color: rgba(201, 168, 76, 0.6); }
     @media (prefers-reduced-motion: reduce) { #boot { display: none; } }
   </style>
 </head>
@@ -246,6 +256,7 @@
       <p class="bl gold"><span class="tag">[SYSTEM]</span> welcome, traveler.</p>
     </div>
     <p class="boot-hint">tap anywhere to skip</p>
+    <a class="boot-quick" href="classic.html">in a hurry? quick view &#8599;</a>
   </div>
 
   <div class="topbar">
