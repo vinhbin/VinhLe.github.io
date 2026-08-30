@@ -5,34 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Vinh Le — The Phone</title>
   <link rel="icon" href="images/linkedinpfp.jpg" type="image/jpeg" />
-  <meta name="description" content="Vinh Le's portfolio as a phone. Unlock it, read the messages, browse the project photos, and send a text that becomes a real email." />
+  <meta name="description" content="Vinh Le's portfolio as an iPhone. Unlock it, read the messages, browse the project photos, and send a text that becomes a real email." />
   <link rel="stylesheet" href="shared/void.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;500&display=swap" rel="stylesheet" />
   <style>
     /* ============================================================
-       THE PHONE — a flagship handset floating in the void.
+       THE PHONE — a faithful iOS recreation floating in the void.
        Canvas: 390 x 844 design px, JS-scaled to fit the viewport.
        On real mobile: full-bleed, the page IS the phone.
        ============================================================ */
     :root {
       --accent: #9fc9ff;
-      --accent-deep: #5a8fe0;
+      --ios-blue: #0a84ff;
+      --ios-yellow: #ffd60a;
+      --ios-green: #30d158;
       --void: #050507;
-      --screen-bg: #0b0e15;
-      --panel: #131826;
-      --panel-2: #1a2133;
-      --hairline: rgba(159, 201, 255, 0.12);
-      --ink: #eef3fb;
-      --ink-dim: #93a0b8;
-      --bubble-in: #232b3d;
-      --bubble-out: linear-gradient(180deg, #4d94f7, #2f6fe0);
+      --screen-bg: #000;
+      --app-bg: #000;
+      --grouped-bg: #1c1c1e;
+      --grouped-bg-2: #2c2c2e;
+      --hairline: rgba(84, 84, 88, 0.65);
+      --ink: #ffffff;
+      --ink-dim: #98989f;
+      --bubble-in: #26252a;
+      --bubble-out: #0a84ff;
       --safe-t: 54px;
       --safe-b: 44px;
       --r-screen: 44px;
-      --ui: 'Instrument Sans', -apple-system, sans-serif;
-      --clock: 'Outfit', sans-serif;
+      --ui: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -71,6 +70,12 @@
       0%, 100% { transform: scale(1); opacity: 0.85; }
       50% { transform: scale(1.08); opacity: 1; }
     }
+    .torch-veil {
+      position: fixed; inset: 0; pointer-events: none; z-index: 5;
+      background: radial-gradient(circle at 50% 92%, rgba(240, 248, 255, 0.42), rgba(240, 248, 255, 0.10) 42%, transparent 72%);
+      opacity: 0; transition: opacity 0.5s ease;
+    }
+    body.torch .torch-veil { opacity: 1; }
 
     /* ---------- Phone hardware ---------- */
     .ph-scale { will-change: transform; }
@@ -113,45 +118,70 @@
       background: linear-gradient(115deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 28%, transparent 42%);
     }
 
+    /* Dynamic Island — pill, subtly expands while an app is open */
     .island {
       position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-      width: 120px; height: 34px; border-radius: 20px;
+      width: 122px; height: 35px; border-radius: 20px;
       background: #000; z-index: 50;
       display: flex; align-items: center; justify-content: flex-end;
-      padding-right: 11px;
+      padding-right: 12px;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      transition: width 0.45s cubic-bezier(0.32, 0.72, 0, 1), height 0.45s cubic-bezier(0.32, 0.72, 0, 1);
     }
+    .island.live { width: 148px; height: 36px; }
     .island .lens {
       width: 11px; height: 11px; border-radius: 50%;
       background: radial-gradient(circle at 35% 32%, #2a3d55 12%, #0c111c 45%, #05070b 70%);
       box-shadow: inset 0 0 2px rgba(120, 160, 220, 0.4);
     }
 
-    /* ---------- Status bar ---------- */
+    /* ---------- Status bar (iOS layout: bold time left, glyphs right) ---------- */
     .statusbar {
       position: absolute; top: 0; left: 0; right: 0; height: var(--safe-t);
       z-index: 40; pointer-events: none;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 30px 0;
-      font-size: 15px; font-weight: 600; letter-spacing: 0.01em;
+      padding: 16px 32px 0 36px;
+      font-size: 15.5px; font-weight: 600; letter-spacing: -0.02em;
       color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      font-variant-numeric: tabular-nums;
     }
     .statusbar .cluster { display: flex; align-items: center; gap: 7px; }
     .statusbar svg { display: block; }
-    .batt { position: relative; width: 26px; height: 13px; border: 1px solid rgba(255,255,255,0.5); border-radius: 4px; }
-    .batt::after { content: ''; position: absolute; right: -3.5px; top: 3.5px; width: 2px; height: 4px; background: rgba(255,255,255,0.5); border-radius: 0 2px 2px 0; }
-    .batt .fill { position: absolute; inset: 1.5px; width: 84%; background: #fff; border-radius: 2px; transition: width 0.6s ease; }
-    .batt.charging .fill { background: #7be08a; }
+    .batt {
+      position: relative; width: 27px; height: 13px;
+      border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 4.5px;
+    }
+    .batt::after { content: ''; position: absolute; right: -4px; top: 3.5px; width: 2px; height: 4px; background: rgba(255,255,255,0.4); border-radius: 0 2px 2px 0; }
+    .batt .fill { position: absolute; top: 1.5px; bottom: 1.5px; left: 1.5px; width: 84%; max-width: calc(100% - 3px); background: #fff; border-radius: 2.5px; transition: width 0.6s ease, background 0.3s ease; }
+    .batt.charging .fill { background: var(--ios-green); }
+    .batt.low .fill { background: #ff453a; }
+    .batt .pct {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      font-size: 8.5px; font-weight: 700; letter-spacing: -0.03em; color: #000;
+    }
+    .batt.dark-text .pct { color: #000; }
+    .batt:not(.dark-text) .pct { color: #fff; }
 
     .home-indicator {
       position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%);
-      width: 128px; height: 5px; border-radius: 3px;
-      background: rgba(255, 255, 255, 0.6); z-index: 41; pointer-events: none;
-      mix-blend-mode: screen;
+      width: 134px; height: 5px; border-radius: 3px;
+      background: rgba(255, 255, 255, 0.75); z-index: 47; pointer-events: none;
+      transition: transform 0.2s ease;
     }
+    .screen.grabbing .home-indicator { transform: translateX(-50%) translateY(-3px); }
+    .gesture-zone {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 240px; height: 30px; z-index: 46; cursor: grab;
+      touch-action: none; background: transparent;
+    }
+    .gesture-zone:active { cursor: grabbing; }
 
     /* ---------- Wallpaper (shared by lock + home) ---------- */
-    .wallpaper { position: absolute; inset: -6%; z-index: 0; pointer-events: none; }
+    .wallpaper {
+      position: absolute; inset: -6%; z-index: 0; pointer-events: none;
+      transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .screen.unlocked .wallpaper { transform: scale(1.05); }
     .wp-layer { position: absolute; inset: 0; transition: transform 0.4s ease-out; }
     .wp-base {
       background:
@@ -186,104 +216,123 @@
         radial-gradient(1px 1px at 92% 66%, rgba(255,255,255,0.4), transparent 100%);
     }
 
-    /* ---------- Lock screen ---------- */
+    /* ---------- Lock screen (iOS 17/18) ---------- */
     .lock {
       position: absolute; inset: 0; z-index: 20;
       display: flex; flex-direction: column; align-items: center;
-      overflow: hidden; cursor: pointer;
-      border: 0; background: transparent; font-family: inherit; color: inherit;
-      text-align: center; width: 100%;
-      transition: transform 0.55s cubic-bezier(0.5, 0, 0.2, 1), opacity 0.5s ease;
+      overflow: hidden; cursor: pointer; text-align: center;
+      transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.5s ease;
     }
-    .lock.away { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-    .lock .lock-glyph { margin-top: 74px; opacity: 0.85; }
-    .lock-date { margin-top: 14px; font-size: 17px; font-weight: 500; color: rgba(238, 243, 251, 0.9); letter-spacing: 0.01em; }
+    .lock.away { transform: translateY(-104%); opacity: 0; pointer-events: none; }
+    .lock .lock-glyph { margin-top: 62px; opacity: 0.9; }
+    .lock-date { margin-top: 12px; font-size: 19px; font-weight: 600; color: rgba(255, 255, 255, 0.92); letter-spacing: -0.01em; }
     .lock-clock {
-      font-family: var(--clock); font-weight: 200; font-size: 92px;
-      line-height: 1; letter-spacing: -0.015em; margin-top: 2px;
-      color: #f4f8ff; text-shadow: 0 2px 24px rgba(159, 201, 255, 0.35);
+      font-family: var(--ui); font-weight: 200; font-size: 90px;
+      line-height: 1.02; letter-spacing: -0.03em; margin-top: 0;
+      color: #fff; text-shadow: 0 2px 24px rgba(159, 201, 255, 0.3);
       font-variant-numeric: tabular-nums;
     }
-    .lock-owner { margin-top: auto; margin-bottom: 26px; }
-    .lock-owner .who { font-size: 21px; font-weight: 600; letter-spacing: 0.01em; }
-    .lock-owner .what { margin-top: 5px; font-size: 13.5px; font-weight: 500; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; }
-    .lock-hint {
-      margin-bottom: calc(var(--safe-b) + 12px);
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      font-size: 12.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-      color: rgba(238, 243, 251, 0.55);
+    .lock-notifs {
+      margin-top: 26px; width: 348px; max-width: calc(100% - 32px);
+      display: flex; flex-direction: column; gap: 8px;
     }
-    .lock-hint svg { animation: nudge 2.2s ease-in-out infinite; }
+    .lock-notif {
+      display: flex; align-items: center; gap: 11px; text-align: left;
+      padding: 12px 14px; border-radius: 22px;
+      background: rgba(30, 34, 48, 0.5);
+      border: 1px solid rgba(159, 201, 255, 0.1);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    }
+    .lock-notif .n-ic { flex: none; width: 38px; height: 38px; border-radius: 9px; object-fit: cover; display: grid; place-items: center; }
+    .lock-notif .nt { flex: 1; min-width: 0; }
+    .lock-notif .nt b { display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+    .lock-notif .nt span { display: block; font-size: 14px; color: rgba(255,255,255,0.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lock-notif time { font-size: 12px; color: rgba(255,255,255,0.5); align-self: flex-start; margin-top: 2px; }
+
+    .lock-owner { margin-top: auto; margin-bottom: 18px; }
+    .lock-owner .who { font-size: 21px; font-weight: 600; letter-spacing: -0.01em; }
+    .lock-owner .what { margin-top: 4px; font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; }
+    .unlock-hint {
+      margin-bottom: calc(var(--safe-b) + 34px);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      background: none; border: 0; cursor: pointer; font-family: inherit;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.65);
+      padding: 6px 10px; border-radius: 10px;
+    }
+    .unlock-hint svg { animation: nudge 2.2s ease-in-out infinite; }
     @keyframes nudge {
       0%, 100% { transform: translateY(0); opacity: 0.5; }
       50% { transform: translateY(-7px); opacity: 1; }
     }
-    .lock-notif {
-      margin-top: 26px; width: 330px; max-width: calc(100% - 40px);
-      display: flex; align-items: center; gap: 12px; text-align: left;
-      padding: 12px 14px; border-radius: 22px;
-      background: rgba(20, 26, 40, 0.55);
-      border: 1px solid rgba(159, 201, 255, 0.14);
-      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    /* corner glass buttons — inset ABOVE the safe area so the shared
+       hallway hatch (viewport bottom-left) never collides on mobile */
+    .lock-fab {
+      position: absolute; bottom: calc(var(--safe-b) + 22px);
+      width: 50px; height: 50px; border-radius: 50%;
+      border: 0; cursor: pointer; display: grid; place-items: center;
+      background: rgba(70, 75, 90, 0.42); color: #fff;
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      transition: background 0.25s ease, color 0.25s ease, transform 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
     }
-    .lock-notif img { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; }
-    .lock-notif .nt { flex: 1; min-width: 0; }
-    .lock-notif .nt b { display: block; font-size: 14px; font-weight: 600; }
-    .lock-notif .nt span { display: block; font-size: 13px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .lock-notif time { font-size: 11.5px; color: var(--ink-dim); align-self: flex-start; }
+    .lock-fab:active { transform: scale(0.9); }
+    .lock-fab.fl { left: 46px; }
+    .lock-fab.cam { right: 46px; }
+    .lock-fab.on { background: #fff; color: #000; }
 
     /* ---------- Home screen ---------- */
     .home {
       position: absolute; inset: 0; z-index: 5;
       display: flex; flex-direction: column;
-      padding: calc(var(--safe-t) + 8px) 22px var(--safe-b);
-      opacity: 0; transform: scale(1.12);
-      transition: opacity 0.45s ease 0.1s, transform 0.55s cubic-bezier(0.3, 0.9, 0.3, 1) 0.1s;
+      padding: calc(var(--safe-t) + 8px) 24px var(--safe-b);
+      opacity: 0; transform: scale(1.14);
+      transition: opacity 0.4s ease 0.08s, transform 0.6s cubic-bezier(0.23, 1.1, 0.32, 1) 0.08s;
       pointer-events: none;
     }
     .home.on { opacity: 1; transform: scale(1); pointer-events: auto; }
 
     .widget {
-      border-radius: 24px; padding: 16px 18px;
-      background: rgba(16, 21, 34, 0.62);
-      border: 1px solid rgba(159, 201, 255, 0.13);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      display: flex; align-items: center; gap: 14px;
-      margin-bottom: 26px;
+      border-radius: 22px; padding: 15px 17px;
+      background: rgba(28, 32, 46, 0.55);
+      border: 1px solid rgba(159, 201, 255, 0.1);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      display: flex; align-items: center; gap: 13px;
+      margin-bottom: 22px;
     }
-    .widget img { width: 52px; height: 52px; border-radius: 15px; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.25); }
+    .widget img { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.25); }
     .widget .w-txt { flex: 1; min-width: 0; }
-    .widget .w-name { font-size: 16.5px; font-weight: 700; letter-spacing: 0.01em; }
-    .widget .w-role { font-size: 12.5px; font-weight: 500; color: var(--accent); margin-top: 2px; }
+    .widget .w-name { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; }
+    .widget .w-role { font-size: 12.5px; font-weight: 600; color: var(--accent); margin-top: 2px; }
     .widget .w-loc { font-size: 11.5px; color: var(--ink-dim); margin-top: 3px; }
 
     .grid {
       display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 22px 8px; align-content: start;
+      gap: 20px 8px; align-content: start;
     }
     .app-ic {
-      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
       background: none; border: 0; cursor: pointer; text-decoration: none;
       font-family: inherit; -webkit-tap-highlight-color: transparent;
     }
     .app-ic .tile {
-      width: 62px; height: 62px; border-radius: 15.5px;
+      width: 62px; height: 62px; border-radius: 22.5%; /* iOS squircle approximation */
       display: grid; place-items: center; overflow: hidden;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 0.5px 0 rgba(255, 255, 255, 0.18);
       transition: transform 0.15s ease, filter 0.15s ease;
     }
     .app-ic:active .tile { transform: scale(0.88); filter: brightness(0.82); }
     .app-ic .lbl {
-      font-size: 11.5px; font-weight: 500; color: rgba(255, 255, 255, 0.92);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); letter-spacing: 0.01em;
+      font-size: 11px; font-weight: 500; color: #fff;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); letter-spacing: 0.01em;
     }
     .app-ic svg { display: block; }
 
     .widget-photo {
-      margin-top: 26px; position: relative; overflow: hidden;
-      height: 172px; border-radius: 24px; padding: 0;
-      border: 1px solid rgba(159, 201, 255, 0.13); cursor: pointer;
-      background: var(--panel);
+      margin-top: 22px; position: relative; overflow: hidden;
+      flex: 0 1 168px; min-height: 84px; border-radius: 22px; padding: 0;
+      border: 1px solid rgba(159, 201, 255, 0.12); cursor: pointer;
+      background: var(--grouped-bg);
       box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), inset 0 0.5px 0 rgba(255, 255, 255, 0.14);
       transition: transform 0.18s ease;
       -webkit-tap-highlight-color: transparent;
@@ -295,125 +344,168 @@
       background: linear-gradient(180deg, rgba(4, 6, 12, 0.42), transparent 38%, transparent 55%, rgba(4, 6, 12, 0.68));
     }
     .widget-photo .wpw-tag {
-      position: absolute; top: 12px; left: 15px; z-index: 2;
+      position: absolute; top: 11px; left: 15px; z-index: 2;
       font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
       color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
     }
     .widget-photo .wpw-name {
-      position: absolute; bottom: 11px; left: 15px; z-index: 2;
-      font-size: 15.5px; font-weight: 600; color: #fff; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
+      position: absolute; bottom: 10px; left: 15px; z-index: 2;
+      font-size: 15px; font-weight: 600; color: #fff; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
     }
-    @media (max-height: 760px) { .widget-photo { height: 120px; } }
     @media (max-height: 640px) { .widget-photo { display: none; } }
 
-    .page-dot { margin: auto auto 12px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.85); }
+    .page-dot { margin: auto auto 10px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.85); }
 
     .dock {
-      margin: 0 auto; width: 100%; max-width: 330px;
+      margin: 0 auto; width: 100%; max-width: 334px;
       display: grid; grid-template-columns: repeat(4, 1fr); justify-items: center;
-      padding: 14px 10px; border-radius: 30px;
-      background: rgba(22, 28, 44, 0.5);
-      border: 1px solid rgba(159, 201, 255, 0.1);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      padding: 14px 10px; border-radius: 32px;
+      background: rgba(70, 75, 95, 0.32);
+      border: 1px solid rgba(159, 201, 255, 0.08);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
     }
     .dock .app-ic { gap: 0; }
     .dock .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-    /* icon tile skins */
-    .t-msg { background: linear-gradient(180deg, #6ce07a, #2db84e); }
-    .t-photos { background: linear-gradient(180deg, #ffffff, #e9edf4); }
-    .t-notes { background: linear-gradient(180deg, #fdfdfb, #f2f0e6); position: relative; }
-    .t-notes::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 15px; background: linear-gradient(180deg, #f8d878, #f2c14e); }
-    .t-store { background: linear-gradient(180deg, #38b6ff, #1d6ff2); }
+    /* icon tile skins — evocations of iOS apps, drawn in CSS/SVG */
+    .t-msg { background: linear-gradient(180deg, #6ce07a, #27b64c); }
+    .t-photos { background: linear-gradient(180deg, #ffffff, #ebeef3); }
+    .t-notes { background: linear-gradient(180deg, #fdfdfb, #f4f2e8); position: relative; }
+    .t-notes::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 15px; background: linear-gradient(180deg, #fad969, #f3c94f); }
+    .t-store { background: linear-gradient(180deg, #34aefc, #1d6ff2); }
+    .t-set { background: linear-gradient(180deg, #90939b, #55575e); }
     .t-li { background: #0a66c2; }
     .t-gh { background: linear-gradient(180deg, #2b3137, #14171b); }
     .t-dp { background: linear-gradient(180deg, #1e3358, #0d1730); }
     .t-cv { background: linear-gradient(180deg, #fbfcff, #e8ecf3); }
-    .t-li .in-word { color: #fff; font-weight: 700; font-size: 27px; letter-spacing: -0.03em; font-family: var(--ui); transform: translateY(-1px); }
+    .t-li .in-word { color: #fff; font-weight: 700; font-size: 27px; letter-spacing: -0.03em; transform: translateY(-1px); }
 
-    /* ---------- App views ---------- */
+    /* ---------- App views (zoom-from-icon + corner-radius morph) ---------- */
     .app-view {
       position: absolute; inset: 0; z-index: 15;
       display: flex; flex-direction: column;
-      background: var(--screen-bg);
+      background: var(--app-bg);
       visibility: hidden; opacity: 0; transform: scale(0.16);
-      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0.25, 1), opacity 0.3s ease, visibility 0s linear 0.42s;
+      border-radius: 26%;
+      overflow: hidden;
+      transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.3s ease, visibility 0s linear 0.45s;
     }
     .app-view.open {
-      visibility: visible; opacity: 1; transform: scale(1);
-      transition: transform 0.42s cubic-bezier(0.32, 0.72, 0.25, 1), opacity 0.22s ease, visibility 0s;
+      visibility: visible; opacity: 1; transform: scale(1); border-radius: 0;
+      transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.45s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.22s ease, visibility 0s;
     }
     .app-head {
       flex: none; display: flex; align-items: center; gap: 6px;
       padding: calc(var(--safe-t) + 4px) 16px 10px;
-      border-bottom: 0.5px solid var(--hairline);
-      background: rgba(11, 14, 21, 0.82);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 0.33px solid var(--hairline);
+      background: rgba(18, 18, 20, 0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
       position: relative; z-index: 3;
     }
     .back-btn {
-      display: inline-flex; align-items: center; gap: 2px;
+      display: inline-flex; align-items: center; gap: 3px;
       background: none; border: 0; cursor: pointer; font-family: inherit;
-      color: var(--accent); font-size: 16px; font-weight: 500;
+      color: var(--ios-blue); font-size: 17px; font-weight: 400; letter-spacing: -0.02em;
       padding: 6px 8px 6px 2px; margin-left: -4px; border-radius: 10px;
       -webkit-tap-highlight-color: transparent;
     }
-    .back-btn:active { opacity: 0.55; }
-    .app-title { flex: 1; text-align: center; font-size: 16.5px; font-weight: 700; letter-spacing: 0.01em; margin-right: 58px; }
+    .back-btn:active { opacity: 0.5; }
+    .app-title { flex: 1; text-align: center; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; margin-right: 58px; }
     .app-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(var(--safe-b) + 8px); scrollbar-width: thin; scrollbar-color: rgba(159,201,255,0.25) transparent; }
 
-    /* ---------- Messages ---------- */
-    #app-messages .app-head { flex-direction: row; }
-    .msg-contact { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; margin-right: 46px; }
-    .msg-contact img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.3); }
-    .msg-contact span { font-size: 12px; font-weight: 500; color: var(--ink-dim); }
-    .thread { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 8px; }
-    .stamp { text-align: center; font-size: 11px; font-weight: 500; color: var(--ink-dim); margin: 4px 0 8px; }
+    /* ---------- Messages (iMessage) ---------- */
+    #app-messages .app-head { flex-direction: row; padding-bottom: 8px; }
+    .msg-contact { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; margin-right: 40px; }
+    .msg-contact img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    .msg-contact .nm { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 500; color: var(--ink); }
+    .msg-contact .nm svg { opacity: 0.5; }
+    .thread { display: flex; flex-direction: column; gap: 2px; padding: 16px 16px 8px; }
+    .stamp { text-align: center; font-size: 11px; font-weight: 500; color: var(--ink-dim); margin: 4px 0 10px; }
+    .stamp b { font-weight: 600; }
     .bubble {
-      max-width: 76%; padding: 9px 13px; border-radius: 19px;
-      font-size: 14.5px; line-height: 1.42; letter-spacing: 0.005em;
+      position: relative; max-width: 74%; padding: 8px 13px; border-radius: 18px;
+      font-size: 16px; line-height: 1.35; letter-spacing: -0.01em;
       animation: pop-in 0.3s cubic-bezier(0.3, 1.2, 0.4, 1);
-      transform-origin: bottom left; word-wrap: break-word;
+      word-wrap: break-word; margin-bottom: 3px;
     }
     @keyframes pop-in { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .bubble.in { align-self: flex-start; background: var(--bubble-in); color: var(--ink); border-bottom-left-radius: 6px; }
-    .bubble.out { align-self: flex-end; background: var(--bubble-out); color: #fff; border-bottom-right-radius: 6px; transform-origin: bottom right; }
+    .bubble.in { align-self: flex-start; background: var(--bubble-in); color: #fff; transform-origin: bottom left; }
+    .bubble.out { align-self: flex-end; background: var(--bubble-out); color: #fff; transform-origin: bottom right; }
+    /* iMessage tails (only on the last bubble of a cluster) */
+    .bubble.tail.in::before {
+      content: ''; position: absolute; z-index: -1; bottom: -1px; left: -7px;
+      width: 20px; height: 20px; background: var(--bubble-in);
+      border-bottom-right-radius: 15px;
+    }
+    .bubble.tail.in::after {
+      content: ''; position: absolute; z-index: -1; bottom: -1px; left: -10px;
+      width: 10px; height: 21px; background: var(--app-bg);
+      border-bottom-right-radius: 10px;
+    }
+    .bubble.tail.out::before {
+      content: ''; position: absolute; z-index: -1; bottom: -1px; right: -7px;
+      width: 20px; height: 20px; background: var(--bubble-out);
+      border-bottom-left-radius: 15px;
+    }
+    .bubble.tail.out::after {
+      content: ''; position: absolute; z-index: -1; bottom: -1px; right: -10px;
+      width: 10px; height: 21px; background: var(--app-bg);
+      border-bottom-left-radius: 10px;
+    }
     .bubble.typing { display: inline-flex; gap: 4px; padding: 13px 15px; }
-    .bubble.typing i { width: 7px; height: 7px; border-radius: 50%; background: #8b98b0; animation: blink 1.2s ease-in-out infinite; }
+    .bubble.typing i { width: 8px; height: 8px; border-radius: 50%; background: #8b8b90; animation: blink 1.2s ease-in-out infinite; }
     .bubble.typing i:nth-child(2) { animation-delay: 0.18s; }
     .bubble.typing i:nth-child(3) { animation-delay: 0.36s; }
     @keyframes blink { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+    .delivered { align-self: flex-end; font-size: 11px; font-weight: 600; color: var(--ink-dim); margin: 1px 6px 6px 0; }
     .composer {
       flex: none; display: flex; align-items: center; gap: 9px;
-      padding: 10px 14px calc(var(--safe-b) + 6px);
-      border-top: 0.5px solid var(--hairline);
-      background: rgba(11, 14, 21, 0.85);
+      padding: 8px 14px calc(var(--safe-b) + 4px);
+      background: rgba(18, 18, 20, 0.85);
     }
+    .composer .plus {
+      flex: none; width: 32px; height: 32px; border-radius: 50%;
+      border: 0; display: grid; place-items: center;
+      background: var(--grouped-bg-2); color: #98989f;
+    }
+    .composer .field { flex: 1; min-width: 0; position: relative; display: flex; }
     .composer input {
-      flex: 1; min-width: 0; height: 38px; padding: 0 16px;
-      border-radius: 19px; border: 1px solid rgba(159, 201, 255, 0.2);
-      background: rgba(30, 38, 58, 0.55); color: var(--ink);
-      font: 400 16px/1 var(--ui); outline-offset: 2px;
+      flex: 1; min-width: 0; height: 36px; padding: 0 42px 0 14px;
+      border-radius: 18px; border: 1px solid rgba(84, 84, 88, 0.65);
+      background: rgba(10, 10, 12, 0.6); color: var(--ink);
+      font: 400 16px/1 var(--ui); outline-offset: 2px; letter-spacing: -0.01em;
     }
-    .composer input::placeholder { color: var(--ink-dim); }
-    .composer button {
-      flex: none; width: 36px; height: 36px; border-radius: 50%;
+    .composer input::placeholder { color: #5d5d63; }
+    .composer button.send {
+      position: absolute; right: 3px; top: 3px;
+      width: 30px; height: 30px; border-radius: 50%;
       border: 0; cursor: pointer; display: grid; place-items: center;
-      background: linear-gradient(180deg, #4d94f7, #2f6fe0); color: #fff;
+      background: var(--ios-blue); color: #fff;
       transition: transform 0.15s ease, opacity 0.2s ease;
     }
-    .composer button:active { transform: scale(0.88); }
-    .composer button:disabled { opacity: 0.35; cursor: default; }
+    .composer button.send:active { transform: scale(0.88); }
+    .composer button.send:disabled { opacity: 0; cursor: default; }
 
-    /* ---------- Photos ---------- */
-    .ph-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; }
+    /* ---------- Photos (iOS Photos) ---------- */
+    .ph-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; padding: 1.5px; }
     .ph-grid button {
-      border: 0; padding: 0; cursor: pointer; background: var(--panel);
+      border: 0; padding: 0; cursor: pointer; background: var(--grouped-bg);
       aspect-ratio: 1; overflow: hidden; -webkit-tap-highlight-color: transparent;
     }
     .ph-grid img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
     .ph-grid button:hover img, .ph-grid button:focus-visible img { transform: scale(1.06); }
-    .ph-count { padding: 14px 16px 6px; font-size: 13px; color: var(--ink-dim); font-weight: 500; }
+    .ph-count { padding: 14px 16px 8px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+    .ph-count small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-dim); margin-top: 2px; }
+    #app-photos .app-body { padding-bottom: calc(var(--safe-b) + 64px); }
+    .ph-seg {
+      position: absolute; bottom: calc(var(--safe-b) + 12px); left: 50%; transform: translateX(-50%);
+      z-index: 4; display: flex; gap: 2px; padding: 3px;
+      border-radius: 999px; background: rgba(30, 30, 32, 0.78);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      pointer-events: none;
+    }
+    .ph-seg span { font-size: 13px; font-weight: 600; color: var(--ink-dim); padding: 6px 16px; border-radius: 999px; letter-spacing: -0.01em; }
+    .ph-seg span.on { background: rgba(255, 255, 255, 0.16); color: #fff; }
 
     .ph-viewer {
       position: absolute; inset: 0; z-index: 30; background: #000;
@@ -423,90 +515,162 @@
     .ph-viewer.open { visibility: visible; opacity: 1; transition: opacity 0.25s ease, visibility 0s; }
     .ph-viewer .v-top {
       flex: none; display: flex; justify-content: space-between; align-items: center;
-      padding: calc(var(--safe-t) + 2px) 16px 8px; z-index: 2;
+      padding: calc(var(--safe-t) + 2px) 16px 10px; z-index: 2;
+      background: rgba(18, 18, 20, 0.6);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     }
     .v-btn {
       border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
       width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(35, 43, 61, 0.8); color: var(--ink);
+      background: rgba(60, 60, 66, 0.7); color: var(--ink);
       -webkit-tap-highlight-color: transparent;
     }
     .v-btn:active { transform: scale(0.9); }
-    .ph-viewer .v-img { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 10px; }
-    .ph-viewer .v-img img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
-    .ph-viewer .v-cap { flex: none; padding: 14px 20px calc(var(--safe-b) + 10px); text-align: center; }
-    .v-cap .v-name { font-size: 16px; font-weight: 700; }
-    .v-cap .v-meta { font-size: 12px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 3px; }
+    .ph-viewer .v-img { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 6px; }
+    .ph-viewer .v-img img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .ph-viewer .v-cap {
+      flex: none; padding: 14px 20px calc(var(--safe-b) + 10px); text-align: center;
+      background: rgba(18, 18, 20, 0.6);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .v-cap .v-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+    .v-cap .v-meta { font-size: 11.5px; color: var(--accent); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 3px; }
     .v-cap .v-desc { font-size: 13px; line-height: 1.5; color: var(--ink-dim); margin-top: 7px; }
     .v-cap .v-link {
-      display: inline-block; margin-top: 11px; padding: 8px 20px; border-radius: 999px;
-      background: rgba(159, 201, 255, 0.14); border: 1px solid rgba(159, 201, 255, 0.35);
-      color: var(--accent); font-size: 13px; font-weight: 600; text-decoration: none;
+      display: inline-block; margin-top: 11px; padding: 8px 22px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--ios-blue); font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: -0.01em;
     }
     .v-nav { display: flex; gap: 8px; }
 
-    /* ---------- Notes ---------- */
+    /* ---------- Notes (iOS Notes: dark + system yellow) ---------- */
+    #app-notes .back-btn { color: var(--ios-yellow); }
     .notes-list { padding: 8px 16px; }
-    .notes-hd { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; padding: 10px 2px 14px; }
+    .notes-hd { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; padding: 10px 4px 14px; }
+    .notes-group { border-radius: 12px; background: var(--grouped-bg); overflow: hidden; }
     .note-row {
       width: 100%; text-align: left; border: 0; cursor: pointer; font-family: inherit;
-      display: block; padding: 13px 15px; border-radius: 14px; margin-bottom: 8px;
-      background: var(--panel); color: var(--ink);
+      display: block; padding: 12px 16px; background: transparent; color: var(--ink);
+      border-bottom: 0.33px solid var(--hairline);
       -webkit-tap-highlight-color: transparent;
       transition: background 0.15s ease;
     }
-    .note-row:hover, .note-row:focus-visible { background: var(--panel-2); }
-    .note-row b { display: block; font-size: 15.5px; font-weight: 600; }
-    .note-row span { display: block; font-size: 13px; color: var(--ink-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .note-row:last-child { border-bottom: 0; }
+    .note-row:hover, .note-row:focus-visible { background: var(--grouped-bg-2); }
+    .note-row b { display: block; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+    .note-row span { display: block; font-size: 15px; color: var(--ink-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .note-row span .n-when { color: var(--ink-dim); }
     .note-detail { display: none; padding: 6px 22px 30px; }
     .note-detail.on { display: block; }
-    .note-detail h2 { font-size: 24px; font-weight: 700; margin: 10px 0 4px; }
-    .note-detail .n-date { font-size: 12px; color: var(--ink-dim); margin-bottom: 16px; }
-    .note-detail p { font-size: 15px; line-height: 1.65; color: #cbd5e6; margin-bottom: 13px; }
-    .note-detail h3 { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.07em; text-transform: uppercase; margin: 18px 0 6px; }
+    .note-detail .n-date { font-size: 12px; color: var(--ink-dim); text-align: center; margin: 8px 0 14px; }
+    .note-detail h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 12px; }
+    .note-detail p { font-size: 17px; line-height: 1.5; letter-spacing: -0.015em; color: #e8e8ea; margin-bottom: 14px; }
+    .note-detail h3 { font-size: 14px; font-weight: 700; color: var(--ios-yellow); letter-spacing: 0.06em; text-transform: uppercase; margin: 18px 0 6px; }
     .note-detail ul { list-style: none; }
-    .note-detail li { font-size: 14.5px; line-height: 1.6; color: #cbd5e6; padding-left: 16px; position: relative; margin-bottom: 5px; }
-    .note-detail li::before { content: ''; position: absolute; left: 2px; top: 0.62em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent-deep); }
+    .note-detail li { font-size: 15.5px; line-height: 1.55; letter-spacing: -0.01em; color: #e8e8ea; padding-left: 16px; position: relative; margin-bottom: 6px; }
+    .note-detail li::before { content: ''; position: absolute; left: 2px; top: 0.62em; width: 5px; height: 5px; border-radius: 50%; background: var(--ios-yellow); }
     .note-detail .edu-block { margin-bottom: 16px; }
-    .note-detail .edu-block b { font-size: 15.5px; }
-    .note-detail .edu-block em { display: block; font-style: normal; font-size: 13.5px; color: var(--ink-dim); margin-top: 2px; }
+    .note-detail .edu-block b { font-size: 17px; letter-spacing: -0.015em; }
+    .note-detail .edu-block em { display: block; font-style: normal; font-size: 14px; color: var(--ink-dim); margin-top: 2px; }
 
-    /* ---------- Projects ("store") ---------- */
-    .store-hd { padding: 12px 18px 4px; }
-    .store-hd .today { font-size: 12px; font-weight: 700; color: var(--ink-dim); letter-spacing: 0.08em; text-transform: uppercase; }
-    .store-hd h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; margin-top: 2px; }
-    .store-list { padding: 8px 16px; }
-    .store-row { border-bottom: 0.5px solid var(--hairline); padding: 13px 2px; }
-    .store-main { display: flex; align-items: center; gap: 13px; width: 100%; background: none; border: 0; cursor: pointer; font-family: inherit; color: var(--ink); text-align: left; -webkit-tap-highlight-color: transparent; }
-    .store-app-ic {
-      flex: none; width: 56px; height: 56px; border-radius: 13px;
-      display: grid; place-items: center;
-      font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.02em;
-      box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+    /* ---------- Projects (App Store "Today" cards) ---------- */
+    .store-hd { padding: 14px 20px 6px; }
+    .store-hd .today { font-size: 12px; font-weight: 700; color: var(--ink-dim); letter-spacing: 0.02em; text-transform: uppercase; }
+    .store-hd h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-top: 0; }
+    .store-list { padding: 10px 16px; display: flex; flex-direction: column; gap: 20px; }
+    .today-card {
+      border-radius: 22px; overflow: hidden; background: var(--grouped-bg);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
     }
-    .store-txt { flex: 1; min-width: 0; }
-    .store-txt b { display: block; font-size: 15.5px; font-weight: 600; }
-    .store-txt span { display: block; font-size: 12.5px; color: var(--ink-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .store-txt .award { color: #f5cd6b; font-weight: 600; }
+    .tc-art {
+      display: block; width: 100%; position: relative; height: 168px;
+      border: 0; padding: 0; cursor: pointer; overflow: hidden;
+      background-size: cover; background-position: top center;
+      text-align: left; font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tc-art::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.34), transparent 40%, transparent 52%, rgba(0, 0, 0, 0.72));
+    }
+    .tc-art .tc-eyebrow {
+      position: absolute; top: 13px; left: 16px; z-index: 2;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .tc-art .tc-eyebrow.gold { color: #f5cd6b; }
+    .tc-art h3 {
+      position: absolute; bottom: 12px; left: 16px; right: 16px; z-index: 2;
+      font-size: 24px; font-weight: 700; letter-spacing: -0.02em; color: #fff;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    }
+    .tc-art .tc-mono {
+      position: absolute; right: -8px; bottom: -26px;
+      font-size: 130px; font-weight: 800; color: rgba(255, 255, 255, 0.16); line-height: 1;
+      pointer-events: none;
+    }
+    .tc-foot {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px;
+    }
+    .tc-ic {
+      flex: none; width: 38px; height: 38px; border-radius: 22.5%;
+      display: grid; place-items: center;
+      font-size: 16px; font-weight: 700; color: #fff;
+      box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.25);
+    }
+    .tc-txt { flex: 1; min-width: 0; }
+    .tc-txt b { display: block; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+    .tc-txt span { display: block; font-size: 12px; color: var(--ink-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .get-btn {
-      flex: none; padding: 7px 20px; border-radius: 999px; border: 0; cursor: pointer;
-      background: rgba(159, 201, 255, 0.16); color: var(--accent);
-      font: 700 13px/1 var(--ui); letter-spacing: 0.06em;
+      flex: none; padding: 7px 22px; border-radius: 999px; border: 0; cursor: pointer;
+      background: rgba(255, 255, 255, 0.12); color: var(--ios-blue);
+      font: 700 14px/1 var(--ui); letter-spacing: 0.01em;
       text-decoration: none; transition: transform 0.15s ease, background 0.15s ease;
     }
-    .get-btn:hover, .get-btn:focus-visible { background: rgba(159, 201, 255, 0.28); }
+    .get-btn:hover, .get-btn:focus-visible { background: rgba(255, 255, 255, 0.22); }
     .get-btn:active { transform: scale(0.92); }
-    .store-more { display: none; padding: 11px 4px 2px 69px; }
-    .store-row.expanded .store-more { display: block; }
-    .store-more p { font-size: 13.5px; line-height: 1.55; color: #b9c4d8; margin-bottom: 8px; }
-    .store-more ul { list-style: none; margin-bottom: 8px; }
-    .store-more li { font-size: 12.5px; line-height: 1.5; color: var(--ink-dim); padding-left: 13px; position: relative; margin-bottom: 4px; }
-    .store-more li::before { content: '–'; position: absolute; left: 0; color: var(--accent-deep); }
+    .tc-more { display: none; padding: 2px 16px 14px; }
+    .today-card.expanded .tc-more { display: block; }
+    .tc-more p { font-size: 14.5px; line-height: 1.5; letter-spacing: -0.01em; color: #d9d9dd; margin-bottom: 9px; }
+    .tc-more ul { list-style: none; margin-bottom: 9px; }
+    .tc-more li { font-size: 13px; line-height: 1.5; color: var(--ink-dim); padding-left: 13px; position: relative; margin-bottom: 4px; }
+    .tc-more li::before { content: '–'; position: absolute; left: 0; color: var(--ios-blue); }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .chip { font-size: 11px; font-weight: 600; color: var(--accent); padding: 4px 10px; border-radius: 999px; background: rgba(159, 201, 255, 0.1); border: 1px solid rgba(159, 201, 255, 0.18); }
-    .store-links { display: flex; gap: 12px; margin-top: 9px; }
-    .store-links a { font-size: 12.5px; font-weight: 600; color: var(--accent); text-decoration: none; }
+    .store-links { display: flex; gap: 14px; margin-top: 10px; }
+    .store-links a { font-size: 13px; font-weight: 600; color: var(--ios-blue); text-decoration: none; }
     .store-links a:hover { text-decoration: underline; }
+
+    /* ---------- Settings ---------- */
+    .set-wrap { padding: 8px 16px; }
+    .set-hd { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; padding: 10px 4px 14px; }
+    .set-profile {
+      display: flex; align-items: center; gap: 13px; text-decoration: none; color: var(--ink);
+      padding: 12px 14px; border-radius: 12px; background: var(--grouped-bg); margin-bottom: 22px;
+    }
+    .set-profile:hover { background: var(--grouped-bg-2); }
+    .set-profile img { width: 58px; height: 58px; border-radius: 50%; object-fit: cover; }
+    .set-profile .sp-t { flex: 1; min-width: 0; }
+    .set-profile .sp-t b { display: block; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+    .set-profile .sp-t span { display: block; font-size: 12.5px; color: var(--ink-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .set-profile svg { flex: none; color: #5d5d63; }
+    .set-cap { font-size: 13px; font-weight: 400; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.03em; padding: 0 16px 7px; }
+    .set-group { border-radius: 12px; background: var(--grouped-bg); overflow: hidden; margin-bottom: 24px; }
+    .set-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 16px; border-bottom: 0.33px solid var(--hairline);
+      font-size: 17px; letter-spacing: -0.02em; color: var(--ink); text-decoration: none;
+    }
+    .set-row:last-child { border-bottom: 0; }
+    a.set-row:hover { background: var(--grouped-bg-2); }
+    .set-row .k { flex: 1; min-width: 0; font-weight: 400; }
+    .set-row .v { flex: none; max-width: 60%; font-size: 16px; color: var(--ink-dim); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .set-row .chev { flex: none; color: #5d5d63; }
+    .set-row .mini {
+      flex: none; width: 29px; height: 29px; border-radius: 7px;
+      display: grid; place-items: center; color: #fff;
+    }
 
     /* ---------- Focus / a11y ---------- */
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
@@ -524,16 +688,16 @@
       .screen { border-radius: 0; }
       .screen::after { display: none; }
       :root { --safe-t: calc(env(safe-area-inset-top, 0px) + 44px); --safe-b: calc(env(safe-area-inset-bottom, 0px) + 54px); --r-screen: 0px; }
-      .statusbar { padding: calc(env(safe-area-inset-top, 0px) + 10px) 24px 0; }
-      .lock .lock-glyph { margin-top: calc(env(safe-area-inset-top, 0px) + 48px); }
-      .dock { max-width: 300px; }
+      .statusbar { padding: calc(env(safe-area-inset-top, 0px) + 12px) 26px 0 30px; }
+      .lock .lock-glyph { margin-top: calc(env(safe-area-inset-top, 0px) + 46px); }
+      .dock { max-width: 306px; }
     }
 
     /* ---------- Reduced motion ---------- */
     @media (prefers-reduced-motion: reduce) {
-      .ph-float, .halo, .wp-aurora, .lock-hint svg { animation: none; }
+      .ph-float, .halo, .wp-aurora, .unlock-hint svg { animation: none; }
       .phone { transform: none !important; transition: none; }
-      .wp-layer { transition: none; }
+      .wp-layer, .wallpaper, .island, .home-indicator, .torch-veil { transition: none; }
       .lock, .home, .app-view, .ph-viewer, .bubble { transition-duration: 0.01s; animation: none; }
       .bubble.typing i { animation: none; opacity: 0.6; }
       .ph-grid img { transition: none; }
@@ -544,6 +708,7 @@
 
   <div class="stage" id="stage">
     <div class="halo" aria-hidden="true"></div>
+    <div class="torch-veil" aria-hidden="true"></div>
     <div class="ph-scale" id="phScale">
       <div class="ph-float">
         <div class="phone" id="phone">
@@ -561,38 +726,55 @@
               <div class="wp-layer wp-aurora" data-depth="10"></div>
             </div>
 
-            <!-- status bar -->
+            <!-- status bar: bold time left, glyph cluster right -->
             <div class="statusbar" aria-hidden="true">
               <div class="cluster"><span id="sbClock">9:41</span></div>
               <div class="cluster">
-                <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0.5" width="3" height="11.5" rx="1"/></svg>
-                <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 12 5.6 8.9a4.1 4.1 0 0 1 5.8 0Zm5-5.3a7.6 7.6 0 0 0-10 0L1.4 4.5a10.6 10.6 0 0 1 14.2 0Z" opacity="0.95"/></svg>
-                <span id="battPct" style="font-size:12.5px;font-weight:600;">84%</span>
-                <div class="batt" id="battIcon"><div class="fill" id="battFill"></div></div>
+                <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7.5" width="3" height="4.5" rx="1"/><rect x="4.7" y="5.5" width="3" height="6.5" rx="1"/><rect x="9.4" y="3" width="3" height="9" rx="1"/><rect x="14.1" y="0.5" width="3" height="11.5" rx="1"/></svg>
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M1.2 3.9a10 10 0 0 1 13.6 0"/><path d="M3.5 6.4a6.6 6.6 0 0 1 9 0"/><path d="M5.8 8.9a3.2 3.2 0 0 1 4.4 0"/><circle cx="8" cy="10.9" r="1" fill="currentColor" stroke="none"/></svg>
+                <div class="batt dark-text" id="battIcon"><div class="fill" id="battFill"></div><span class="pct" id="battPct">84</span></div>
               </div>
             </div>
 
-            <div class="island" aria-hidden="true"><div class="lens"></div></div>
+            <div class="island" id="island" aria-hidden="true"><div class="lens"></div></div>
 
             <!-- LOCK SCREEN -->
-            <button class="lock" id="lockScreen" aria-label="Lock screen. Press Enter or click to unlock the phone.">
-              <svg class="lock-glyph" width="21" height="27" viewBox="0 0 21 27" fill="none" stroke="#f4f8ff" stroke-width="2" aria-hidden="true"><rect x="1.5" y="11" width="18" height="14.5" rx="4" fill="rgba(244,248,255,0.12)"/><path d="M5.5 11V7.5a5 5 0 0 1 10 0V11"/></svg>
+            <section class="lock" id="lockScreen" aria-label="Lock screen">
+              <svg class="lock-glyph" width="19" height="25" viewBox="0 0 21 27" fill="none" stroke="#fff" stroke-width="2" aria-hidden="true"><rect x="1.5" y="11" width="18" height="14.5" rx="4" fill="rgba(255,255,255,0.14)"/><path d="M5.5 11V7.5a5 5 0 0 1 10 0V11"/></svg>
               <div class="lock-date" id="lockDate">Friday, August 29</div>
               <div class="lock-clock" id="lockClock">9:41</div>
-              <div class="lock-notif">
-                <img src="images/linkedinpfp.jpg" alt="" />
-                <div class="nt"><b>Messages</b><span id="lockNotifTxt">3 new messages from Vinh</span></div>
-                <time id="lockNotifTime">now</time>
+
+              <div class="lock-notifs">
+                <div class="lock-notif">
+                  <img class="n-ic" src="images/linkedinpfp.jpg" alt="" />
+                  <div class="nt"><b>Messages</b><span id="lockNotifTxt">3 new messages from Vinh</span></div>
+                  <time>now</time>
+                </div>
+                <div class="lock-notif">
+                  <span class="n-ic" style="background:linear-gradient(180deg,#34aefc,#1d6ff2)" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 34 34" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M10 25 17 8l7 17"/><path d="M12.6 19.5h8.8"/></svg>
+                  </span>
+                  <div class="nt"><b>Projects</b><span id="lockNotifTxt2"></span></div>
+                  <time>1h ago</time>
+                </div>
               </div>
+
               <div class="lock-owner">
                 <div class="who" id="lockWho">Vinh Le</div>
-                <div class="what" id="lockWhat">AI Engineer &middot; M.S. CS @ Georgia Tech</div>
+                <div class="what" id="lockWhat">Backend-Focused Software Engineer</div>
               </div>
-              <div class="lock-hint">
+              <button class="unlock-hint" id="unlockHint" aria-label="Unlock the phone">
                 <svg width="17" height="10" viewBox="0 0 17 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m2 8 6.5-6L15 8"/></svg>
-                <span>swipe up to unlock</span>
-              </div>
-            </button>
+                <span>Swipe up to unlock</span>
+              </button>
+
+              <button class="lock-fab fl" id="flashFab" aria-label="Toggle flashlight" aria-pressed="false">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10v3.2L14.6 9v11a2 2 0 0 1-2 2h-1.2a2 2 0 0 1-2-2V9L7 5.2Z" opacity="0.95"/><rect x="10.9" y="10.6" width="2.2" height="3.4" rx="1.1" fill="#000" opacity="0.35"/></svg>
+              </button>
+              <button class="lock-fab cam" id="camFab" aria-label="Open camera — jumps to the Photos app">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.6l1.2-1.8A2 2 0 0 1 10 3.3h4a2 2 0 0 1 1.7.9L16.9 6h1.6A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"/><circle cx="12" cy="13" r="3.6"/></svg>
+              </button>
+            </section>
 
             <!-- HOME SCREEN -->
             <main class="home" id="homeScreen" aria-label="Home screen" hidden>
@@ -600,12 +782,12 @@
                 <img src="images/linkedinpfp.jpg" alt="" />
                 <div class="w-txt">
                   <div class="w-name" id="wName">Vinh Le</div>
-                  <div class="w-role" id="wRole">AI Engineer &middot; M.S. CS @ Georgia Tech</div>
+                  <div class="w-role" id="wRole">Backend-Focused Software Engineer</div>
                   <div class="w-loc" id="wLoc">Atlanta, GA</div>
                 </div>
               </div>
 
-              <div class="grid" id="linkGrid" role="group" aria-label="Links">
+              <div class="grid" id="linkGrid" role="group" aria-label="Apps and links">
                 <a class="app-ic" id="icLinkedin" target="_blank" rel="noopener" aria-label="Open LinkedIn profile in a new tab">
                   <span class="tile t-li"><span class="in-word" aria-hidden="true">in</span></span>
                   <span class="lbl">LinkedIn</span>
@@ -615,13 +797,17 @@
                   <span class="lbl">GitHub</span>
                 </a>
                 <a class="app-ic" id="icDevpost" target="_blank" rel="noopener" aria-label="Open Devpost profile in a new tab">
-                  <span class="tile t-dp"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="#003e54"/><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="none" stroke="#5bd3f3" stroke-width="1.6"/><text x="17" y="20.5" text-anchor="middle" font-family="Instrument Sans, sans-serif" font-size="15" font-weight="700" fill="#fff">D</text></svg></span>
+                  <span class="tile t-dp"><svg width="34" height="30" viewBox="0 0 34 30" aria-hidden="true"><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="#003e54"/><path d="M8.7 0 0 15l8.7 15h16.6L34 15 25.3 0Z" fill="none" stroke="#5bd3f3" stroke-width="1.6"/><text x="17" y="20.5" text-anchor="middle" font-family="-apple-system, 'Helvetica Neue', sans-serif" font-size="15" font-weight="700" fill="#fff">D</text></svg></span>
                   <span class="lbl">Devpost</span>
                 </a>
                 <a class="app-ic" id="icResume" target="_blank" rel="noopener" aria-label="Open resume in a new tab">
                   <span class="tile t-cv"><svg width="30" height="34" viewBox="0 0 30 34" aria-hidden="true"><path d="M4 2h14l8 8v22a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" fill="#fff" stroke="#c6cede" stroke-width="1.4"/><path d="M18 2v8h8" fill="#e6ebf4" stroke="#c6cede" stroke-width="1.4"/><rect x="6.5" y="15" width="17" height="2" rx="1" fill="#9fb4d4"/><rect x="6.5" y="20" width="17" height="2" rx="1" fill="#9fb4d4"/><rect x="6.5" y="25" width="11" height="2" rx="1" fill="#9fb4d4"/><rect x="6" y="6" width="7" height="2.4" rx="1.2" fill="#e0463f"/></svg></span>
                   <span class="lbl">Resume</span>
                 </a>
+                <button class="app-ic" data-app="settings" aria-label="Open Settings app">
+                  <span class="tile t-set"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#e8e9ec" aria-hidden="true"><circle cx="20" cy="20" r="12.5" stroke-width="5.5" stroke-dasharray="3.3 2.05"/><circle cx="20" cy="20" r="5.6" stroke-width="2.6"/></svg></span>
+                  <span class="lbl">Settings</span>
+                </button>
               </div>
 
               <button class="widget-photo" id="photoWidget" data-app="photos" aria-label="Open Photos app — recent project screenshots">
@@ -660,18 +846,25 @@
                 </button>
                 <div class="msg-contact">
                   <img src="images/linkedinpfp.jpg" alt="" />
-                  <span id="msgContactName">Vinh Le</span>
+                  <span class="nm"><span id="msgContactName">Vinh Le</span>
+                    <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="m1 1 4 4-4 4"/></svg>
+                  </span>
                 </div>
               </div>
               <div class="app-body">
                 <div class="thread" id="thread" aria-live="polite"></div>
               </div>
               <form class="composer" id="composer">
-                <label class="visually-hidden" for="composerInput">Type a message to Vinh. Sending opens your email app.</label>
-                <input id="composerInput" type="text" placeholder="Text Vinh — it becomes an email" autocomplete="off" />
-                <button type="submit" id="sendBtn" aria-label="Send message" disabled>
-                  <svg width="15" height="17" viewBox="0 0 15 17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 15.5v-13M2 7l5.5-5.5L13 7"/></svg>
+                <button class="plus" type="button" tabindex="-1" aria-hidden="true">
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
                 </button>
+                <div class="field">
+                  <label class="visually-hidden" for="composerInput">Type an iMessage to Vinh. Sending opens your email app.</label>
+                  <input id="composerInput" type="text" placeholder="iMessage" autocomplete="off" />
+                  <button type="submit" class="send" id="sendBtn" aria-label="Send message" disabled>
+                    <svg width="13" height="15" viewBox="0 0 15 17" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 15.5v-13M2 7l5.5-5.5L13 7"/></svg>
+                  </button>
+                </div>
               </form>
             </section>
 
@@ -688,6 +881,7 @@
                 <div class="ph-count" id="phCount"></div>
                 <div class="ph-grid" id="phGrid"></div>
               </div>
+              <div class="ph-seg" aria-hidden="true"><span>Years</span><span>Months</span><span class="on">All</span></div>
               <div class="ph-viewer" id="phViewer" role="dialog" aria-modal="true" aria-label="Photo viewer">
                 <div class="v-top">
                   <button class="v-btn" id="vClose" aria-label="Close photo viewer">
@@ -707,7 +901,7 @@
                   <div class="v-name" id="vName"></div>
                   <div class="v-meta" id="vMeta"></div>
                   <div class="v-desc" id="vDesc"></div>
-                  <a class="v-link" id="vLink" target="_blank" rel="noopener">Open project</a>
+                  <a class="v-link" id="vLink" target="_blank" rel="noopener">OPEN</a>
                 </div>
               </div>
             </section>
@@ -724,6 +918,7 @@
               <div class="app-body">
                 <div class="notes-list" id="notesList">
                   <div class="notes-hd">Notes</div>
+                  <div class="notes-group" id="notesGroup"></div>
                 </div>
                 <div class="note-detail" id="noteDetail"></div>
               </div>
@@ -741,13 +936,39 @@
               <div class="app-body">
                 <div class="store-hd">
                   <div class="today" id="storeDate">Friday, August 29</div>
-                  <h2>Shipped</h2>
+                  <h2>Today</h2>
                 </div>
                 <div class="store-list" id="storeList"></div>
               </div>
             </section>
 
+            <!-- APP: SETTINGS -->
+            <section class="app-view" id="app-settings" role="region" aria-label="Settings app" hidden>
+              <div class="app-head">
+                <button class="back-btn" data-close aria-label="Back to home screen">
+                  <svg width="11" height="19" viewBox="0 0 11 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 1.5 2 9.5l7.5 8"/></svg>
+                  <span>Back</span>
+                </button>
+                <span class="app-title">Settings</span>
+              </div>
+              <div class="app-body">
+                <div class="set-wrap">
+                  <div class="set-hd">Settings</div>
+                  <a class="set-profile" id="setProfile" href="#">
+                    <img src="images/linkedinpfp.jpg" alt="" />
+                    <div class="sp-t"><b id="setName">Vinh Le</b><span id="setSub"></span></div>
+                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg>
+                  </a>
+                  <div class="set-cap">General · About</div>
+                  <div class="set-group" id="aboutGroup"></div>
+                  <div class="set-cap">Accounts</div>
+                  <div class="set-group" id="acctGroup"></div>
+                </div>
+              </div>
+            </section>
+
             <div class="home-indicator" aria-hidden="true"></div>
+            <div class="gesture-zone" id="gestureZone" aria-hidden="true"></div>
           </div>
         </div>
       </div>
@@ -755,7 +976,7 @@
   </div>
 
   <noscript>
-    <div style="position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#050507;color:#eef3fb;font-family:sans-serif;text-align:center;padding:2rem;">
+    <div style="position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:#050507;color:#fff;font-family:sans-serif;text-align:center;padding:2rem;">
       <p>This phone needs JavaScript. For the no-frills version, visit <a href="classic.html" style="color:#9fc9ff;">the classic view</a>.</p>
     </div>
   </noscript>
@@ -781,13 +1002,16 @@
     window.addEventListener('resize', fit);
 
     /* ============ identity ============ */
+    var first = V.name.split(' ')[0];
     $('lockWho').textContent = V.name;
     $('lockWhat').textContent = V.role;
     $('wName').textContent = V.name;
     $('wRole').textContent = V.role;
     $('wLoc').textContent = V.location + ' · ' + V.tagline;
     $('msgContactName').textContent = V.name;
-    $('lockNotifTxt').textContent = V.about.length + ' new messages from ' + V.name.split(' ')[0];
+    $('lockNotifTxt').textContent = V.about.length + ' new messages from ' + first;
+    var awarded = V.projects.filter(function (p) { return p.award; })[0];
+    if (awarded) $('lockNotifTxt2').textContent = awarded.name + ' — ' + awarded.award + ' at ' + awarded.event;
     $('icLinkedin').href = V.links.linkedin;
     $('icGithub').href = V.links.github;
     $('icDevpost').href = V.links.devpost;
@@ -815,9 +1039,12 @@
 
     function setBatt(level, charging) {
       var pct = Math.round(level * 100);
-      $('battPct').textContent = pct + '%';
-      $('battFill').style.width = Math.max(4, pct * 0.92) + '%';
-      $('battIcon').classList.toggle('charging', !!charging);
+      var icon = $('battIcon');
+      $('battPct').textContent = pct;
+      $('battFill').style.width = Math.max(6, pct * 0.92) + '%';
+      icon.classList.toggle('charging', !!charging);
+      icon.classList.toggle('low', pct <= 20 && !charging);
+      icon.classList.toggle('dark-text', pct >= 45);
     }
     setBatt(0.84, false);
     if (navigator.getBattery) {
@@ -853,33 +1080,60 @@
     /* ============ lock screen ============ */
     var lock = $('lockScreen');
     var home = $('homeScreen');
+    var screen = $('screen');
     var locked = true;
     function unlock() {
       if (!locked) return;
       locked = false;
       home.hidden = false;
+      screen.classList.add('unlocked'); // wallpaper depth zoom
       requestAnimationFrame(function () {
         lock.classList.add('away');
         home.classList.add('on');
       });
       setTimeout(function () {
         lock.hidden = true;
-        var first = home.querySelector('.dock .app-ic');
-        if (first) first.focus({ preventScroll: true });
-      }, reduced ? 30 : 580);
+        var firstIc = home.querySelector('.dock .app-ic');
+        if (firstIc && !openApp) firstIc.focus({ preventScroll: true });
+      }, reduced ? 30 : 600);
     }
-    lock.addEventListener('click', unlock);
+    lock.addEventListener('click', function (e) {
+      if (e.target.closest('.lock-fab')) return;
+      unlock();
+    });
+    $('unlockHint').addEventListener('click', unlock);
     var touchY = null;
-    lock.addEventListener('touchstart', function (e) { touchY = e.touches[0].clientY; }, { passive: true });
+    lock.addEventListener('touchstart', function (e) {
+      if (e.target.closest('.lock-fab')) return;
+      touchY = e.touches[0].clientY;
+    }, { passive: true });
     lock.addEventListener('touchmove', function (e) {
       if (touchY !== null && touchY - e.touches[0].clientY > 55) { touchY = null; unlock(); }
     }, { passive: true });
     document.addEventListener('keydown', function (e) {
-      if (locked && (e.key === 'Enter' || e.key === ' ') && document.activeElement !== lock) unlock();
+      if (!locked || (e.key !== 'Enter' && e.key !== ' ')) return;
+      if (e.target.closest && e.target.closest('.lock-fab')) return;
+      unlock();
+    });
+
+    /* flashlight easter egg + camera shortcut */
+    var flashFab = $('flashFab');
+    flashFab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var on = document.body.classList.toggle('torch');
+      flashFab.classList.toggle('on', on);
+      flashFab.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    var camFab = $('camFab');
+    camFab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var origin = camFab;
+      unlock();
+      setTimeout(function () { open('photos', origin); }, reduced ? 40 : 500);
     });
 
     /* ============ app open / close ============ */
-    var screen = $('screen');
+    var island = $('island');
     var openApp = null;
     var lastIcon = null;
 
@@ -896,13 +1150,14 @@
         view.style.transformOrigin = ox + '% ' + oy + '%';
       }
       view.hidden = false;
+      island.classList.add('live');
       requestAnimationFrame(function () {
         requestAnimationFrame(function () { view.classList.add('open'); });
       });
       setTimeout(function () {
         var back = view.querySelector('[data-close]');
         if (back) back.focus({ preventScroll: true });
-      }, reduced ? 30 : 430);
+      }, reduced ? 30 : 460);
       if (appId === 'messages') startThread();
     }
 
@@ -911,7 +1166,8 @@
       var view = openApp;
       openApp = null;
       view.classList.remove('open');
-      setTimeout(function () { view.hidden = true; }, reduced ? 30 : 440);
+      island.classList.remove('live');
+      setTimeout(function () { view.hidden = true; }, reduced ? 30 : 470);
       if (view.id === 'app-messages') stopThread();
       if (lastIcon) { lastIcon.focus({ preventScroll: true }); lastIcon = null; }
     }
@@ -928,7 +1184,28 @@
       close();
     });
 
-    /* ============ MESSAGES ============ */
+    /* home-indicator swipe: drag up on the bottom pill zone exits the app */
+    var zone = $('gestureZone');
+    var gy = null;
+    zone.addEventListener('pointerdown', function (e) {
+      gy = e.clientY;
+      screen.classList.add('grabbing');
+      zone.setPointerCapture(e.pointerId);
+    });
+    zone.addEventListener('pointermove', function (e) {
+      if (gy === null) return;
+      if (gy - e.clientY > 36) {
+        gy = null;
+        if ($('phViewer').classList.contains('open')) closeViewer();
+        close();
+        screen.classList.remove('grabbing');
+      }
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      zone.addEventListener(ev, function () { gy = null; screen.classList.remove('grabbing'); });
+    });
+
+    /* ============ MESSAGES (iMessage) ============ */
     var thread = $('thread');
     var composerInput = $('composerInput');
     var sendBtn = $('sendBtn');
@@ -938,8 +1215,14 @@
     function stopThread() { timers.forEach(clearTimeout); timers = []; }
 
     function bubble(cls, text) {
+      // iMessage tails belong to the LAST bubble of a cluster: strip the
+      // tail from the previous bubble when it has the same direction.
+      var prev = thread.lastElementChild;
+      if (prev && prev.classList.contains('bubble') && prev.classList.contains(cls)) {
+        prev.classList.remove('tail');
+      }
       var b = document.createElement('div');
-      b.className = 'bubble ' + cls;
+      b.className = 'bubble tail ' + cls;
       b.textContent = text;
       thread.appendChild(b);
       thread.parentElement.scrollTop = thread.parentElement.scrollHeight;
@@ -947,7 +1230,7 @@
     }
     function typingDots() {
       var t = document.createElement('div');
-      t.className = 'bubble in typing';
+      t.className = 'bubble tail in typing';
       t.setAttribute('aria-label', 'Vinh is typing');
       t.innerHTML = '<i></i><i></i><i></i>';
       thread.appendChild(t);
@@ -960,10 +1243,10 @@
       threadStarted = true;
       var stamp = document.createElement('div');
       stamp.className = 'stamp';
-      stamp.textContent = 'iMessage · Today ' + fmtTime(new Date(), true);
+      stamp.innerHTML = '<b>iMessage</b><br>Today ' + fmtTime(new Date(), true);
       thread.appendChild(stamp);
 
-      var msgs = ['hey — ' + V.name.split(' ')[0] + ' here. thanks for picking up.']
+      var msgs = ['hey — ' + first + ' here. thanks for picking up.']
         .concat(V.about)
         .concat(['want to reach me for real? type below — it goes straight to ' + V.email + '.']);
 
@@ -986,11 +1269,20 @@
       var text = composerInput.value.trim();
       if (!text) return;
       bubble('out', text);
+      var old = thread.querySelector('.delivered');
+      if (old) old.remove();
       composerInput.value = '';
       sendBtn.disabled = true;
       var mailto = 'mailto:' + V.email +
-        '?subject=' + encodeURIComponent('Hello ' + V.name.split(' ')[0] + ' — from your portfolio phone') +
+        '?subject=' + encodeURIComponent('Hello ' + first + ' — from your portfolio phone') +
         '&body=' + encodeURIComponent(text + '\n\n— sent from the phone at ' + V.links.site);
+      later(function () {
+        var d = document.createElement('div');
+        d.className = 'delivered';
+        d.textContent = 'Delivered';
+        thread.appendChild(d);
+        thread.parentElement.scrollTop = thread.parentElement.scrollHeight;
+      }, 600);
       later(function () {
         var t = typingDots();
         later(function () {
@@ -998,7 +1290,7 @@
           bubble('in', 'got it — opening your mail app so this actually reaches me.');
           later(function () { window.location.href = mailto; }, 900);
         }, 1100);
-      }, 500);
+      }, 900);
     });
 
     /* ============ PHOTOS ============ */
@@ -1007,7 +1299,7 @@
       return L.demo || L.app || L.devpost || L.dorahacks || L.github || V.links.github;
     }
     var shots = V.projects.concat(V.earlier).filter(function (p) { return p.image; });
-    $('phCount').textContent = shots.length + ' Photos · ' + V.name.split(' ')[0] + "'s builds";
+    $('phCount').innerHTML = 'Recents<small>' + shots.length + ' items · ' + first + "'s builds</small>";
     var phGrid = $('phGrid');
     shots.forEach(function (p, i) {
       var b = document.createElement('button');
@@ -1078,6 +1370,11 @@
     });
 
     /* ============ NOTES ============ */
+    function esc(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
     var notesData = [
       { title: 'About', preview: V.about[0] },
       { title: 'Education', preview: V.education.map(function (e) { return e.school; }).join(' · ') },
@@ -1085,15 +1382,11 @@
       { title: 'Experience', preview: V.experience.map(function (e) { return e.org; }).join(' · ') }
     ];
     var notesList = $('notesList');
+    var notesGroup = $('notesGroup');
     var noteDetail = $('noteDetail');
     var notesBackLbl = $('notesBackLbl');
     var noteBackBtn = document.querySelector('#app-notes [data-close]');
 
-    function esc(s) {
-      var d = document.createElement('div');
-      d.textContent = s;
-      return d.innerHTML;
-    }
     function noteBody(title) {
       var h = '';
       if (title === 'About') {
@@ -1120,7 +1413,7 @@
       noteOpen = true;
       notesList.style.display = 'none';
       noteDetail.classList.add('on');
-      noteDetail.innerHTML = '<h2>' + esc(title) + '</h2><div class="n-date">' + esc($('lockDate').textContent) + '</div>' + noteBody(title);
+      noteDetail.innerHTML = '<div class="n-date">' + esc($('lockDate').textContent) + '</div><h2>' + esc(title) + '</h2>' + noteBody(title);
       notesBackLbl.textContent = 'Notes';
       noteDetail.parentElement.scrollTop = 0;
     }
@@ -1138,10 +1431,10 @@
       row.className = 'note-row';
       row.innerHTML = '<b>' + esc(n.title) + '</b><span>' + esc(n.preview) + '</span>';
       row.addEventListener('click', function () { showNote(n.title); });
-      notesList.appendChild(row);
+      notesGroup.appendChild(row);
     });
 
-    /* ============ PROJECTS ("store") ============ */
+    /* ============ PROJECTS (App Store Today cards) ============ */
     var ICON_HUES = [
       'linear-gradient(160deg,#f7b733,#f75c2f)',
       'linear-gradient(160deg,#8e7bf7,#4b3dd4)',
@@ -1153,18 +1446,37 @@
     ];
     var storeList = $('storeList');
     V.projects.forEach(function (p, i) {
-      var row = document.createElement('div');
-      row.className = 'store-row';
+      var card = document.createElement('article');
+      card.className = 'today-card';
 
-      var main = document.createElement('button');
-      main.className = 'store-main';
-      main.setAttribute('aria-expanded', 'false');
-      main.setAttribute('aria-label', p.name + ' — show details');
-      var sub = [p.event, p.award ? p.award : null].filter(Boolean).join(' · ');
-      main.innerHTML =
-        '<span class="store-app-ic" style="background:' + ICON_HUES[i % ICON_HUES.length] + '" aria-hidden="true">' + esc(p.name.charAt(0).toUpperCase()) + '</span>' +
-        '<span class="store-txt"><b>' + esc(p.name) + '</b><span>' + (p.award ? '<span class="award">' + esc(p.award) + '</span> · ' : '') + esc(p.event) + '</span></span>';
+      var art = document.createElement('button');
+      art.className = 'tc-art';
+      art.setAttribute('aria-expanded', 'false');
+      art.setAttribute('aria-label', p.name + ' — show details');
+      if (p.image) {
+        art.style.backgroundImage = 'linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url("' + p.image + '")';
+      } else {
+        art.style.background = ICON_HUES[i % ICON_HUES.length];
+        var mono = document.createElement('span');
+        mono.className = 'tc-mono';
+        mono.setAttribute('aria-hidden', 'true');
+        mono.textContent = p.name.charAt(0).toUpperCase();
+        art.appendChild(mono);
+      }
+      var eyebrow = document.createElement('span');
+      eyebrow.className = 'tc-eyebrow' + (p.award ? ' gold' : '');
+      eyebrow.textContent = p.award ? p.award : p.event;
+      art.appendChild(eyebrow);
+      var h3 = document.createElement('h3');
+      h3.textContent = p.name;
+      art.appendChild(h3);
 
+      var foot = document.createElement('div');
+      foot.className = 'tc-foot';
+      var sub = [p.event, p.date].filter(Boolean).join(' · ');
+      foot.innerHTML =
+        '<span class="tc-ic" style="background:' + ICON_HUES[i % ICON_HUES.length] + '" aria-hidden="true">' + esc(p.name.charAt(0).toUpperCase()) + '</span>' +
+        '<span class="tc-txt"><b>' + esc(p.name) + '</b><span>' + esc(sub) + '</span></span>';
       var get = document.createElement('a');
       get.className = 'get-btn';
       get.href = primaryLink(p);
@@ -1172,11 +1484,10 @@
       get.rel = 'noopener';
       get.textContent = 'GET';
       get.setAttribute('aria-label', 'Open ' + p.name + ' in a new tab');
-      main.appendChild(get);
-      get.addEventListener('click', function (e) { e.stopPropagation(); });
+      foot.appendChild(get);
 
       var more = document.createElement('div');
-      more.className = 'store-more';
+      more.className = 'tc-more';
       var moreHtml = '<p>' + esc(p.desc) + '</p>';
       if (p.bullets && p.bullets.length) {
         moreHtml += '<ul>';
@@ -1192,14 +1503,59 @@
       moreHtml += '</div>';
       more.innerHTML = moreHtml;
 
-      main.addEventListener('click', function () {
-        var on = row.classList.toggle('expanded');
-        main.setAttribute('aria-expanded', on ? 'true' : 'false');
+      art.addEventListener('click', function () {
+        var on = card.classList.toggle('expanded');
+        art.setAttribute('aria-expanded', on ? 'true' : 'false');
       });
 
-      row.appendChild(main);
-      row.appendChild(more);
-      storeList.appendChild(row);
+      card.appendChild(art);
+      card.appendChild(foot);
+      card.appendChild(more);
+      storeList.appendChild(card);
+    });
+
+    /* ============ SETTINGS ============ */
+    $('setName').textContent = V.name;
+    $('setSub').textContent = V.role + ' · ' + V.email;
+    $('setProfile').href = 'mailto:' + V.email;
+    var skillCount = 0, catCount = 0;
+    Object.keys(V.skills).forEach(function (k) { catCount++; skillCount += V.skills[k].length; });
+    var aboutRows = [
+      ['Model Name', V.name],
+      ['Chip', V.education[0].degree],
+      ['Manufactured', V.education[1] ? V.education[1].school : V.location],
+      ['Storage', V.projects.length + ' projects · ' + V.earlier.length + ' archived'],
+      ['Memory', skillCount + ' skills across ' + catCount + ' stacks'],
+      ['Software Version', V.role],
+      ['Coverage', V.location]
+    ];
+    var aboutGroup = $('aboutGroup');
+    aboutRows.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'set-row';
+      row.innerHTML = '<span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span>';
+      aboutGroup.appendChild(row);
+    });
+    var serial = document.createElement('a');
+    serial.className = 'set-row';
+    serial.href = 'mailto:' + V.email;
+    serial.innerHTML = '<span class="k">Serial Number</span><span class="v" style="color:var(--ios-blue)">' + esc(V.email) + '</span>';
+    aboutGroup.appendChild(serial);
+
+    var MINI_HUES = { GitHub: '#24292f', LinkedIn: '#0a66c2', Devpost: '#0d1730', Resume: '#8e8e93' };
+    var acctGroup = $('acctGroup');
+    [['GitHub', V.links.github], ['LinkedIn', V.links.linkedin], ['Devpost', V.links.devpost], ['Resume', V.links.resume]].forEach(function (r) {
+      var row = document.createElement('a');
+      row.className = 'set-row';
+      row.href = r[1];
+      row.target = '_blank';
+      row.rel = 'noopener';
+      row.innerHTML =
+        '<span class="mini" style="background:' + MINI_HUES[r[0]] + '" aria-hidden="true">' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></span>' +
+        '<span class="k">' + esc(r[0]) + '</span>' +
+        '<svg class="chev" width="7" height="12" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg>';
+      acctGroup.appendChild(row);
     });
   })();
   </script>
