@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/jpeg" href="images/linkedinpfp.jpg" />
   <meta name="description"
-    content="Vinh Le — AI engineer and M.S. CS student at Georgia Tech. Five fractures in the dark. Contents unknown. Choose one." />
+    content="Vinh Le — AI engineer and M.S. CS student at Georgia Tech. Five doors: a working terminal, an iPhone, a retro desktop, a pixel town, and the classic portfolio." />
   <meta property="og:title" content="Vinh Le — Pick a Door" />
-  <meta property="og:description" content="AI Engineer | M.S. CS @ Georgia Tech | Five fractures. Choose one." />
+  <meta property="og:description" content="AI Engineer | M.S. CS @ Georgia Tech | Pick a door." />
   <meta property="og:image" content="images/linkedinpfp.jpg" />
   <meta property="og:type" content="website" />
 
@@ -20,18 +20,19 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html, body { min-height: 100%; }
 
     body {
       background: #000;
       color: #cdd6ec;
       font-family: 'JetBrains Mono', monospace;
-      overflow: hidden;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 4.5rem 1rem 2.5rem;
     }
 
-    /* barely-there grain so the black isn't dead pixels */
     body::after {
       content: '';
       position: fixed; inset: 0; pointer-events: none; z-index: 40;
@@ -46,7 +47,7 @@
     .topbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 20;
       display: flex; justify-content: center;
-      padding-top: 1.6rem;
+      padding-top: 1.4rem;
       pointer-events: none;
     }
     .topbar a {
@@ -64,22 +65,13 @@
       box-shadow: 0 0 18px rgba(201, 168, 76, 0.12);
     }
 
-    /* ── the field of fractures ── */
-    #field {
-      position: fixed; inset: 0; z-index: 5;
-      list-style: none;
-    }
+    /* ── decorative fractures in the void ── */
+    #field { position: fixed; inset: 0; z-index: 1; pointer-events: none; list-style: none; }
     .crack {
       position: absolute;
-      display: block;
-      outline: none;
-      text-decoration: none;
-      margin-left: -45px; /* x positions are crack centers */
+      margin-left: -45px;
       transform: rotate(var(--rot));
-      transition: transform 0.5s cubic-bezier(0.25, 0.9, 0.3, 1), filter 0.5s ease;
-      filter: brightness(0.9);
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
+      opacity: 0.5;
     }
     .crack svg { display: block; overflow: visible; }
     .crack .glow {
@@ -89,51 +81,30 @@
       animation: crack-breathe var(--dur) ease-in-out infinite;
     }
     @keyframes crack-breathe {
-      0%, 100% { opacity: 0.82; }
+      0%, 100% { opacity: 0.75; }
       45%      { opacity: 1; }
-      55%      { opacity: 0.9; }
+      55%      { opacity: 0.85; }
     }
-    .crack:hover, .crack:focus-visible {
-      transform: rotate(var(--rot)) scale(1.18, 1.04);
-      filter: brightness(1.35);
-      z-index: 6;
-    }
-    .crack:hover .glow, .crack:focus-visible .glow {
+    .crack.lit { opacity: 0.95; }
+    .crack.lit .glow {
       filter:
         drop-shadow(0 0 10px var(--c))
-        drop-shadow(0 0 34px var(--c))
+        drop-shadow(0 0 36px var(--c))
         drop-shadow(0 0 70px var(--cdim));
     }
-    .crack.opening {
-      transform: rotate(var(--rot)) scale(3.2, 1.15);
-      filter: brightness(2.4);
-      transition-duration: 0.6s;
-    }
-    /* faint halo behind each crack */
-    .crack::before {
-      content: '';
-      position: absolute; inset: -40% -180%;
-      background: radial-gradient(ellipse 45% 55% at 50% 50%, var(--cdim) 0%, transparent 70%);
-      opacity: 0.24;
-      transition: opacity 0.5s ease;
-      pointer-events: none;
-    }
-    .crack:hover::before, .crack:focus-visible::before { opacity: 0.55; }
 
-    /* ── SYSTEM window ── */
+    /* ── SYSTEM window: the menu ── */
     .system {
-      position: fixed; z-index: 15;
-      left: 50%; bottom: clamp(1.4rem, 4vh, 3rem);
-      transform: translateX(-50%);
-      width: min(480px, calc(100vw - 2rem));
-      background: rgba(6, 9, 18, 0.78);
+      position: relative; z-index: 10;
+      width: min(620px, 100%);
+      background: rgba(6, 9, 18, 0.82);
       border: 1px solid rgba(140, 170, 255, 0.38);
       box-shadow:
         0 0 0 1px rgba(0, 0, 0, 0.6),
-        0 0 28px rgba(140, 170, 255, 0.10),
-        inset 0 0 40px rgba(140, 170, 255, 0.04);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      padding: 0.95rem 1.15rem 1.05rem;
+        0 0 34px rgba(140, 170, 255, 0.10),
+        inset 0 0 44px rgba(140, 170, 255, 0.04);
+      backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+      padding: 1.05rem 1.25rem 1.1rem;
       font-size: 0.7rem;
       line-height: 1.85;
       letter-spacing: 0.04em;
@@ -152,50 +123,63 @@
     }
     .system .line {
       display: flex; gap: 0.9rem;
-      opacity: 0;
-      transform: translateY(3px);
+      opacity: 0; transform: translateY(3px);
       transition: opacity 0.35s ease, transform 0.35s ease;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .system .line.on { opacity: 1; transform: none; }
-    .system .k {
-      color: rgba(140, 170, 255, 0.55);
-      min-width: 4.6rem;
-      flex-shrink: 0;
-    }
+    .system .k { color: rgba(140, 170, 255, 0.55); min-width: 4.4rem; flex-shrink: 0; }
     .system .v { color: #dde4f8; }
     .system .v .dim { color: rgba(221, 228, 248, 0.5); }
     .system .v.gold { color: #d9bc6a; }
     .system .v a { color: rgba(160, 185, 255, 0.9); text-decoration: none; }
     .system .v a:hover { color: #fff; text-decoration: underline; }
-    .system .caret {
-      display: inline-block; width: 0.55em; height: 1em;
-      background: rgba(160, 185, 255, 0.9);
-      vertical-align: -0.15em;
-      animation: caret-blink 0.9s step-end infinite;
-      margin-left: 0.2rem;
-    }
-    @keyframes caret-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-    /* ── mobile ── */
-    @media (max-width: 640px) {
-      body { overflow-y: auto; }
-      .system {
-        font-size: 0.64rem;
-        line-height: 1.7;
-        bottom: max(1.1rem, calc(env(safe-area-inset-bottom) + 0.8rem));
-        padding: 0.85rem 1rem 0.95rem;
-      }
-      .system .line { white-space: normal; overflow: visible; text-overflow: clip; }
-      .system .k { min-width: 3.4rem; }
-      .topbar { padding-top: 1.1rem; }
+    /* menu rows */
+    .menu {
+      margin: 0.75rem 0 0.35rem;
+      border-top: 1px solid rgba(140, 170, 255, 0.16);
+      padding-top: 0.7rem;
+      display: flex; flex-direction: column; gap: 0.15rem;
     }
+    .m-row {
+      display: grid;
+      grid-template-columns: 1.1rem 2rem 10.5rem 1fr;
+      align-items: baseline; gap: 0.7rem;
+      width: 100%;
+      background: none; border: none; border-left: 2px solid transparent;
+      padding: 0.5rem 0.6rem 0.5rem 0.5rem;
+      font: inherit; letter-spacing: inherit;
+      color: #dde4f8;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      opacity: 0; transform: translateY(3px);
+    }
+    .m-row.on { opacity: 1; transform: none; transition: opacity 0.35s ease, transform 0.35s ease, background 0.2s ease, border-color 0.2s ease; }
+    .m-cursor { color: var(--c); opacity: 0; }
+    .m-num { color: rgba(140, 170, 255, 0.45); font-size: 0.64rem; }
+    .m-name { text-transform: uppercase; letter-spacing: 0.14em; }
+    .m-blurb { color: rgba(221, 228, 248, 0.42); font-size: 0.64rem; }
+    .m-row.sel, .m-row:hover {
+      background: rgba(140, 170, 255, 0.06);
+      border-left-color: var(--c);
+    }
+    .m-row.sel .m-cursor, .m-row:hover .m-cursor { opacity: 1; }
+    .m-row.sel .m-name, .m-row:hover .m-name { color: var(--c); }
+    .m-row.sel .m-blurb, .m-row:hover .m-blurb { color: rgba(221, 228, 248, 0.65); }
+    .m-row:focus-visible { outline: 1px solid rgba(160, 185, 255, 0.6); outline-offset: -1px; }
 
-    @media (prefers-reduced-motion: reduce) {
-      .crack, .crack .glow, .crack::before { transition: none !important; animation: none !important; }
-      .system .line { opacity: 1 !important; transform: none !important; transition: none; }
-      .system .caret { animation: none; }
+    .hint-line {
+      border-top: 1px solid rgba(140, 170, 255, 0.16);
+      margin-top: 0.4rem; padding-top: 0.6rem;
+      font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(221, 228, 248, 0.3);
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; transition: opacity 0.35s ease;
     }
+    .hint-line.on { opacity: 1; }
+    .hint-line b { font-weight: 400; color: rgba(221, 228, 248, 0.55); }
 
     /* click flood */
     #flood {
@@ -240,19 +224,34 @@
       transition: color 0.3s, border-color 0.3s;
     }
     .boot-quick:hover { color: #e6c96e; border-color: rgba(201, 168, 76, 0.6); }
-    @media (prefers-reduced-motion: reduce) { #boot { display: none; } }
+
+    /* ── mobile ── */
+    @media (max-width: 640px) {
+      body { padding: 4.2rem 0.8rem 1.6rem; align-items: flex-start; }
+      .system { font-size: 0.64rem; padding: 0.9rem 0.9rem 0.95rem; }
+      .system .k { min-width: 3.4rem; }
+      .m-row { grid-template-columns: 1rem 1.7rem 1fr; gap: 0.55rem; padding: 0.65rem 0.5rem; }
+      .m-blurb { grid-column: 3; }
+      .hint-line .kb { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #boot { display: none; }
+      .crack .glow { animation: none; }
+      .system .line, .m-row, .hint-line { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
   </style>
 </head>
 
 <body data-accent="#050507" data-room="hallway">
-  <a class="skip-link" href="#field">Skip to the doors</a>
+  <a class="skip-link" href="#gate-menu">Skip to the menu</a>
 
   <div id="boot" aria-label="System boot sequence">
     <div class="boot-inner">
       <p class="bl"><span class="tag">[SYSTEM]</span> signal acquired</p>
       <p class="bl"><span class="tag">[SYSTEM]</span> you are no longer where you were.</p>
       <p class="bl"><span class="tag">[SYSTEM]</span> reconstructing archive <span class="bar">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span></p>
-      <p class="bl"><span class="tag">[SYSTEM]</span> five fractures stabilized</p>
+      <p class="bl"><span class="tag">[SYSTEM]</span> five doors registered</p>
       <p class="bl gold"><span class="tag">[SYSTEM]</span> welcome, traveler.</p>
     </div>
     <p class="boot-hint">tap anywhere to skip</p>
@@ -263,9 +262,9 @@
     <a href="classic.html">Quick View</a>
   </div>
 
-  <ul id="field" aria-label="Five fractures — each leads somewhere different"></ul>
+  <ul id="field" aria-hidden="true"></ul>
 
-  <aside class="system" aria-label="System window">
+  <main class="system" aria-label="System window">
     <div class="sys-head"><span class="diamond" aria-hidden="true"></span>SYSTEM</div>
     <div id="sys-lines">
       <p class="line"><span class="k">&gt;</span><span class="v">You have crossed over.</span></p>
@@ -278,10 +277,14 @@
         <a href="https://devpost.com/vinhbin" target="_blank" rel="noopener noreferrer">devpost</a> ·
         <a href="mailto:vinhhle24@gmail.com">email</a>
       </span></p>
-      <p class="line"><span class="k">QUEST</span><span class="v">Five fractures detected. Contents unknown.</span></p>
-      <p class="line"><span class="k">&gt;</span><span class="v">Choose one.<span class="caret" aria-hidden="true"></span></span></p>
+      <p class="line"><span class="k">&gt;</span><span class="v">Choose your door.</span></p>
     </div>
-  </aside>
+    <nav class="menu" id="gate-menu" aria-label="Choose a door"></nav>
+    <p class="hint-line" id="hint">
+      <span class="kb"><b>&#8593;&#8595;</b> select &nbsp;·&nbsp; <b>enter</b> open &nbsp;·&nbsp; <b>1&#8211;5</b> direct</span>
+      <span>&#169; 2026 Vinh Le</span>
+    </p>
+  </main>
 
   <noscript>
     <ul style="position:fixed;top:5rem;left:0;right:0;list-style:none;display:flex;flex-direction:column;gap:0.75rem;text-align:center;z-index:50;">
@@ -304,8 +307,6 @@
         var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [200, 200, 200];
       }
-
-      /* deterministic pseudo-random per crack so the composition is stable */
       function mulberry(seed) {
         return function () {
           seed |= 0; seed = seed + 0x6D2B79F5 | 0;
@@ -314,23 +315,19 @@
           return ((t ^ t >>> 14) >>> 0) / 4294967296;
         };
       }
-
-      /* jagged fissure path with small branches */
       function crackPath(rnd, w, h) {
-        var segs = 13;
-        var pts = [];
+        var segs = 13, pts = [];
         var x = w / 2 + (rnd() - 0.5) * w * 0.2;
         for (var i = 0; i <= segs; i++) {
           var y = (h / segs) * i;
           if (i > 0) {
             x += (rnd() - 0.5) * w * 0.42;
-            if (rnd() < 0.22) x += (rnd() - 0.5) * w * 0.6; /* hard kink */
+            if (rnd() < 0.22) x += (rnd() - 0.5) * w * 0.6;
             x = Math.max(w * 0.12, Math.min(w * 0.88, x));
           }
           pts.push([x, y]);
         }
         var d = 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L');
-        /* branches */
         var branches = '';
         for (var b = 0; b < 3; b++) {
           var idx = 2 + Math.floor(rnd() * (segs - 4));
@@ -347,103 +344,138 @@
         return d + branches;
       }
 
-      /* hand-placed scatter — no order, no labels, no hints */
       var spotsDesktop = [
-        { x: 13, y: 16, h: 40, rot: -7, dur: '4.2s' },
-        { x: 31, y: 44, h: 30, rot: 6, dur: '5.1s' },
-        { x: 50, y: 12, h: 46, rot: -2, dur: '3.6s' },
-        { x: 68, y: 42, h: 32, rot: 8, dur: '4.7s' },
-        { x: 86, y: 18, h: 42, rot: -5, dur: '5.6s' }
+        { x: 10, y: 12, h: 36, rot: -7, dur: '4.2s' },
+        { x: 22, y: 52, h: 28, rot: 6, dur: '5.1s' },
+        { x: 50, y: 6, h: 26, rot: -2, dur: '3.6s' },
+        { x: 79, y: 50, h: 30, rot: 8, dur: '4.7s' },
+        { x: 90, y: 10, h: 38, rot: -5, dur: '5.6s' }
       ];
-      /* portrait: everything on-screen, clear of the system window */
       var spotsMobile = [
-        { x: 17, y: 5, h: 25, rot: -6, dur: '4.2s' },
-        { x: 30, y: 33, h: 22, rot: 5, dur: '5.1s' },
-        { x: 51, y: 4, h: 27, rot: -2, dur: '3.6s' },
-        { x: 71, y: 32, h: 23, rot: 7, dur: '4.7s' },
-        { x: 85, y: 5, h: 25, rot: -5, dur: '5.6s' }
+        { x: 12, y: 3, h: 18, rot: -6, dur: '4.2s' },
+        { x: 88, y: 4, h: 16, rot: 5, dur: '5.1s' },
+        { x: 8, y: 70, h: 20, rot: -2, dur: '3.6s' },
+        { x: 92, y: 66, h: 18, rot: 7, dur: '4.7s' },
+        { x: 50, y: 84, h: 14, rot: -5, dur: '5.6s' }
       ];
       var mobileMq = window.matchMedia('(max-width: 640px)');
       function spots() { return mobileMq.matches ? spotsMobile : spotsDesktop; }
 
+      /* decorative fractures — one per room, lit when its menu row is selected */
       var field = document.getElementById('field');
-      var sceneEls = [];
-
+      var crackEls = [];
       (window.VINH ? VINH.rooms : []).forEach(function (room, idx) {
         var rgb = hexToRgb(room.accent);
         var spot = spots()[idx % 5];
         var rnd = mulberry(97 + idx * 131);
-
         var li = document.createElement('li');
-        var a = document.createElement('a');
-        a.className = 'crack';
-        a.href = room.file;
-        a.style.setProperty('--c', room.accent);
-        a.style.setProperty('--cdim', 'rgba(' + rgb.join(',') + ',0.35)');
-        a.style.setProperty('--rot', spot.rot + 'deg');
-        a.style.setProperty('--dur', spot.dur);
-        a.style.left = spot.x + '%';
-        a.style.top = spot.y + '%';
-        a.setAttribute('aria-label', 'Fracture ' + (idx + 1) + ' — contents unknown');
-
+        var d = document.createElement('div');
+        d.className = 'crack';
+        d.style.setProperty('--c', room.accent);
+        d.style.setProperty('--cdim', 'rgba(' + rgb.join(',') + ',0.35)');
+        d.style.setProperty('--rot', spot.rot + 'deg');
+        d.style.setProperty('--dur', spot.dur);
+        d.style.left = spot.x + '%';
+        d.style.top = spot.y + '%';
         var W = 90, H = Math.round(spot.h * 8);
-        var d = crackPath(rnd, W, H);
-        a.innerHTML =
-          '<svg class="glow" width="' + W + '" height="' + (spot.h) + 'vh" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
-          '  <path d="' + d + '" fill="none" stroke="rgba(' + rgb.join(',') + ',0.35)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '  <path d="' + d + '" fill="none" stroke="' + room.accent + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '  <path d="' + d + '" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>' +
+        var path = crackPath(rnd, W, H);
+        d.innerHTML =
+          '<svg class="glow" width="' + W + '" height="' + spot.h + 'vh" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+          '  <path d="' + path + '" fill="none" stroke="rgba(' + rgb.join(',') + ',0.35)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '  <path d="' + path + '" fill="none" stroke="' + room.accent + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '  <path d="' + path + '" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>' +
           '</svg>';
-
-        a.addEventListener('click', function (e) {
-          if (reduced) return;
-          e.preventDefault();
-          a.classList.add('opening');
-          var flood = document.getElementById('flood');
-          flood.style.background = room.accent;
-          requestAnimationFrame(function () { flood.classList.add('on'); });
-          setTimeout(function () { window.location.href = room.file; }, 600);
-        });
-
-        li.appendChild(a);
+        li.appendChild(d);
         field.appendChild(li);
-        sceneEls.push(a);
+        crackEls.push(d);
       });
-
-      /* re-scatter when crossing the mobile breakpoint */
       function applySpots() {
-        sceneEls.forEach(function (a, i) {
+        crackEls.forEach(function (d, i) {
           var s = spots()[i % 5];
-          a.style.left = s.x + '%';
-          a.style.top = s.y + '%';
-          a.style.setProperty('--rot', s.rot + 'deg');
-          var svg = a.querySelector('svg');
+          d.style.left = s.x + '%';
+          d.style.top = s.y + '%';
+          d.style.setProperty('--rot', s.rot + 'deg');
+          var svg = d.querySelector('svg');
           if (svg) svg.setAttribute('height', s.h + 'vh');
         });
       }
       if (mobileMq.addEventListener) mobileMq.addEventListener('change', applySpots);
 
-      /* secret: 1–5 still works for those who figure it out */
-      document.addEventListener('keydown', function (e) {
-        if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-        if (document.getElementById('boot') && !bootDone) return; /* not during boot */
-        var n = parseInt(e.key, 10);
-        if (n >= 1 && n <= sceneEls.length) sceneEls[n - 1].click();
+      /* ── the menu ── */
+      var menu = document.getElementById('gate-menu');
+      var rows = [];
+      var selIdx = 0;
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+      (window.VINH ? VINH.rooms : []).forEach(function (room, idx) {
+        var b = document.createElement('button');
+        b.className = 'm-row';
+        b.type = 'button';
+        b.style.setProperty('--c', room.accent);
+        b.setAttribute('aria-label', room.name + ' — ' + room.blurb);
+        b.innerHTML =
+          '<span class="m-cursor" aria-hidden="true">&#9656;</span>' +
+          '<span class="m-num">' + pad(idx + 1) + '</span>' +
+          '<span class="m-name">' + room.name + '</span>' +
+          '<span class="m-blurb">' + room.blurb + '</span>';
+        b.addEventListener('mouseenter', function () { select(idx); });
+        b.addEventListener('focus', function () { select(idx); });
+        b.addEventListener('click', function () { enter(idx); });
+        menu.appendChild(b);
+        rows.push(b);
       });
 
-      /* system window: line-by-line reveal (starts after boot) */
+      function select(i) {
+        selIdx = i;
+        rows.forEach(function (r, j) { r.classList.toggle('sel', j === i); });
+        crackEls.forEach(function (c, j) { c.classList.toggle('lit', j === i); });
+      }
+
+      function enter(i) {
+        var room = VINH.rooms[i];
+        if (reduced) { window.location.href = room.file; return; }
+        var flood = document.getElementById('flood');
+        flood.style.background = room.accent;
+        requestAnimationFrame(function () { flood.classList.add('on'); });
+        setTimeout(function () { window.location.href = room.file; }, 580);
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+        if (document.getElementById('boot') && !bootDone) return;
+        var n = parseInt(e.key, 10);
+        if (n >= 1 && n <= rows.length) { select(n - 1); enter(n - 1); return; }
+        if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          select((selIdx + 1) % rows.length);
+          rows[selIdx].focus({ preventScroll: true });
+          e.preventDefault();
+        } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          select((selIdx - 1 + rows.length) % rows.length);
+          rows[selIdx].focus({ preventScroll: true });
+          e.preventDefault();
+        } else if (e.key === 'Enter' && document.activeElement && document.activeElement.className.indexOf('m-row') === -1) {
+          enter(selIdx);
+        }
+      });
+
+      /* clock not needed in menu version; reveal below */
       var revealStarted = false;
       function startReveal() {
         if (revealStarted) return;
         revealStarted = true;
         var lines = document.querySelectorAll('#sys-lines .line');
+        var all = Array.prototype.slice.call(lines).concat(rows).concat([document.getElementById('hint')]);
         if (reduced) {
-          lines.forEach(function (l) { l.classList.add('on'); });
-        } else {
-          lines.forEach(function (l, i) {
-            setTimeout(function () { l.classList.add('on'); }, 420 + i * 340);
-          });
+          all.forEach(function (l) { l.classList.add('on'); });
+          select(0);
+          return;
         }
+        all.forEach(function (l, i) {
+          setTimeout(function () {
+            l.classList.add('on');
+            if (l === rows[0]) select(0);
+          }, 150 + i * 110);
+        });
       }
 
       /* ── isekai boot: once per session, skippable ── */
@@ -483,7 +515,10 @@
           }, 350 + i * 430);
         });
         setTimeout(finish, 350 + bl.length * 430 + 1000);
-        boot.addEventListener('click', finish);
+        boot.addEventListener('click', function (e) {
+          if (e.target.closest('.boot-quick')) return; /* let the link navigate */
+          finish();
+        });
         document.addEventListener('keydown', function onKey() {
           document.removeEventListener('keydown', onKey);
           finish();
