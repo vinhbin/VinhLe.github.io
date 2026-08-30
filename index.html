@@ -283,7 +283,26 @@
             <div class="ml-what">AI Engineer &middot; Georgia Tech</div>
             <div class="ml-bar"></div>
           </div>
-          <!-- story screens inserted in Task 4 -->
+          <div class="mscreen s-messages">
+            <div class="mm-head">
+              <img src="images/linkedinpfp.jpg" alt="" />
+              <span>Vinh</span>
+            </div>
+            <div class="mm-thread">
+              <div class="mm-b in">hey — thanks for stopping by &#128075;</div>
+              <div class="mm-b in">i'm vinh. i build backend + AI systems. everything on this phone is real.</div>
+              <div class="mm-b in">wanna see?</div>
+              <div class="mm-b out">show me &rarr;</div>
+            </div>
+          </div>
+
+          <div class="mscreen s-photos">
+            <div class="mp-grid" id="mockPhotos"></div>
+          </div>
+
+          <div class="mscreen s-apps">
+            <div class="ma-grid" id="mockApps"></div>
+          </div>
 
         </div>
       </div>
@@ -298,7 +317,24 @@
           <a class="pill pill-ghost" href="classic.html">Quick view</a>
         </div>
       </div>
-      <!-- story moments inserted in Task 4 -->
+      <div class="moment" data-screen="messages">
+        <div class="m-copy">
+          <h2>Messages. Straight from Vinh.</h2>
+          <p>The intro thread types itself out. Reply, and it composes a <b>real email</b> — no contact form in sight.</p>
+        </div>
+      </div>
+      <div class="moment" data-screen="photos">
+        <div class="m-copy">
+          <h2>Photos. A life in sixteen shots.</h2>
+          <p>San Francisco fog, a Japanese garden, night cities, Muay Thai. A <b>real camera roll</b>, not stock.</p>
+        </div>
+      </div>
+      <div class="moment" data-screen="apps">
+        <div class="m-copy">
+          <h2>Apps. Real work inside.</h2>
+          <p><b>WATTLINE</b> — Best Hack for Good at Hack RenderATL. <b>Trace</b> — 1st place, Actian VectorAI Build. Every app opens.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -341,7 +377,55 @@
       tick();
       setInterval(tick, 15000);
 
-      /* Task 4 adds: mock screens rendering + scroll-story observer */
+      /* photos screen: first 9 real shots from data.js */
+      var mp = document.getElementById('mockPhotos');
+      if (mp && V.life) {
+        V.life.slice(0, 9).forEach(function (l) {
+          var img = document.createElement('img');
+          img.src = l.src;
+          img.alt = '';
+          img.loading = 'lazy';
+          mp.appendChild(img);
+        });
+      }
+
+      /* apps screen: project tiles from data.js */
+      var ma = document.getElementById('mockApps');
+      if (ma && V.projects) {
+        var pal = ['#0a84ff', '#ff375f', '#30d158', '#ff9f0a', '#bf5af2', '#64d2ff', '#ffd60a', '#ac8e68'];
+        V.projects.slice(0, 8).forEach(function (p, i) {
+          var t = document.createElement('div');
+          t.className = 'm-app';
+          var ic = document.createElement('div');
+          ic.className = 'm-app-ic';
+          ic.style.backgroundColor = pal[i % pal.length];
+          ic.textContent = (p.name || '?').charAt(0);
+          var lb = document.createElement('span');
+          lb.textContent = p.name;
+          t.appendChild(ic);
+          t.appendChild(lb);
+          ma.appendChild(t);
+        });
+      }
+
+      /* scroll story: swap the mock's screen as moments pass */
+      var mock = document.getElementById('mock');
+      var moments = document.querySelectorAll('.moment');
+      if ('IntersectionObserver' in window && mock) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              en.target.classList.add('in');
+              mock.dataset.screen = en.target.dataset.screen;
+            } else {
+              if (!en.target.classList.contains('moment-hero')) en.target.classList.remove('in');
+            }
+          });
+        }, { threshold: 0.55 });
+        moments.forEach(function (m) { io.observe(m); });
+      } else {
+        moments.forEach(function (m) { m.classList.add('in'); });
+      }
       /* Task 5 adds: tech specs rendering */
       /* Task 6 adds: try-it takeoff handoff */
     })();
