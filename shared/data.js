@@ -165,6 +165,13 @@ window.VINH = {
     { id: 'smartbook', name: 'SmartBook', date: 'Jan – May 2025', desc: 'Flutter mobile reading companion: Google Books search, Firebase Auth, Firestore.', tech: ['Flutter', 'Dart', 'Firebase'], links: { github: 'https://github.com/vinhbin/smartbook' }, image: 'images/smartbook3.png' },
     { id: 'heartdisease', name: 'Heart Disease Prediction', date: 'Fall 2025', desc: 'Logistic Regression and Random Forest on clinical data, evaluated via ROC-AUC, precision, and recall.', tech: ['Python', 'scikit-learn', 'Pandas'], links: { github: 'https://github.com/vinhbin/heartdiseaseDS' }, image: 'images/heartdisease.jfif' }
   ],
+  life: [
+    { src: 'images/life/travel-1.jpg', caption: 'Sensō-ji Temple — Tokyo', album: 'Travel' },
+    { src: 'images/life/travel-2.jpg', caption: 'Sunset wade with the crew', album: 'Travel' },
+    { src: 'images/life/shot-1.jpg', caption: 'Above the valley', album: 'Shots' },
+    { src: 'images/life/shot-2.jpg', caption: 'Golden hour local', album: 'Shots' },
+    { src: 'images/life/muaythai-1.jpg', caption: 'After sparring', album: 'Muay Thai' }
+  ],
   rooms: [
     { id: 'terminal', file: 'terminal.html', name: 'The Terminal', accent: '#33ff66', blurb: 'A working shell. Type help.' },
     { id: 'phone', file: 'phone.html', name: 'The Phone', accent: '#9fc9ff', blurb: 'Slide to unlock.' },

@@ -1298,15 +1298,18 @@
       var L = p.links || {};
       return L.demo || L.app || L.devpost || L.dorahacks || L.github || V.links.github;
     }
-    var shots = V.projects.concat(V.earlier).filter(function (p) { return p.image; });
-    $('phCount').innerHTML = 'Recents<small>' + shots.length + ' items · ' + first + "'s builds</small>";
+    var lifeShots = (V.life || []).map(function (l) {
+      return { name: l.caption, image: l.src, life: true, album: l.album };
+    });
+    var shots = lifeShots.concat(V.projects.concat(V.earlier).filter(function (p) { return p.image; }));
+    $('phCount').innerHTML = 'Recents<small>' + shots.length + ' items · ' + first + "'s life & builds</small>";
     var phGrid = $('phGrid');
     shots.forEach(function (p, i) {
       var b = document.createElement('button');
       b.setAttribute('aria-label', 'View ' + p.name);
       var img = document.createElement('img');
       img.src = p.image;
-      img.alt = p.name + ' screenshot';
+      img.alt = p.life ? p.name : p.name + ' screenshot';
       img.loading = 'lazy';
       b.appendChild(img);
       b.addEventListener('click', function () { openViewer(i); });
@@ -1350,11 +1353,13 @@
     function renderViewer() {
       var p = shots[vIdx];
       $('vImg').src = p.image;
-      $('vImg').alt = p.name + ' screenshot';
+      $('vImg').alt = p.life ? p.name : p.name + ' screenshot';
       $('vName').textContent = p.name;
-      $('vMeta').textContent = [p.event, p.award, p.date].filter(Boolean).join(' · ');
-      $('vDesc').textContent = p.desc;
-      $('vLink').href = primaryLink(p);
+      $('vMeta').textContent = p.life ? (p.album || '') : [p.event, p.award, p.date].filter(Boolean).join(' · ');
+      $('vDesc').textContent = p.desc || '';
+      var vl = $('vLink');
+      if (p.life) { vl.style.display = 'none'; }
+      else { vl.style.display = ''; vl.href = primaryLink(p); }
     }
     function closeViewer() {
       viewer.classList.remove('open');

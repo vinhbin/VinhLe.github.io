@@ -559,6 +559,7 @@
     <div id="icons" role="group" aria-label="Desktop icons. Press Enter to open, arrow through with Tab.">
       <button class="dicon" data-app="projects" data-ico="folder"><span class="ico"></span><span class="lbl">My Projects</span></button>
       <button class="dicon" data-app="earlier" data-ico="folderarc"><span class="ico"></span><span class="lbl">Earlier Work</span></button>
+      <button class="dicon" data-app="pictures" data-ico="folder"><span class="ico"></span><span class="lbl">My Pictures</span></button>
       <button class="dicon" data-app="resume" data-ico="doc"><span class="ico"></span><span class="lbl">resume.txt</span></button>
       <button class="dicon" data-app="about" data-ico="doc"><span class="ico"></span><span class="lbl">About Vinh.txt</span></button>
       <button class="dicon" data-app="skills" data-ico="chip"><span class="ico"></span><span class="lbl">Skills.sys</span></button>
@@ -598,6 +599,7 @@
       <ul class="sm-list sm-left">
         <li><button class="sm-item" data-app="projects" data-ico-s="folder">My Projects</button></li>
         <li><button class="sm-item" data-app="earlier" data-ico-s="folderarc">Earlier Work</button></li>
+        <li><button class="sm-item" data-app="pictures" data-ico-s="folder">My Pictures</button></li>
         <li><button class="sm-item" data-app="resume" data-ico-s="doc">resume.txt</button></li>
         <li><button class="sm-item" data-app="about" data-ico-s="doc">About Vinh.txt</button></li>
         <li><button class="sm-item" data-app="skills" data-ico-s="chip">Skills.sys</button></li>
@@ -1433,8 +1435,47 @@
       return win;
     }
 
+    /* ================= My Pictures ================= */
+    function picturesWindow(op) {
+      var win = createWindow('pictures', { title: 'My Pictures', icon: 'folder', width: 470, opener: op });
+      var body = win.querySelector('.win-body');
+      var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px;padding:12px;background:#fff;min-height:180px;max-height:320px;overflow:auto;">';
+      (V.life || []).forEach(function (l, i) {
+        html += '<button class="pic-it" data-i="' + i + '" style="border:1px solid #d5d2c8;background:#fff;padding:4px;cursor:pointer;text-align:left;" aria-label="Open ' + esc(l.caption) + '">' +
+          '<img src="' + esc(l.src) + '" alt="' + esc(l.caption) + '" loading="lazy" style="width:100%;height:86px;object-fit:cover;display:block;" />' +
+          '<span style="display:block;font-size:10px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(l.caption) + '</span></button>';
+      });
+      html += '</div><div style="padding:4px 10px;background:#ece9d8;border-top:1px solid #d5d2c8;font-size:10px;">' + (V.life || []).length + ' objects &middot; life outside the terminal</div>';
+      body.innerHTML = html;
+      body.querySelectorAll('.pic-it').forEach(function (b) {
+        wireItemActivation(b,
+          function () { picViewer(parseInt(b.dataset.i, 10)); },
+          function () { b.style.outline = '1px dotted #316ac5'; setTimeout(function () { b.style.outline = ''; }, 1200); });
+      });
+      return win;
+    }
+    var picIdx = 0;
+    function picViewer(i) {
+      picIdx = i;
+      var win = createWindow('picviewer', { title: 'Windows Picture Viewer', icon: 'doc', width: 520 });
+      renderPic(win);
+    }
+    function renderPic(win) {
+      var l = V.life[picIdx];
+      var body = win.querySelector('.win-body');
+      body.innerHTML =
+        '<div style="background:#1a1a1a;text-align:center;padding:6px;"><img src="' + esc(l.src) + '" alt="' + esc(l.caption) + '" style="max-width:100%;max-height:300px;" /></div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#ece9d8;font-size:11px;">' +
+        '<button class="btn95" id="pic-prev" aria-label="Previous picture">&#9664;</button>' +
+        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(l.caption) + ' &middot; ' + esc(l.album) + '</span>' +
+        '<button class="btn95" id="pic-next" aria-label="Next picture">&#9654;</button></div>';
+      body.querySelector('#pic-prev').addEventListener('click', function () { picIdx = (picIdx - 1 + V.life.length) % V.life.length; renderPic(win); });
+      body.querySelector('#pic-next').addEventListener('click', function () { picIdx = (picIdx + 1) % V.life.length; renderPic(win); });
+    }
+
     /* ================= app registry + desktop ================= */
     var APPS = {
+      pictures: picturesWindow,
       projects: function (op) {
         folderWindow('projects', {
           title: 'My Projects', icon: 'folder', path: 'C:\\Vinh\\Projects', items: V.projects, kind: 'projects',

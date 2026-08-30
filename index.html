@@ -203,11 +203,50 @@
       opacity: 0; transition: opacity 0.55s ease;
     }
     #flood.on { opacity: 0.96; }
+
+    /* ── isekai boot ── */
+    #boot {
+      position: fixed; inset: 0; z-index: 60000;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.65s ease;
+      cursor: pointer;
+    }
+    #boot.off { opacity: 0; pointer-events: none; }
+    .boot-inner { min-width: min(430px, 88vw); }
+    #boot .bl {
+      font-size: 0.7rem; letter-spacing: 0.08em; line-height: 2.15;
+      color: rgba(205, 214, 236, 0.88);
+      opacity: 0; transform: translateY(3px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #boot .bl.on { opacity: 1; transform: none; }
+    #boot .bl .tag { color: rgba(140, 170, 255, 0.5); margin-right: 0.6rem; }
+    #boot .bl .bar { color: rgba(160, 185, 255, 0.85); letter-spacing: 0; }
+    #boot .bl.gold { color: #d9bc6a; }
+    .boot-hint {
+      position: absolute; bottom: 1.6rem; left: 0; right: 0;
+      text-align: center;
+      font-size: 0.58rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+    }
+    @media (prefers-reduced-motion: reduce) { #boot { display: none; } }
   </style>
 </head>
 
 <body data-accent="#050507" data-room="hallway">
   <a class="skip-link" href="#field">Skip to the doors</a>
+
+  <div id="boot" aria-label="System boot sequence">
+    <div class="boot-inner">
+      <p class="bl"><span class="tag">[SYSTEM]</span> signal acquired</p>
+      <p class="bl"><span class="tag">[SYSTEM]</span> you are no longer where you were.</p>
+      <p class="bl"><span class="tag">[SYSTEM]</span> reconstructing archive <span class="bar">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span></p>
+      <p class="bl"><span class="tag">[SYSTEM]</span> five fractures stabilized</p>
+      <p class="bl gold"><span class="tag">[SYSTEM]</span> welcome, traveler.</p>
+    </div>
+    <p class="boot-hint">tap anywhere to skip</p>
+  </div>
 
   <div class="topbar">
     <a href="classic.html">Quick View</a>
@@ -376,19 +415,69 @@
       /* secret: 1–5 still works for those who figure it out */
       document.addEventListener('keydown', function (e) {
         if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+        if (document.getElementById('boot') && !bootDone) return; /* not during boot */
         var n = parseInt(e.key, 10);
         if (n >= 1 && n <= sceneEls.length) sceneEls[n - 1].click();
       });
 
-      /* system window: line-by-line reveal */
-      var lines = document.querySelectorAll('#sys-lines .line');
-      if (reduced) {
-        lines.forEach(function (l) { l.classList.add('on'); });
-      } else {
-        lines.forEach(function (l, i) {
-          setTimeout(function () { l.classList.add('on'); }, 420 + i * 340);
-        });
+      /* system window: line-by-line reveal (starts after boot) */
+      var revealStarted = false;
+      function startReveal() {
+        if (revealStarted) return;
+        revealStarted = true;
+        var lines = document.querySelectorAll('#sys-lines .line');
+        if (reduced) {
+          lines.forEach(function (l) { l.classList.add('on'); });
+        } else {
+          lines.forEach(function (l, i) {
+            setTimeout(function () { l.classList.add('on'); }, 420 + i * 340);
+          });
+        }
       }
+
+      /* ── isekai boot: once per session, skippable ── */
+      var bootDone = false;
+      (function () {
+        var boot = document.getElementById('boot');
+        if (!boot) { bootDone = true; startReveal(); return; }
+        var seen = false;
+        try { seen = sessionStorage.getItem('voidBoot') === '1'; } catch (e) {}
+        if (reduced || seen) {
+          boot.remove();
+          bootDone = true;
+          startReveal();
+          return;
+        }
+        function finish() {
+          if (bootDone) return;
+          bootDone = true;
+          try { sessionStorage.setItem('voidBoot', '1'); } catch (e) {}
+          boot.classList.add('off');
+          setTimeout(function () { boot.remove(); }, 750);
+          startReveal();
+        }
+        var bl = boot.querySelectorAll('.bl');
+        bl.forEach(function (l, i) {
+          setTimeout(function () {
+            l.classList.add('on');
+            var bar = l.querySelector('.bar');
+            if (bar) {
+              var n = 0;
+              var iv = setInterval(function () {
+                n++;
+                bar.textContent = Array(n + 1).join('█') + Array(15 - n).join('░');
+                if (n >= 14) clearInterval(iv);
+              }, 42);
+            }
+          }, 350 + i * 430);
+        });
+        setTimeout(finish, 350 + bl.length * 430 + 1000);
+        boot.addEventListener('click', finish);
+        document.addEventListener('keydown', function onKey() {
+          document.removeEventListener('keydown', onKey);
+          finish();
+        }, { once: true });
+      })();
     })();
   </script>
   <script src="shared/void.js" defer></script>
