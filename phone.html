@@ -299,12 +299,20 @@
       backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
       display: flex; align-items: center; gap: 13px;
       margin-bottom: 22px;
+      width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
+    .widget:active { transform: scale(0.985); filter: brightness(1.08); }
     .widget img { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; box-shadow: 0 0 0 1px rgba(159,201,255,0.25); }
     .widget .w-txt { flex: 1; min-width: 0; }
-    .widget .w-name { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; }
-    .widget .w-role { font-size: 12.5px; font-weight: 600; color: var(--accent); margin-top: 2px; }
-    .widget .w-loc { font-size: 11.5px; color: var(--ink-dim); margin-top: 3px; }
+    .widget .w-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .widget .w-name { font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; margin-top: 2px; }
+    .widget .w-role { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.88); margin-top: 2px; }
+    .widget .w-loc {
+      font-size: 11.5px; color: var(--ink-dim); margin-top: 5px; line-height: 1.35;
+      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+    }
+    .widget .w-chev { flex-shrink: 0; opacity: 0.45; }
 
     .grid {
       display: grid; grid-template-columns: repeat(4, 1fr);
@@ -703,6 +711,12 @@
       .ph-grid img { transition: none; }
     }
   </style>
+  <style>
+    /* Cross-document morph from the launch page: the landing mock and this phone
+       share a view-transition-name, so supporting browsers animate one into the other. */
+    @view-transition { navigation: auto; }
+    .phone { view-transition-name: phone; }
+  </style>
 </head>
 <body data-accent="#9fc9ff" data-room="phone">
 
@@ -747,7 +761,7 @@
               <div class="lock-notifs">
                 <div class="lock-notif">
                   <img class="n-ic" src="images/linkedinpfp.jpg" alt="" />
-                  <div class="nt"><b>Messages</b><span id="lockNotifTxt">3 new messages from Vinh</span></div>
+                  <div class="nt"><b>About</b><span id="lockNotifTxt">AI engineer. Georgia Tech. The work is on this phone.</span></div>
                   <time>now</time>
                 </div>
                 <div class="lock-notif">
@@ -778,14 +792,16 @@
 
             <!-- HOME SCREEN -->
             <main class="home" id="homeScreen" aria-label="Home screen" hidden>
-              <div class="widget">
+              <button class="widget" id="aboutWidget" type="button" aria-label="Open About">
                 <img src="images/linkedinpfp.jpg" alt="" />
                 <div class="w-txt">
+                  <div class="w-kicker">About</div>
                   <div class="w-name" id="wName">Vinh Le</div>
-                  <div class="w-role" id="wRole">Backend-Focused Software Engineer</div>
+                  <div class="w-role" id="wRole">AI Engineer · M.S. CS @ Georgia Tech</div>
                   <div class="w-loc" id="wLoc">Atlanta, GA</div>
                 </div>
-              </div>
+                <svg class="w-chev" width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m1 1 6 6-6 6"/></svg>
+              </button>
 
               <div class="grid" id="linkGrid" role="group" aria-label="Apps and links">
                 <a class="app-ic" id="icLinkedin" target="_blank" rel="noopener" aria-label="Open LinkedIn profile in a new tab">
@@ -810,7 +826,7 @@
                 </button>
               </div>
 
-              <button class="widget-photo" id="photoWidget" data-app="photos" aria-label="Open Photos app — recent project screenshots">
+              <button class="widget-photo" id="photoWidget" data-app="photos" aria-label="Open Photos — Vinh's camera roll">
                 <img id="pwImg" src="" alt="" />
                 <span class="wpw-tag">Photos</span>
                 <span class="wpw-name" id="pwName"></span>
@@ -1007,9 +1023,9 @@
     $('lockWhat').textContent = V.role;
     $('wName').textContent = V.name;
     $('wRole').textContent = V.role;
-    $('wLoc').textContent = V.location + ' · ' + V.tagline;
+    $('wLoc').textContent = V.about[0] || (V.location + ' · ' + V.tagline);
     $('msgContactName').textContent = V.name;
-    $('lockNotifTxt').textContent = V.about.length + ' new messages from ' + first;
+    $('lockNotifTxt').textContent = V.about[0] || ('Messages from ' + first);
     var awarded = V.projects.filter(function (p) { return p.award; })[0];
     if (awarded) $('lockNotifTxt2').textContent = awarded.name + ' — ' + awarded.award + ' at ' + awarded.event;
     $('icLinkedin').href = V.links.linkedin;
@@ -1438,6 +1454,14 @@
       row.addEventListener('click', function () { showNote(n.title); });
       notesGroup.appendChild(row);
     });
+
+    var aboutWidget = $('aboutWidget');
+    if (aboutWidget) {
+      aboutWidget.addEventListener('click', function () {
+        open('notes', aboutWidget);
+        setTimeout(function () { showNote('About'); }, reduced ? 40 : 480);
+      });
+    }
 
     /* ============ PROJECTS (App Store Today cards) ============ */
     var ICON_HUES = [

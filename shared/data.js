@@ -166,6 +166,14 @@ window.VINH = {
     { id: 'heartdisease', name: 'Heart Disease Prediction', date: 'Fall 2025', desc: 'Logistic Regression and Random Forest on clinical data, evaluated via ROC-AUC, precision, and recall.', tech: ['Python', 'scikit-learn', 'Pandas'], links: { github: 'https://github.com/vinhbin/heartdiseaseDS' }, image: 'images/heartdisease.jfif' }
   ],
   life: [
+    { src: 'images/life/wattline-winning-picture.jpg', caption: 'Best Hack for Good — Hack RenderATL', album: 'Builds' },
+    { src: 'images/life/cox-hackathon-pic.jpg', caption: 'Demo day — walking the table through it', album: 'Builds' },
+    { src: 'images/life/muaythai-1.jpg', caption: 'After sparring', album: 'Muay Thai' },
+    { src: 'images/life/travel-1.jpg', caption: 'Sensō-ji Temple — Tokyo', album: 'Travel' },
+    { src: 'images/life/shot-11.jpg', caption: 'Golden Gate in bloom', album: 'Shots' },
+    { src: 'images/life/travel-3.jpg', caption: 'Straight up, midnight towers', album: 'Travel' },
+    { src: 'images/life/shot-10.jpg', caption: 'Japanese garden, deep summer', album: 'Shots' },
+    { src: 'images/life/travel-2.jpg', caption: 'Sunset wade with the crew', album: 'Travel' },
     { src: 'images/life/shot-3.jpg', caption: 'Golden hour over Sutro Baths', album: 'Shots' },
     { src: 'images/life/shot-4.jpg', caption: 'Wings out at Lands End', album: 'Shots' },
     { src: 'images/life/shot-5.jpg', caption: 'Front row seats to the Pacific', album: 'Shots' },
@@ -173,21 +181,12 @@ window.VINH = {
     { src: 'images/life/shot-7.jpg', caption: 'Crissy Field, one good boy', album: 'Shots' },
     { src: 'images/life/shot-8.jpg', caption: 'The climb to the bridge', album: 'Shots' },
     { src: 'images/life/shot-9.jpg', caption: 'Through the trees', album: 'Shots' },
-    { src: 'images/life/shot-10.jpg', caption: 'Japanese garden, deep summer', album: 'Shots' },
-    { src: 'images/life/shot-11.jpg', caption: 'Golden Gate in bloom', album: 'Shots' },
-    { src: 'images/life/travel-1.jpg', caption: 'Sensō-ji Temple — Tokyo', album: 'Travel' },
-    { src: 'images/life/travel-2.jpg', caption: 'Sunset wade with the crew', album: 'Travel' },
-    { src: 'images/life/travel-3.jpg', caption: 'Straight up, midnight towers', album: 'Travel' },
     { src: 'images/life/travel-4.jpg', caption: 'City lights from the top', album: 'Travel' },
     { src: 'images/life/shot-1.jpg', caption: 'Above the valley', album: 'Shots' },
-    { src: 'images/life/shot-2.jpg', caption: 'Golden hour local', album: 'Shots' },
-    { src: 'images/life/muaythai-1.jpg', caption: 'After sparring', album: 'Muay Thai' }
+    { src: 'images/life/shot-2.jpg', caption: 'Golden hour local', album: 'Shots' }
   ],
   rooms: [
-    { id: 'terminal', file: 'terminal.html', name: 'The Terminal', accent: '#33ff66', blurb: 'A working shell. Type help.' },
     { id: 'phone', file: 'phone.html', name: 'The Phone', accent: '#9fc9ff', blurb: 'Slide to unlock.' },
-    { id: 'retro', file: 'retro.html', name: 'Retro Windows', accent: '#14b8a6', blurb: 'It is now safe to browse my archive.' },
-    { id: 'game', file: 'game.html', name: 'The Arcade', accent: '#ff2d95', blurb: '60 seconds. Keep the lights on.' },
     { id: 'classic', file: 'classic.html', name: 'The Classic View', accent: '#c9a84c', blurb: 'The portfolio, no games. Quick view.' }
   ]
 };

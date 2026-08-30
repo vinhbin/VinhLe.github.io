@@ -1,7 +1,7 @@
 # Door Hub Redesign — "The Void Hallway"
 
 **Date:** 2026-08-29
-**Status:** Design approved (brainstormed with Vinh), not yet built
+**Status:** SUPERSEDED by `2026-08-29-apple-launch-redesign-design.md` — site pivoted from 5-door hub to single-product Apple launch page
 **Concept:** Doraemon Anywhere-Door-inspired hub. A liminal-void hallway of glowing doors; each door opens a differently-themed, fully functional room. Coherent, not chaotic.
 
 ## Goals
