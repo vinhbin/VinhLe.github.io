@@ -184,10 +184,7 @@ window.VINH = {
     { src: 'images/life/muaythai-1.jpg', caption: 'After sparring', album: 'Muay Thai' }
   ],
   rooms: [
-    { id: 'terminal', file: 'terminal.html', name: 'The Terminal', accent: '#33ff66', blurb: 'A working shell. Type help.' },
     { id: 'phone', file: 'phone.html', name: 'The Phone', accent: '#9fc9ff', blurb: 'Slide to unlock.' },
-    { id: 'retro', file: 'retro.html', name: 'Retro Windows', accent: '#14b8a6', blurb: 'It is now safe to browse my archive.' },
-    { id: 'game', file: 'game.html', name: 'The Arcade', accent: '#ff2d95', blurb: '60 seconds. Keep the lights on.' },
     { id: 'classic', file: 'classic.html', name: 'The Classic View', accent: '#c9a84c', blurb: 'The portfolio, no games. Quick view.' }
   ]
 };

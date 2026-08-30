@@ -1,5 +1,6 @@
-/* Shared room runtime: sets the accent, plays the door-light enter flood,
-   and injects the "hallway" escape hatch on every page except the hallway itself. */
+/* Shared room runtime: sets the accent, plays the enter fade, and injects the
+   "back to vinhle.xyz" corner link on every page except the launch page.
+   Skips the enter flood when arriving via the launch page's Try-it handoff. */
 (function () {
   var body = document.body;
   var accent = body.dataset.accent || '#c9a84c';
@@ -7,7 +8,13 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (!reduced) {
+  var fromLaunch = false;
+  try {
+    fromLaunch = sessionStorage.getItem('fromLaunch') === '1';
+    if (fromLaunch) sessionStorage.removeItem('fromLaunch');
+  } catch (e) {}
+
+  if (!reduced && !fromLaunch) {
     var ov = document.createElement('div');
     ov.className = 'void-enter';
     ov.style.background = accent;
@@ -19,14 +26,12 @@
   }
 
   if (body.dataset.room !== 'hallway') {
+    var home = /\/archive\//.test(window.location.pathname) ? '../index.html' : 'index.html';
     var hatch = document.createElement('a');
     hatch.className = 'void-hatch';
-    hatch.href = 'index.html';
-    hatch.setAttribute('aria-label', 'Back to the hallway');
-    hatch.innerHTML =
-      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-      '<path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h20"/><path d="M13 20V4a1 1 0 0 0-1.2-.98l-5 1A1 1 0 0 0 6 5v15"/><circle cx="10" cy="12" r="0.5" fill="currentColor"/></svg>' +
-      '<span>hallway</span>';
+    hatch.href = home;
+    hatch.setAttribute('aria-label', 'Back to vinhle.xyz');
+    hatch.innerHTML = '<span aria-hidden="true">&#8249;</span><span>vinhle.xyz</span>';
     body.appendChild(hatch);
 
     hatch.addEventListener('click', function (e) {
@@ -38,7 +43,7 @@
       requestAnimationFrame(function () {
         requestAnimationFrame(function () { out.classList.add('void-exit-on'); });
       });
-      setTimeout(function () { window.location.href = 'index.html'; }, 420);
+      setTimeout(function () { window.location.href = home; }, 420);
     });
   }
 })();
